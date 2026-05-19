@@ -1,0 +1,45 @@
+.strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  border: 1px solid #ece4d7;
+  border-radius: 8px;
+}
+
+.itemWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.35rem 0.65rem;
+}
+
+.day {
+  font-weight: 600;
+  text-transform: none;
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+.value {
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.sep {
+  color: #d6cab2;
+  font-weight: 400;
+}
+
+.muted {
+  font-size: 0.85rem;
+  color: #8a7e6c;
+}

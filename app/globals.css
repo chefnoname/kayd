@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "../styles/theme.css";
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 196 41% 15%;            /* night blue shadow */
+    --card: 0 0% 100%;
+    --card-foreground: 196 41% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 196 41% 15%;
+    --primary: 192 37% 28%;               /* night blue #2d545e */
+    --primary-foreground: 30 60% 88%;     /* sand-ish */
+    --secondary: 28 60% 88%;
+    --secondary-foreground: 196 41% 15%;
+    --muted: 28 30% 94%;
+    --muted-foreground: 196 20% 35%;
+    --accent: 28 60% 70%;                 /* sand tan */
+    --accent-foreground: 196 41% 15%;
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 28 30% 85%;
+    --input: 28 30% 85%;
+    --ring: 192 37% 28%;
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+  }
+}

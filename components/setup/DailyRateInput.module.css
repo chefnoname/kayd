@@ -1,0 +1,49 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.85rem 1rem;
+  background: #fbf2e3;
+  border: 1px solid #ecd9b8;
+  border-radius: 8px;
+}
+
+.previewLabel {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--kayd-sand-shadow);
+  font-weight: 600;
+}
+
+.previewValue {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--kayd-night-shadow);
+}
+
+.previewMuted {
+  font-size: 0.9rem;
+  color: #8a7e6c;
+}
+
+.submit {
+  background: var(--kayd-night);
+  color: #fff;
+  margin-top: 0.25rem;
+}
+.submit:hover:not(:disabled) {
+  background: var(--kayd-night-shadow);
+}
