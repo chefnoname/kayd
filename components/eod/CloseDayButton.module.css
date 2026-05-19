@@ -1,0 +1,66 @@
+.wrap {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn {
+  background: var(--kayd-night);
+  color: #fff;
+  font-weight: 600;
+  padding: 0 1.75rem;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--kayd-night-shadow);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.9rem;
+}
+
+.label {
+  color: #6b6b6b;
+}
+
+.value {
+  font-weight: 500;
+  color: var(--kayd-night-shadow);
+  font-variant-numeric: tabular-nums;
+}
+
+.valueStrong {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--kayd-night-shadow);
+  font-variant-numeric: tabular-nums;
+}
+
+.reason {
+  background: #fbf2e3;
+  border: 1px solid #ecd9b8;
+  border-radius: 8px;
+  padding: 0.65rem 0.8rem;
+}
+
+.reasonLabel {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--kayd-sand-shadow);
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.reasonText {
+  font-size: 0.875rem;
+  color: var(--kayd-night-shadow);
+}

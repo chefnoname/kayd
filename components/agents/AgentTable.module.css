@@ -1,0 +1,98 @@
+.tableWrap {
+  background: #fff;
+  border: 1px solid #ece4d7;
+  border-radius: 10px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.row {
+  cursor: pointer;
+}
+
+.row:hover {
+  background: #fbf2e3;
+}
+
+.expanded {
+  background: #fbf2e3;
+}
+
+.inactive {
+  opacity: 0.55;
+}
+
+.nameCell {
+  font-weight: 600;
+  color: var(--kayd-night-shadow);
+}
+
+.actionHead {
+  text-align: right;
+}
+
+.actionCell {
+  text-align: right;
+}
+
+.detailRow {
+  background: #fbf7f0;
+}
+
+.detailRow:hover {
+  background: #fbf7f0;
+}
+
+.detailCell {
+  padding: 0 !important;
+}
+
+/* Status pill */
+.statusPill {
+  display: inline-block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+}
+
+.statusActive {
+  background: #dff1e3;
+  color: #1e6b3c;
+}
+
+.statusInactive {
+  background: #ece4d7;
+  color: #6b6b6b;
+}
+
+/* Balance badges */
+.green {
+  background: #dff1e3 !important;
+  color: #1e6b3c !important;
+}
+
+.amber {
+  background: #fbe6c2 !important;
+  color: #8a5a16 !important;
+}
+
+.red {
+  background: #f8d7d7 !important;
+  color: #8a1f1f !important;
+}
+
+/* Empty */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 3rem 1rem;
+  background: #fff;
+  border: 1px dashed #ece4d7;
+  border-radius: 10px;
+  color: #6b6b6b;
+}

@@ -83,6 +83,8 @@ create table if not exists public.daily_balances (
   closing_gbp             numeric(14, 2) not null default 0,
   is_closed               boolean not null default false,
   discrepancy             numeric(14, 2) not null default 0,
+  notes                   text,
+  closed_at               timestamptz,
   created_at              timestamptz not null default now(),
   updated_at              timestamptz not null default now()
 );
@@ -120,12 +122,13 @@ create table if not exists public.regional_offices (
 -- Collection pickups (cash collected from regional offices)
 -- ------------------------------------------------------------
 create table if not exists public.collection_pickups (
-  id            uuid primary key default gen_random_uuid(),
-  office_id     uuid not null references public.regional_offices (id) on delete restrict,
-  amount_gbp    numeric(14, 2) not null check (amount_gbp >= 0),
-  date          date not null,
-  collected_by  uuid references public.staff_users (id) on delete set null,
-  created_at    timestamptz not null default now()
+  id                 uuid primary key default gen_random_uuid(),
+  office_id          uuid not null references public.regional_offices (id) on delete restrict,
+  amount_gbp         numeric(14, 2) not null check (amount_gbp >= 0),
+  date               date not null,
+  collected_by       uuid references public.staff_users (id) on delete set null,
+  collected_by_name  text,
+  created_at         timestamptz not null default now()
 );
 
 create index if not exists collection_pickups_office_idx on public.collection_pickups (office_id, date desc);

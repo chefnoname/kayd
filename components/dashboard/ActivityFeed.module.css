@@ -1,0 +1,18 @@
+.title {
+  font-size: 1rem;
+}
+
+.content {
+  padding: 0 !important;
+}
+
+.muted {
+  text-align: center;
+  color: #8a7e6c;
+  padding: 1.5rem;
+}
+
+.name {
+  font-weight: 600;
+  color: var(--kayd-night-shadow);
+}

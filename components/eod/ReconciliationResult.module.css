@@ -1,0 +1,54 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.placeholder {
+  background: #fff;
+  border: 1px dashed #ece4d7;
+  border-radius: 10px;
+  padding: 1.25rem;
+  color: #8a7e6c;
+  font-size: 0.9rem;
+}
+
+.banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+.bannerTitle {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.bannerBody {
+  font-size: 0.875rem;
+  margin-top: 0.15rem;
+}
+
+.success {
+  background: #dff1e3;
+  color: #1e6b3c;
+  border: 1px solid #b9dec3;
+}
+
+.error {
+  background: #f8d7d7;
+  color: #8a1f1f;
+  border: 1px solid #e3b3b3;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  background: #fff;
+  border: 1px solid #ece4d7;
+  border-radius: 10px;
+  padding: 1rem;
+}

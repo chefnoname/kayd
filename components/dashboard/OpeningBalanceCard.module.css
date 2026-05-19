@@ -1,0 +1,14 @@
+.label {
+  font-size: 0.75rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--kayd-sand-shadow);
+  font-weight: 600;
+}
+
+.value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--kayd-night-shadow);
+  font-variant-numeric: tabular-nums;
+}

@@ -1,0 +1,30 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;
+}
+
+.tableWrap {
+  background: #fff;
+  border: 1px solid #ece4d7;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.numeric,
+.numericHead {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.empty {
+  text-align: center;
+  color: #8a7e6c;
+  padding: 1.75rem 0;
+}
+
+.muted {
+  color: #8a7e6c;
+  margin: 0;
+}

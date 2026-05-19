@@ -1,0 +1,46 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.95rem;
+}
+
+.label {
+  color: #6b6b6b;
+}
+
+.value {
+  font-weight: 500;
+  color: var(--kayd-night-shadow);
+  font-variant-numeric: tabular-nums;
+}
+
+.valueStrong {
+  font-weight: 700;
+  color: var(--kayd-night-shadow);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.15rem;
+}
+
+.negative {
+  color: #8a5a16;
+}
+
+.divider {
+  height: 1px;
+  background: #ece4d7;
+  margin: 0.4rem 0 0.2rem;
+}
+
+.formula {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  color: #8a7e6c;
+  font-variant-numeric: tabular-nums;
+}

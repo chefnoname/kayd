@@ -1,14 +1,135 @@
+"use client";
+
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { createClient } from "@/lib/supabase";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { DepositSummaryCards } from "@/components/deposits/DepositSummaryCards";
+import { DepositTable } from "@/components/deposits/DepositTable";
+import { AddDepositModal } from "@/components/deposits/AddDepositModal";
+import { EditDepositModal } from "@/components/deposits/EditDepositModal";
+import { ReleaseDepositModal } from "@/components/deposits/ReleaseDepositModal";
+import type { Deposit, DepositFilter } from "@/components/deposits/types";
+import styles from "./deposits.module.css";
 
 export default function DepositsPage() {
+  const [deposits, setDeposits] = useState<Deposit[]>([]);
+  const [filter, setFilter] = useState<DepositFilter>("all");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [addOpen, setAddOpen] = useState(false);
+  const [editTarget, setEditTarget] = useState<Deposit | null>(null);
+  const [releaseTarget, setReleaseTarget] = useState<Deposit | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    const supabase = createClient();
+    const { data, error: fetchError } = await supabase
+      .from("individual_deposits")
+      .select(
+        "id, holder_name, amount_usd, date_received, location, notes, status, released_at, released_to, created_at"
+      )
+      .order("date_received", { ascending: false })
+      .order("created_at", { ascending: false });
+
+    if (fetchError) {
+      setError(fetchError.message);
+      setDeposits([]);
+    } else {
+      setDeposits(
+        (data ?? []).map((d: any) => ({
+          id: d.id,
+          holder_name: d.holder_name,
+          amount_usd: Number(d.amount_usd),
+          date_received: d.date_received,
+          location: d.location,
+          notes: d.notes,
+          status: d.status,
+          released_at: d.released_at,
+          released_to: d.released_to,
+          created_at: d.created_at,
+        }))
+      );
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const { totalHeldUSD, activeCount } = useMemo(() => {
+    const held = deposits.filter((d) => d.status === "held");
+    return {
+      totalHeldUSD: held.reduce((s, d) => s + d.amount_usd, 0),
+      activeCount: held.length,
+    };
+  }, [deposits]);
+
+  const filtered = useMemo(() => {
+    if (filter === "all") return deposits;
+    return deposits.filter((d) => d.status === filter);
+  }, [deposits, filter]);
+
   return (
-    <>
+    <div className={styles.page}>
       <PageHeader
-        title="Individual deposits"
-        description="Track held customer deposits."
-        actions={<Button>New deposit</Button>}
+        title="Deposit ledger"
+        description="Money held on behalf of individuals."
+        actions={
+          <Button onClick={() => setAddOpen(true)}>Add deposit</Button>
+        }
       />
-    </>
+
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      <DepositSummaryCards
+        totalHeldUSD={totalHeldUSD}
+        activeCount={activeCount}
+      />
+
+      {loading ? (
+        <p>Loading…</p>
+      ) : (
+        <DepositTable
+          deposits={filtered}
+          filter={filter}
+          onFilterChange={setFilter}
+          onRelease={(d) => setReleaseTarget(d)}
+          onEdit={(d) => setEditTarget(d)}
+        />
+      )}
+
+      <AddDepositModal
+        open={addOpen}
+        onOpenChange={setAddOpen}
+        onCreated={load}
+      />
+
+      <EditDepositModal
+        open={editTarget !== null}
+        onOpenChange={(v) => {
+          if (!v) setEditTarget(null);
+        }}
+        deposit={editTarget}
+        onUpdated={load}
+      />
+
+      <ReleaseDepositModal
+        open={releaseTarget !== null}
+        onOpenChange={(v) => {
+          if (!v) setReleaseTarget(null);
+        }}
+        deposit={releaseTarget}
+        onReleased={load}
+      />
+    </div>
   );
 }

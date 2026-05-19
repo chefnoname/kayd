@@ -1,0 +1,37 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.toggle {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.65rem 0.85rem;
+  background: #fbf2e3;
+  border: 1px solid #ecd9b8;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: var(--kayd-night-shadow);
+  cursor: pointer;
+}
+
+.toggle input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--kayd-night);
+}
+
+.toggleHint {
+  font-size: 0.75rem;
+  color: #6b6b6b;
+  grid-column: 3;
+}

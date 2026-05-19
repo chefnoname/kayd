@@ -1,0 +1,144 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.wrap {
+  position: relative;
+}
+
+.trigger {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.75rem;
+  border-radius: 6px;
+  border: 1px solid hsl(var(--input));
+  background: #fff;
+  font-size: 0.875rem;
+  color: var(--kayd-night-shadow);
+  cursor: pointer;
+  text-align: left;
+}
+
+.trigger:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px hsl(var(--ring) / 0.5);
+}
+
+.trigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.placeholder {
+  color: #8a7e6c;
+}
+
+.triggerValue {
+  font-weight: 500;
+}
+
+.chev {
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+  color: #8a7e6c;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid hsl(var(--input));
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  z-index: 30;
+  overflow: hidden;
+}
+
+.searchRow {
+  position: relative;
+  padding: 0.5rem;
+  border-bottom: 1px solid #ece4d7;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #8a7e6c;
+  pointer-events: none;
+}
+
+.search {
+  padding-left: 1.85rem;
+  padding-right: 1.85rem;
+  height: 34px;
+}
+
+.clear {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #8a7e6c;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem 0;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.empty {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: #8a7e6c;
+}
+
+.option {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.55rem 0.85rem;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.option:hover {
+  background: #fbf2e3;
+}
+
+.optionActive {
+  background: var(--kayd-night);
+  color: #fff;
+}
+
+.optionActive:hover {
+  background: var(--kayd-night-shadow);
+}
+
+.optName {
+  font-weight: 600;
+}
+
+.optMeta {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}

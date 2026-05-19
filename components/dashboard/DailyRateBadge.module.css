@@ -1,0 +1,26 @@
+.badge {
+  background: var(--kayd-sand);
+  color: var(--kayd-night-shadow);
+  border: 1px solid var(--kayd-sand-shadow);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.75rem;
+}
+
+.warning {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  background: #fbe6c2;
+  color: #8a5a16;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid #ecd9b8;
+}
+
+.warning:hover {
+  background: #f7d99a;
+}

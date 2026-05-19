@@ -1,0 +1,106 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tabs {
+  display: inline-flex;
+  align-self: flex-start;
+  background: #fbf2e3;
+  border: 1px solid #ecd9b8;
+  border-radius: 10px;
+  padding: 0.25rem;
+  gap: 0.25rem;
+}
+
+.tab {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0.4rem 0.95rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--kayd-night-shadow);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.tab:hover {
+  background: #f4e6c9;
+}
+
+.tabActive {
+  background: var(--kayd-night);
+  color: #fff;
+}
+
+.tabActive:hover {
+  background: var(--kayd-night);
+}
+
+.tableCard {
+  background: #fff;
+  border: 1px solid #ece4d7;
+  border-radius: 10px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.holder {
+  font-weight: 600;
+  color: var(--kayd-night-shadow);
+}
+
+.numeric,
+.numericHead {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.notes {
+  max-width: 240px;
+  color: #6b6b6b;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actionsHead {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.actions {
+  display: inline-flex;
+  gap: 0.4rem;
+}
+
+.releaseBtn {
+  background: var(--kayd-night);
+  color: #fff;
+}
+
+.releaseBtn:hover:not(:disabled) {
+  background: var(--kayd-night-shadow);
+}
+
+.badgeHeld {
+  background: #dbeafe;
+  color: #1e40af;
+  border-color: #bfdbfe;
+}
+
+.badgeReleased {
+  background: #dcfce7;
+  color: #166534;
+  border-color: #bbf7d0;
+}
+
+.empty {
+  text-align: center;
+  color: #8a7e6c;
+  padding: 2.25rem 0;
+}

@@ -88,3 +88,125 @@ export function formatLongDate(d: Date = new Date()): string {
     year: "numeric",
   }).format(d);
 }
+
+export interface SettlementCalculation {
+  usdEquivalent: number;
+  newBalance: number;
+  isOverpayment: boolean;
+  isFullSettlement: boolean;
+}
+
+/**
+ * Core settlement maths. All values rounded to 2 dp.
+ *
+ * - `usdEquivalent` = `receivedGBP * rate`
+ * - `newBalance`    = `agentBalanceUSD - usdEquivalent` (may go negative on overpayment)
+ * - `isOverpayment` = payment strictly exceeds the balance
+ * - `isFullSettlement` = payment exactly clears the balance (within 1¢)
+ */
+export function calculateSettlement(
+  agentBalanceUSD: number,
+  receivedGBP: number,
+  rate: number
+): SettlementCalculation {
+  const usdEquivalent = convertGBPtoUSD(receivedGBP, rate);
+  const newBalance = Math.round((agentBalanceUSD - usdEquivalent) * 100) / 100;
+  const isFullSettlement = Math.abs(newBalance) < 0.005;
+  const isOverpayment = newBalance < -0.005;
+  return {
+    usdEquivalent,
+    newBalance,
+    isOverpayment,
+    isFullSettlement,
+  };
+}
+
+export interface ReconciliationResult {
+  expectedClosingGBP: number;
+  formula: string;
+}
+
+/**
+ * Compute the expected closing cash position for the day.
+ *
+ *   expected = opening + cashInSafe + collections - totalAgentDebt
+ *
+ * Returns a human-readable formula alongside the figure.
+ */
+export function reconcileDay(
+  openingGBP: number,
+  cashInSafeGBP: number,
+  collectionsTodayGBP: number,
+  totalAgentDebtGBP: number
+): ReconciliationResult {
+  const expected =
+    Math.round(
+      (openingGBP + cashInSafeGBP + collectionsTodayGBP - totalAgentDebtGBP) *
+        100
+    ) / 100;
+
+  const formula = `${formatCurrency(openingGBP, "GBP")} + ${formatCurrency(
+    cashInSafeGBP,
+    "GBP"
+  )} + ${formatCurrency(collectionsTodayGBP, "GBP")} − ${formatCurrency(
+    totalAgentDebtGBP,
+    "GBP"
+  )} = ${formatCurrency(expected, "GBP")}`;
+
+  return { expectedClosingGBP: expected, formula };
+}
+
+export interface DiscrepancyResult {
+  amount: number;
+  hasDiscrepancy: boolean;
+  direction: "over" | "under" | "balanced";
+}
+
+/**
+ * Compare expected vs actual cash. `amount` is always non-negative;
+ * `direction` indicates whether actual is over, under, or balanced.
+ * A 1p tolerance is applied.
+ */
+export function calculateDiscrepancy(
+  expectedGBP: number,
+  actualGBP: number
+): DiscrepancyResult {
+  const diff = Math.round((actualGBP - expectedGBP) * 100) / 100;
+  const abs = Math.abs(diff);
+  if (abs < 0.005) {
+    return { amount: 0, hasDiscrepancy: false, direction: "balanced" };
+  }
+  return {
+    amount: abs,
+    hasDiscrepancy: true,
+    direction: diff > 0 ? "over" : "under",
+  };
+}
+
+/**
+ * Whole-day difference between today (UTC) and the given ISO date string.
+ * Returns 0 if `date` is today or in the future. Returns a large number
+ * (>= 7) when `date` is null/invalid so the UI treats it as overdue.
+ */
+export function daysSince(date: string | null | undefined): number {
+  if (!date) return Number.POSITIVE_INFINITY;
+  const then = new Date(`${date.slice(0, 10)}T00:00:00Z`).getTime();
+  if (!Number.isFinite(then)) return Number.POSITIVE_INFINITY;
+  const today = new Date(toDateString()).getTime();
+  const diff = Math.floor((today - then) / 86_400_000);
+  return diff < 0 ? 0 : diff;
+}
+
+export type LocationStatus = "green" | "amber" | "red";
+
+/**
+ * Map a "days since last collection" value to a status colour.
+ *   0–3 days  → green
+ *   4–5 days  → amber
+ *   6+ days   → red (overdue)
+ */
+export function getLocationStatus(days: number): LocationStatus {
+  if (days <= 3) return "green";
+  if (days <= 5) return "amber";
+  return "red";
+}

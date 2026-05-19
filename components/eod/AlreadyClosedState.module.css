@@ -1,0 +1,68 @@
+.card {
+  border-color: #b9dec3;
+  background: #f1f9f3;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #1e6b3c;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.line {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--kayd-night-shadow);
+}
+
+.figureRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.95rem;
+}
+
+.label {
+  color: #6b6b6b;
+}
+
+.value {
+  font-weight: 700;
+  color: var(--kayd-night-shadow);
+  font-variant-numeric: tabular-nums;
+}
+
+.notes {
+  background: #fff;
+  border: 1px solid #ece4d7;
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
+}
+
+.notesLabel {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--kayd-sand-shadow);
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.notesText {
+  font-size: 0.875rem;
+  color: var(--kayd-night-shadow);
+  white-space: pre-wrap;
+}
+
+.muted {
+  margin: 0.25rem 0 0;
+  font-size: 0.825rem;
+  color: #6b6b6b;
+}
