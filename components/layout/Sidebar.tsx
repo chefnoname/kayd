@@ -13,6 +13,7 @@ import {
   Settings,
   Shield,
   UsersRound,
+  UserCircle,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import styles from "./Sidebar.module.css";
@@ -50,6 +51,7 @@ const nav: NavItem[] = [
     icon: UsersRound,
     roles: ["admin"],
   },
+  { href: "/dashboard/profile", label: "Profile", icon: UserCircle },
 ];
 
 export function Sidebar() {

@@ -103,9 +103,9 @@ export default function LoginPage() {
 
             <p style={{ fontSize: 14, textAlign: "center" }}>
               Don&apos;t have an account?{" "}
-              <Link href="/signup"><em>
+              <Link href="/signup"><strong>
                 Create one
-              </em>
+              </strong>
               </Link>
             </p>
           </form>

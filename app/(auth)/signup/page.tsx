@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import Image from "next/image";
 import styles from "../login/login.module.css";
 
 export default function SignupPage() {
@@ -61,7 +62,13 @@ export default function SignupPage() {
       <div className={styles.shell}>
         <Card className={styles.card}>
           <CardHeader>
-            <div className={styles.brand}>Kayd</div>
+            <Image
+              src="/kayd.png"
+              alt="Kayd logo"
+              width={250}
+              height={0}
+              className={styles.logo}
+            />
             <CardTitle>Check your email</CardTitle>
           </CardHeader>
           <CardContent>
@@ -83,8 +90,13 @@ export default function SignupPage() {
     <div className={styles.shell}>
       <Card className={styles.card}>
         <CardHeader>
-          <div className={styles.brand}>Kayd</div>
-          <CardTitle>Create your account</CardTitle>
+          <Image
+            src="/kayd.png"
+            alt="Kayd logo"
+            width={250}
+            height={0}
+            className={styles.logo}
+          />
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className={styles.form}>
@@ -132,7 +144,11 @@ export default function SignupPage() {
             </Button>
 
             <p style={{ fontSize: 14, textAlign: "center" }}>
-              Already have an account? <Link href="/login">Sign in</Link>
+              Already have an account? <Link href="/login">
+              <strong>
+              Sign in
+              </strong>
+              </Link>
             </p>
           </form>
         </CardContent>

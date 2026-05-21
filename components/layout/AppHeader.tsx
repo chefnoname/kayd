@@ -2,18 +2,27 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import { getOrganisationId, clearOrganisationCache } from "@/lib/org";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { formatLongDate, toDateString } from "@/lib/utils";
 import { startOnboardingTour } from "@/lib/tour";
 import styles from "./AppHeader.module.css";
 
 export function AppHeader() {
-  const router = useRouter();
   const supabase = createClient();
+  const router = useRouter();
 
   const [rate, setRate] = useState<number | null>(null);
   const [email, setEmail] = useState<string>("");
@@ -64,7 +73,13 @@ export function AppHeader() {
 
   return (
     <header className={styles.header}>
-      <div className={styles.brand}>Kayd</div>
+       <Image
+            src="/kayd.png"
+            alt="Kayd logo"
+            width={175}
+            height={0}
+            className={styles.logo}
+          />
 
       <div className={styles.meta}>
         <span className={styles.date}>{formatLongDate()}</span>
@@ -74,25 +89,31 @@ export function AppHeader() {
       </div>
 
       <div className={styles.user}>
-        <Avatar>
-          <AvatarFallback>{initials}</AvatarFallback>
-        </Avatar>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => startOnboardingTour()}
-          className={styles.logout}
-        >
-          Replay tour
-        </Button>
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={onLogout}
-          className={styles.logout}
-        >
-          Log out
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className={styles.avatarBtn} aria-label="Open user menu">
+              <Avatar>
+                <AvatarFallback className={styles.avatarFallback}>
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>{email || "My account"}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard/profile">Profile</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => startOnboardingTour()}>
+              Replay tour
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={onLogout} className={styles.logoutItem}>
+              Log out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );

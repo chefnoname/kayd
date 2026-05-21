@@ -140,38 +140,28 @@ export default function DashboardPage() {
       }))
     );
     setLoadingActivity(false);
+
+    // Auto-start the onboarding tour on first ever load.
+    // Runs here (after all data is fetched) so every tour anchor is in the DOM.
+    const {
+      data: { user: currentUser },
+    } = await supabase.auth.getUser();
+    if (currentUser) {
+      const { data: staffRow } = await supabase
+        .from("staff_users")
+        .select("has_seen_tour")
+        .eq("id", currentUser.id)
+        .maybeSingle();
+      if (staffRow && staffRow.has_seen_tour === false) {
+        // Small delay to let React flush the state updates above to the DOM.
+        setTimeout(() => startOnboardingTour(), 400);
+      }
+    }
   }, [today, yesterday]);
 
   useEffect(() => {
     load();
   }, [load]);
-
-  // First-time login → autoplay the onboarding tour
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user || cancelled) return;
-
-      const { data } = await supabase
-        .from("staff_users")
-        .select("has_seen_tour")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      if (cancelled) return;
-      if (data && data.has_seen_tour === false) {
-        // Defer one frame so anchor elements are mounted.
-        requestAnimationFrame(() => startOnboardingTour());
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   async function patchBalance(patch: Partial<DailyBalance>) {
     if (!balance) return;
