@@ -15,7 +15,7 @@ export function QuickActions() {
   const router = useRouter();
 
   return (
-    <Card>
+    <Card data-tour="quick-actions">
       <CardHeader>
         <CardTitle className={styles.title}>Quick Actions</CardTitle>
       </CardHeader>

@@ -19,7 +19,7 @@ export function BalanceSummaryRow({
   onSaveCashInSafe,
 }: BalanceSummaryRowProps) {
   return (
-    <div className={styles.row}>
+    <div className={styles.row} data-tour="balance-summary">
       <EditableStatCard
         label="System Limit"
         value={systemLimitUSD}

@@ -43,3 +43,55 @@
       "Helvetica Neue", Arial, sans-serif;
   }
 }
+
+/* -------------------------------------------------------- */
+/* Onboarding tour (driver.js) — match Kayd palette          */
+/* -------------------------------------------------------- */
+.kayd-tour-popover.driver-popover {
+  border-radius: 12px;
+  font-family: inherit;
+  background: var(--kayd-night);
+  color: #fff;
+  border: 1px solid var(--kayd-night-shadow);
+  box-shadow: 0 12px 32px rgba(18, 52, 59, 0.25);
+}
+
+.kayd-tour-popover .driver-popover-title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--kayd-sand);
+}
+
+.kayd-tour-popover .driver-popover-description {
+  color: #f3ece2;
+}
+
+.kayd-tour-popover .driver-popover-progress-text {
+  color: var(--kayd-sand);
+  font-size: 0.75rem;
+}
+
+.kayd-tour-popover .driver-popover-next-btn,
+.kayd-tour-popover .driver-popover-prev-btn,
+.kayd-tour-popover .driver-popover-close-btn {
+  background: var(--kayd-sand);
+  color: var(--kayd-night-shadow);
+  border: none;
+  border-radius: 6px;
+  text-shadow: none;
+  font-weight: 500;
+  padding: 6px 12px;
+}
+
+.kayd-tour-popover .driver-popover-next-btn:hover,
+.kayd-tour-popover .driver-popover-prev-btn:hover,
+.kayd-tour-popover .driver-popover-close-btn:hover {
+  background: var(--kayd-sand-shadow);
+}
+
+.kayd-tour-popover .driver-popover-arrow-side-left.driver-popover-arrow,
+.kayd-tour-popover .driver-popover-arrow-side-right.driver-popover-arrow,
+.kayd-tour-popover .driver-popover-arrow-side-top.driver-popover-arrow,
+.kayd-tour-popover .driver-popover-arrow-side-bottom.driver-popover-arrow {
+  border-color: var(--kayd-night) transparent transparent transparent;
+}

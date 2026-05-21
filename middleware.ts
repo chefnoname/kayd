@@ -3,16 +3,31 @@ import { createServerClient } from "@supabase/ssr";
 
 /**
  * Auth middleware:
- *  - Unauthenticated → /login (except /login itself)
- *  - /admin → only superadmin
- *  - /admin/team → admin or superadmin
- *  - Authenticated without today's rate set → /setup (skip for /admin routes)
- *  - Otherwise → allow
+ *  - Public routes: /login, /signup, /verify-email, /set-password, /auth/*
+ *  - Unauthenticated → /login
+ *  - Authenticated but email not verified → /verify-email
+ *  - /admin (root) → superadmin only
+ *  - /admin/team → admin or superadmin (staff → /dashboard?denied=team)
+ *  - Verified user without today's rate → /setup
  */
+const PUBLIC_PATHS = [
+  "/login",
+  "/signup",
+  "/verify-email",
+  "/set-password",
+  "/auth",
+];
+
+function isPublicPath(pathname: string): boolean {
+  return PUBLIC_PATHS.some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`)
+  );
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip static assets and Next internals
+  // Skip static assets, API routes, and files
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
@@ -45,26 +60,45 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isLogin = pathname.startsWith("/login");
-  const isSetup = pathname.startsWith("/setup");
-  const isAdmin = pathname.startsWith("/admin");
+  const publicPath = isPublicPath(pathname);
 
+  // Not signed in → only public pages allowed
   if (!user) {
-    if (isLogin) return response;
+    if (publicPath) return response;
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  // Authenticated — bounce off /login
-  if (isLogin) {
+  const emailConfirmed = Boolean(user.email_confirmed_at);
+
+  // Signed in but email not verified → /verify-email holding page.
+  // /set-password and /auth/* must remain reachable so invited users can
+  // complete their flow.
+  if (!emailConfirmed) {
+    const allowedUnverified =
+      pathname.startsWith("/verify-email") ||
+      pathname.startsWith("/set-password") ||
+      pathname.startsWith("/auth");
+    if (allowedUnverified) return response;
+    const url = request.nextUrl.clone();
+    url.pathname = "/verify-email";
+    return NextResponse.redirect(url);
+  }
+
+  // Authenticated + verified → bounce off auth-only pages
+  if (
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/signup") ||
+    pathname.startsWith("/verify-email")
+  ) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);
   }
 
   // Role-based access for /admin routes
-  if (isAdmin) {
+  if (pathname.startsWith("/admin")) {
     const { data: staffUser } = await supabase
       .from("staff_users")
       .select("role")
@@ -73,11 +107,11 @@ export async function middleware(request: NextRequest) {
 
     const role = staffUser?.role ?? "staff";
 
-    // /admin/team → admin or superadmin
     if (pathname.startsWith("/admin/team")) {
       if (role !== "admin" && role !== "superadmin") {
         const url = request.nextUrl.clone();
         url.pathname = "/dashboard";
+        url.searchParams.set("denied", "team");
         return NextResponse.redirect(url);
       }
       return response;
@@ -92,7 +126,8 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // Check today's rate (skip for /setup itself)
+  // Verified dashboard users without today's rate → /setup
+  const isSetup = pathname.startsWith("/setup");
   const today = new Date().toISOString().slice(0, 10);
   const { data: rate } = await supabase
     .from("daily_rates")

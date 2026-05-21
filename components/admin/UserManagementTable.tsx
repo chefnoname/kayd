@@ -22,7 +22,8 @@ interface UserManagementTableProps {
   onResetPassword: (user: StaffUser) => void;
 }
 
-function formatDate(iso: string): string {
+function formatDate(iso: string | null): string {
+  if (!iso) return "Never";
   return new Intl.DateTimeFormat("en-GB", {
     day: "2-digit",
     month: "short",
@@ -49,10 +50,10 @@ export function UserManagementTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Email</TableHead>
             <TableHead>Name</TableHead>
+            <TableHead>Email</TableHead>
             <TableHead>Role</TableHead>
-            <TableHead>Created</TableHead>
+            <TableHead>Last Active</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -66,17 +67,29 @@ export function UserManagementTable({
           ) : (
             users.map((u) => {
               const isSelf = u.id === currentUserId;
+              const isInactive = u.status === "inactive";
               const nextRole: UserRole =
                 u.role === "staff" ? "admin" : "staff";
               const canToggle =
                 !isSelf &&
+                !isInactive &&
                 u.role !== "superadmin" &&
                 (canManageAdmins || u.role !== "admin");
 
               return (
                 <TableRow key={u.id}>
+                  <TableCell>
+                    {u.name}
+                    {isInactive && (
+                      <Badge
+                        className={`${styles.roleBadge} ${styles.badgeStaff}`}
+                        style={{ marginLeft: 8 }}
+                      >
+                        inactive
+                      </Badge>
+                    )}
+                  </TableCell>
                   <TableCell className={styles.email}>{u.email}</TableCell>
-                  <TableCell>{u.name}</TableCell>
                   <TableCell>
                     <Badge
                       className={`${styles.roleBadge} ${roleBadgeClass(
@@ -86,7 +99,7 @@ export function UserManagementTable({
                       {u.role}
                     </Badge>
                   </TableCell>
-                  <TableCell>{formatDate(u.created_at)}</TableCell>
+                  <TableCell>{formatDate(u.last_active_at)}</TableCell>
                   <TableCell>
                     <div className={styles.actions}>
                       {canToggle && (
@@ -98,7 +111,7 @@ export function UserManagementTable({
                           Make {nextRole}
                         </Button>
                       )}
-                      {!isSelf && u.role !== "superadmin" && (
+                      {!isSelf && !isInactive && u.role !== "superadmin" && (
                         <Button
                           size="sm"
                           variant="outline"
@@ -107,7 +120,7 @@ export function UserManagementTable({
                           Reset PW
                         </Button>
                       )}
-                      {!isSelf && u.role !== "superadmin" && (
+                      {!isSelf && !isInactive && u.role !== "superadmin" && (
                         <Button
                           size="sm"
                           variant="destructive"

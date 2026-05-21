@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
 
   const admin = createAdminClient();
 
-  // Ban the user in auth (prevents login)
+  // Ban the user in auth (prevents login + revokes existing sessions)
   const { error: banError } = await admin.auth.admin.updateUserById(
     userId,
     { ban_duration: "876600h" } // ~100 years
@@ -63,6 +63,19 @@ export async function POST(request: NextRequest) {
   if (banError) {
     return NextResponse.json(
       { error: banError.message },
+      { status: 500 }
+    );
+  }
+
+  // Mirror status into staff_users so the UI can show it
+  const { error: statusError } = await admin
+    .from("staff_users")
+    .update({ status: "inactive" })
+    .eq("id", userId);
+
+  if (statusError) {
+    return NextResponse.json(
+      { error: statusError.message },
       { status: 500 }
     );
   }

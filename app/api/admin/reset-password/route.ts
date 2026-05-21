@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     type: "magiclink",
     email: targetUser.user.email,
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || ""}/setup`,
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || ""}/auth/callback?type=recovery`,
     },
   });
 

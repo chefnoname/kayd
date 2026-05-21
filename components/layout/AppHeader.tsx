@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatLongDate, toDateString } from "@/lib/utils";
+import { startOnboardingTour } from "@/lib/tour";
 import styles from "./AppHeader.module.css";
 
 export function AppHeader() {
@@ -61,7 +62,7 @@ export function AppHeader() {
 
       <div className={styles.meta}>
         <span className={styles.date}>{formatLongDate()}</span>
-        <Badge className={styles.rateBadge}>
+        <Badge className={styles.rateBadge} data-tour="daily-rate-badge">
           {rate ? `GBP→USD ${rate.toFixed(4)}` : "Rate not set"}
         </Badge>
       </div>
@@ -70,6 +71,14 @@ export function AppHeader() {
         <Avatar>
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => startOnboardingTour()}
+          className={styles.logout}
+        >
+          Replay tour
+        </Button>
         <Button
           variant="secondary"
           size="sm"

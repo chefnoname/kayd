@@ -48,8 +48,11 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Admins can only invite staff
-  if (callerRole === "admin" && role === "admin") {
+  // Admins can only invite staff (admins cannot create other admins).
+  const resolvedRole =
+    callerRole === "admin" ? "staff" : role || "staff";
+
+  if (callerRole === "admin" && role && role !== "staff") {
     return NextResponse.json(
       { error: "Admins cannot create other admins." },
       { status: 403 }
@@ -64,10 +67,10 @@ export async function POST(request: NextRequest) {
     {
       data: {
         name,
-        role: role || "staff",
+        role: resolvedRole,
         invited_by: invited_by || user.id,
       },
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || ""}/setup`,
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || ""}/auth/callback?type=invite`,
     }
   );
 

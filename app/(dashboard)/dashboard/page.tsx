@@ -14,6 +14,7 @@ import {
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import type { DailyBalance } from "@/components/dashboard/types";
 import { formatLongDate, toDateString, usdToGbp } from "@/lib/utils";
+import { startOnboardingTour } from "@/lib/tour";
 import styles from "./dashboard.module.css";
 
 function yesterdayDate(): Date {
@@ -132,6 +133,33 @@ export default function DashboardPage() {
   useEffect(() => {
     load();
   }, [load]);
+
+  // First-time login → autoplay the onboarding tour
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user || cancelled) return;
+
+      const { data } = await supabase
+        .from("staff_users")
+        .select("has_seen_tour")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (cancelled) return;
+      if (data && data.has_seen_tour === false) {
+        // Defer one frame so anchor elements are mounted.
+        requestAnimationFrame(() => startOnboardingTour());
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function patchBalance(patch: Partial<DailyBalance>) {
     if (!balance) return;
