@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
+import { getOrganisationId, clearOrganisationCache } from "@/lib/org";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,9 +28,13 @@ export function AppHeader() {
       if (!cancelled && user?.email) setEmail(user.email);
 
       const today = toDateString();
+      const orgId = await getOrganisationId();
+      if (!orgId) return;
+
       const { data } = await supabase
         .from("daily_rates")
         .select("gbp_to_usd")
+        .eq("organisation_id", orgId)
         .eq("date", today)
         .maybeSingle();
 
@@ -43,6 +48,7 @@ export function AppHeader() {
 
   async function onLogout() {
     await supabase.auth.signOut();
+    clearOrganisationCache();
     router.push("/login");
     router.refresh();
   }

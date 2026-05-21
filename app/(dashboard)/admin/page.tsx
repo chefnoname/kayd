@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
+import { getOrganisationId } from "@/lib/org";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -29,9 +30,18 @@ export default function AdminPage() {
     } = await supabase.auth.getUser();
     if (user) setCurrentUserId(user.id);
 
+    const orgId = await getOrganisationId();
+    if (!orgId) {
+      setError("Your account is not attached to an organisation.");
+      setUsers([]);
+      setLoading(false);
+      return;
+    }
+
     const { data, error: fetchError } = await supabase
       .from("staff_users")
       .select("id, email, name, role, status, invited_by, created_at, last_active_at")
+      .eq("organisation_id", orgId)
       .order("created_at", { ascending: true });
 
     if (fetchError) {

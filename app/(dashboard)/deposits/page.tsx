@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase";
+import { getOrganisationId } from "@/lib/org";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -27,11 +28,18 @@ export default function DepositsPage() {
     setLoading(true);
     setError(null);
     const supabase = createClient();
+    const orgId = await getOrganisationId();
+    if (!orgId) {
+      setDeposits([]);
+      setLoading(false);
+      return;
+    }
     const { data, error: fetchError } = await supabase
       .from("individual_deposits")
       .select(
         "id, holder_name, amount_usd, date_received, location, notes, status, released_at, released_to, created_at"
       )
+      .eq("organisation_id", orgId)
       .order("date_received", { ascending: false })
       .order("created_at", { ascending: false });
 

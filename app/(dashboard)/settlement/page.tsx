@@ -3,6 +3,7 @@
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase";
+import { getOrganisationId } from "@/lib/org";
 import { PageHeader } from "@/components/shared/PageHeader";
 import {
   SettlementForm,
@@ -44,15 +45,23 @@ function SettlementPageInner() {
 
   const loadData = useCallback(async () => {
     const supabase = createClient();
+    const orgId = await getOrganisationId();
+    if (!orgId) {
+      setAgents([]);
+      setLoading(false);
+      return;
+    }
     const [{ data: agentRows }, { data: rateRow }] = await Promise.all([
       supabase
         .from("agents")
         .select("id, name, city, balance_usd, status")
+        .eq("organisation_id", orgId)
         .eq("status", "active")
         .order("name", { ascending: true }),
       supabase
         .from("daily_rates")
         .select("gbp_to_usd")
+        .eq("organisation_id", orgId)
         .eq("date", today)
         .maybeSingle(),
     ]);
@@ -101,6 +110,13 @@ function SettlementPageInner() {
     setSubmitting(true);
 
     const supabase = createClient();
+    const orgId = await getOrganisationId();
+    if (!orgId) {
+      setSubmitting(false);
+      setError("Your account is not attached to an organisation.");
+      setConfirmOpen(false);
+      return;
+    }
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -113,6 +129,7 @@ function SettlementPageInner() {
 
     // 1) Insert settlement row
     const { error: insertError } = await supabase.from("settlements").insert({
+      organisation_id: orgId,
       agent_id: selectedAgent.id,
       date: today,
       amount_received_gbp: receivedGBP,
@@ -139,6 +156,7 @@ function SettlementPageInner() {
         last_settlement: today,
         updated_at: new Date().toISOString(),
       })
+      .eq("organisation_id", orgId)
       .eq("id", selectedAgent.id);
 
     setSubmitting(false);

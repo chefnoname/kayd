@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { createClient } from "@/lib/supabase";
+import { getOrganisationId } from "@/lib/org";
 import styles from "./AgentModal.module.css";
 
 interface AddAgentModalProps {
@@ -59,7 +60,13 @@ export function AddAgentModal({
 
     setSaving(true);
     const supabase = createClient();
+    const orgId = await getOrganisationId();
+    if (!orgId) {
+      setSaving(false);
+      return setError("Your account is not attached to an organisation.");
+    }
     const { error: insertError } = await supabase.from("agents").insert({
+      organisation_id: orgId,
       name: trimmedName,
       city: trimmedCity,
       phone: phone.trim() || null,

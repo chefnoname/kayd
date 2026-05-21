@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { createClient } from "@/lib/supabase";
+import { getOrganisationId } from "@/lib/org";
 import { toDateString } from "@/lib/utils";
 import styles from "./DepositModal.module.css";
 
@@ -62,9 +63,15 @@ export function AddDepositModal({
 
     setSaving(true);
     const supabase = createClient();
+    const orgId = await getOrganisationId();
+    if (!orgId) {
+      setSaving(false);
+      return setError("Your account is not attached to an organisation.");
+    }
     const { error: insertError } = await supabase
       .from("individual_deposits")
       .insert({
+        organisation_id: orgId,
         holder_name: trimmedHolder,
         amount_usd: amt,
         date_received: dateReceived,

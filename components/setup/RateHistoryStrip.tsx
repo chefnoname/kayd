@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
+import { getOrganisationId } from "@/lib/org";
 import { Badge } from "@/components/ui/badge";
 import styles from "./RateHistoryStrip.module.css";
 
@@ -39,9 +40,16 @@ export function RateHistoryStrip() {
       const earliest = new Date(today);
       earliest.setDate(today.getDate() - (DAYS_TO_SHOW - 1));
 
+      const orgId = await getOrganisationId();
+      if (!orgId) {
+        if (!cancelled) setItems([]);
+        return;
+      }
+
       const { data } = await supabase
         .from("daily_rates")
         .select("date, gbp_to_usd")
+        .eq("organisation_id", orgId)
         .gte("date", toDateKey(earliest))
         .lte("date", toDateKey(today))
         .order("date", { ascending: true });

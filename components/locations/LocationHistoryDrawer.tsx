@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/table";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { createClient } from "@/lib/supabase";
+import { getOrganisationId } from "@/lib/org";
 import { formatCurrency } from "@/lib/utils";
 import type { CollectionPickup, RegionalOffice } from "./types";
 import styles from "./LocationHistoryDrawer.module.css";
@@ -53,9 +54,18 @@ export function LocationHistoryDrawer({
       setLoading(true);
       setError(null);
       const supabase = createClient();
+      const orgId = await getOrganisationId();
+      if (!orgId) {
+        if (!cancelled) {
+          setRows([]);
+          setLoading(false);
+        }
+        return;
+      }
       const { data, error: fetchError } = await supabase
         .from("collection_pickups")
         .select("id, office_id, amount_gbp, date, collected_by_name, created_at")
+        .eq("organisation_id", orgId)
         .eq("office_id", office.id)
         .order("date", { ascending: false })
         .order("created_at", { ascending: false })

@@ -25,17 +25,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Check caller's role
+  // Check caller's role + org
   const { data: staffUser } = await supabase
     .from("staff_users")
-    .select("role")
+    .select("role, organisation_id")
     .eq("id", user.id)
     .maybeSingle();
 
   const callerRole = staffUser?.role ?? "staff";
+  const callerOrgId = (staffUser?.organisation_id as string | null) ?? null;
 
   if (callerRole !== "superadmin" && callerRole !== "admin") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  if (!callerOrgId) {
+    return NextResponse.json(
+      { error: "Your account is not attached to an organisation." },
+      { status: 400 }
+    );
   }
 
   const body = await request.json();
@@ -69,6 +77,9 @@ export async function POST(request: NextRequest) {
         name,
         role: resolvedRole,
         invited_by: invited_by || user.id,
+        // The handle_new_user trigger picks this up so the invitee is
+        // provisioned inside the inviter's organisation as `staff`.
+        organisation_id: callerOrgId,
       },
       redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || ""}/auth/callback?type=invite`,
     }

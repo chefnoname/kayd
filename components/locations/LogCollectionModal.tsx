@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { createClient } from "@/lib/supabase";
+import { getOrganisationId } from "@/lib/org";
 import { formatCurrency, toDateString } from "@/lib/utils";
 import type { RegionalOffice } from "./types";
 import styles from "./LocationModal.module.css";
@@ -71,10 +72,16 @@ export function LogCollectionModal({
 
     setSaving(true);
     const supabase = createClient();
+    const orgId = await getOrganisationId();
+    if (!orgId) {
+      setSaving(false);
+      return setError("Your account is not attached to an organisation.");
+    }
 
     const { error: insertError } = await supabase
       .from("collection_pickups")
       .insert({
+        organisation_id: orgId,
         office_id: office.id,
         amount_gbp: amt,
         date,
@@ -96,6 +103,7 @@ export function LogCollectionModal({
         cash_held_gbp: newCash,
         last_collection_date: date,
       })
+      .eq("organisation_id", orgId)
       .eq("id", office.id);
 
     setSaving(false);

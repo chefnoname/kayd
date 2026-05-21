@@ -2,11 +2,9 @@
   min-height: 100vh;
   display: grid;
   place-items: center;
-  background: linear-gradient(
-    135deg,
-    var(--kayd-night) 0%,
-    var(--kayd-night-shadow) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--kayd-night) 0%,
+      var(--kayd-night-shadow) 100%);
   padding: 1.5rem;
 }
 
@@ -22,6 +20,11 @@
   letter-spacing: 0.02em;
   color: var(--kayd-night);
   margin-bottom: 0.5rem;
+}
+
+.logo {
+  display: block;
+  margin: 0 auto;
 }
 
 .form {

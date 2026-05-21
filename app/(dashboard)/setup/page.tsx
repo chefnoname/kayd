@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
+import { getOrganisationId } from "@/lib/org";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,9 +40,15 @@ export default function SetupPage() {
     const supabase = createClient();
 
     (async () => {
+      const orgId = await getOrganisationId();
+      if (!orgId) {
+        if (!cancelled) setLoading(false);
+        return;
+      }
       const { data, error: fetchError } = await supabase
         .from("daily_rates")
         .select("id, gbp_to_usd, set_at")
+        .eq("organisation_id", orgId)
         .eq("date", toDateString())
         .maybeSingle();
 
@@ -69,21 +76,32 @@ export default function SetupPage() {
     setError(null);
 
     const supabase = createClient();
+    const orgId = await getOrganisationId();
+    if (!orgId) {
+      setSubmitting(false);
+      setError("Your account is not attached to an organisation.");
+      return;
+    }
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     const today = toDateString();
     const payload = {
+      organisation_id: orgId,
       date: today,
       gbp_to_usd: rate,
       set_by: user?.id ?? null,
       set_at: new Date().toISOString(),
     };
 
-    // Insert OR update — `date` is unique, so on edit we update by id.
+    // Insert OR update — `(organisation_id, date)` is unique.
     const query = existing
-      ? supabase.from("daily_rates").update(payload).eq("id", existing.id)
+      ? supabase
+          .from("daily_rates")
+          .update(payload)
+          .eq("organisation_id", orgId)
+          .eq("id", existing.id)
       : supabase.from("daily_rates").insert(payload);
 
     const { error: writeError } = await query;

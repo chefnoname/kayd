@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { createClient } from "@/lib/supabase";
+import { getOrganisationId } from "@/lib/org";
 import type { Agent } from "./types";
 import styles from "./AgentModal.module.css";
 
@@ -65,6 +66,11 @@ export function EditAgentModal({
 
     setSaving(true);
     const supabase = createClient();
+    const orgId = await getOrganisationId();
+    if (!orgId) {
+      setSaving(false);
+      return setError("Your account is not attached to an organisation.");
+    }
     const { error: updateError } = await supabase
       .from("agents")
       .update({
@@ -75,6 +81,7 @@ export function EditAgentModal({
         status: active ? "active" : "inactive",
         updated_at: new Date().toISOString(),
       })
+      .eq("organisation_id", orgId)
       .eq("id", agent.id);
     setSaving(false);
 

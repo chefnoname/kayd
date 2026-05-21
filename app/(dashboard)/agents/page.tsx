@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase";
+import { getOrganisationId } from "@/lib/org";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,6 +39,12 @@ export default function AgentsPage() {
   const load = useCallback(async () => {
     setLoading(true);
     const supabase = createClient();
+    const orgId = await getOrganisationId();
+    if (!orgId) {
+      setAgents([]);
+      setLoading(false);
+      return;
+    }
 
     const [{ data: agentRows }, { data: rateRow }] = await Promise.all([
       supabase
@@ -45,10 +52,12 @@ export default function AgentsPage() {
         .select(
           "id, name, city, phone, balance_usd, last_settlement, status"
         )
+        .eq("organisation_id", orgId)
         .order("name", { ascending: true }),
       supabase
         .from("daily_rates")
         .select("gbp_to_usd")
+        .eq("organisation_id", orgId)
         .eq("date", today)
         .maybeSingle(),
     ]);

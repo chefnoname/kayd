@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase";
+import { getOrganisationId } from "@/lib/org";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { EODSummaryPanel } from "@/components/eod/EODSummaryPanel";
@@ -36,6 +37,12 @@ export default function EndOfDayPage() {
     setLoading(true);
     setError(null);
     const supabase = createClient();
+    const orgId = await getOrganisationId();
+    if (!orgId) {
+      setError("Your account is not attached to an organisation.");
+      setLoading(false);
+      return;
+    }
 
     const [
       { data: balanceRow, error: balanceErr },
@@ -48,20 +55,24 @@ export default function EndOfDayPage() {
         .select(
           "id, date, opening_gbp, cash_in_safe_gbp, collections_today_gbp, total_agent_debt_gbp, closing_gbp, discrepancy, is_closed, notes, closed_at"
         )
+        .eq("organisation_id", orgId)
         .eq("date", today)
         .maybeSingle(),
       supabase
         .from("daily_rates")
         .select("gbp_to_usd")
+        .eq("organisation_id", orgId)
         .eq("date", today)
         .maybeSingle(),
       supabase
         .from("settlements")
         .select("amount_received_gbp")
+        .eq("organisation_id", orgId)
         .eq("date", today),
       supabase
         .from("agents")
         .select("balance_usd")
+        .eq("organisation_id", orgId)
         .eq("status", "active"),
     ]);
 
@@ -154,6 +165,12 @@ export default function EndOfDayPage() {
     setError(null);
 
     const supabase = createClient();
+    const orgId = await getOrganisationId();
+    if (!orgId) {
+      setSubmitting(false);
+      setError("Your account is not attached to an organisation.");
+      return;
+    }
     const signedDiscrepancy = discrepancy
       ? discrepancy.direction === "over"
         ? discrepancy.amount
@@ -174,6 +191,7 @@ export default function EndOfDayPage() {
         closed_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
+      .eq("organisation_id", orgId)
       .eq("id", balance.id);
 
     setSubmitting(false);

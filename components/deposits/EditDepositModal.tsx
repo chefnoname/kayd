@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { createClient } from "@/lib/supabase";
+import { getOrganisationId } from "@/lib/org";
 import type { Deposit } from "./types";
 import styles from "./DepositModal.module.css";
 
@@ -68,6 +69,11 @@ export function EditDepositModal({
 
     setSaving(true);
     const supabase = createClient();
+    const orgId = await getOrganisationId();
+    if (!orgId) {
+      setSaving(false);
+      return setError("Your account is not attached to an organisation.");
+    }
     const { error: updateError } = await supabase
       .from("individual_deposits")
       .update({
@@ -77,6 +83,7 @@ export function EditDepositModal({
         location: location.trim() || null,
         notes: notes.trim() || null,
       })
+      .eq("organisation_id", orgId)
       .eq("id", deposit.id);
     setSaving(false);
 

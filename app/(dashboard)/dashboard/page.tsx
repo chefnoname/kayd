@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
+import { getOrganisationId } from "@/lib/org";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { DailyRateBadge } from "@/components/dashboard/DailyRateBadge";
 import { AlertsBanner } from "@/components/dashboard/AlertsBanner";
@@ -35,11 +36,17 @@ export default function DashboardPage() {
 
   const load = useCallback(async () => {
     const supabase = createClient();
+    const orgId = await getOrganisationId();
+    if (!orgId) {
+      setLoadingActivity(false);
+      return;
+    }
 
     // Today's rate
     const { data: rateRow } = await supabase
       .from("daily_rates")
       .select("gbp_to_usd")
+      .eq("organisation_id", orgId)
       .eq("date", today)
       .maybeSingle();
     const todayRate = rateRow ? Number(rateRow.gbp_to_usd) : null;
@@ -51,6 +58,7 @@ export default function DashboardPage() {
       .select(
         "id, date, opening_gbp, system_limit_usd, cash_in_safe_gbp, total_agent_debt_gbp, collections_today_gbp, closing_gbp, is_closed, discrepancy"
       )
+      .eq("organisation_id", orgId)
       .eq("date", today)
       .maybeSingle();
 
@@ -58,6 +66,7 @@ export default function DashboardPage() {
       const { data: prevRow } = await supabase
         .from("daily_balances")
         .select("closing_gbp")
+        .eq("organisation_id", orgId)
         .eq("date", yesterday)
         .maybeSingle();
 
@@ -66,6 +75,7 @@ export default function DashboardPage() {
       const { data: inserted } = await supabase
         .from("daily_balances")
         .insert({
+          organisation_id: orgId,
           date: today,
           opening_gbp: opening,
           cash_in_safe_gbp: opening,
@@ -98,6 +108,7 @@ export default function DashboardPage() {
     const { data: agentRows } = await supabase
       .from("agents")
       .select("balance_usd")
+      .eq("organisation_id", orgId)
       .eq("status", "active");
 
     const totalDebtUSD = (agentRows ?? []).reduce(
@@ -113,6 +124,7 @@ export default function DashboardPage() {
       .select(
         "id, amount_received_gbp, amount_usd_equivalent, receipt_number, created_at, agents:agent_id ( name )"
       )
+      .eq("organisation_id", orgId)
       .eq("date", today)
       .order("created_at", { ascending: false })
       .limit(10);
@@ -164,9 +176,12 @@ export default function DashboardPage() {
   async function patchBalance(patch: Partial<DailyBalance>) {
     if (!balance) return;
     const supabase = createClient();
+    const orgId = await getOrganisationId();
+    if (!orgId) return;
     const { error } = await supabase
       .from("daily_balances")
       .update({ ...patch, updated_at: new Date().toISOString() })
+      .eq("organisation_id", orgId)
       .eq("id", balance.id);
     if (error) throw error;
     setBalance({ ...balance, ...patch });

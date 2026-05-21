@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { createClient } from "@/lib/supabase";
+import { getOrganisationId } from "@/lib/org";
 import { formatUSD } from "@/lib/utils";
 import type { Deposit } from "./types";
 import styles from "./DepositModal.module.css";
@@ -53,6 +54,11 @@ export function ReleaseDepositModal({
 
     setSaving(true);
     const supabase = createClient();
+    const orgId = await getOrganisationId();
+    if (!orgId) {
+      setSaving(false);
+      return setError("Your account is not attached to an organisation.");
+    }
     const { error: updateError } = await supabase
       .from("individual_deposits")
       .update({
@@ -60,6 +66,7 @@ export function ReleaseDepositModal({
         released_at: new Date().toISOString(),
         released_to: trimmed,
       })
+      .eq("organisation_id", orgId)
       .eq("id", deposit.id);
     setSaving(false);
 

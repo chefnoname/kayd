@@ -26,13 +26,20 @@ export async function POST(request: NextRequest) {
 
   const { data: staffUser } = await supabase
     .from("staff_users")
-    .select("role")
+    .select("role, organisation_id")
     .eq("id", user.id)
     .maybeSingle();
 
   const callerRole = staffUser?.role ?? "staff";
+  const callerOrgId = (staffUser?.organisation_id as string | null) ?? null;
   if (callerRole !== "superadmin" && callerRole !== "admin") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+  if (!callerOrgId) {
+    return NextResponse.json(
+      { error: "Your account is not attached to an organisation." },
+      { status: 400 }
+    );
   }
 
   const body = await request.json();
@@ -54,6 +61,22 @@ export async function POST(request: NextRequest) {
 
   const admin = createAdminClient();
 
+  // Make sure the target belongs to the caller's organisation before we ban
+  // them in auth (which is a cross-table side effect not covered by RLS).
+  const { data: target } = await admin
+    .from("staff_users")
+    .select("id")
+    .eq("id", userId)
+    .eq("organisation_id", callerOrgId)
+    .maybeSingle();
+
+  if (!target) {
+    return NextResponse.json(
+      { error: "User not found in your organisation." },
+      { status: 404 }
+    );
+  }
+
   // Ban the user in auth (prevents login + revokes existing sessions)
   const { error: banError } = await admin.auth.admin.updateUserById(
     userId,
@@ -71,7 +94,8 @@ export async function POST(request: NextRequest) {
   const { error: statusError } = await admin
     .from("staff_users")
     .update({ status: "inactive" })
-    .eq("id", userId);
+    .eq("id", userId)
+    .eq("organisation_id", callerOrgId);
 
   if (statusError) {
     return NextResponse.json(

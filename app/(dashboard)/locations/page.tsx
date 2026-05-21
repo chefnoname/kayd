@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase";
+import { getOrganisationId } from "@/lib/org";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -28,9 +29,16 @@ export default function LocationsPage() {
     setLoading(true);
     setError(null);
     const supabase = createClient();
+    const orgId = await getOrganisationId();
+    if (!orgId) {
+      setOffices([]);
+      setLoading(false);
+      return;
+    }
     const { data, error: fetchError } = await supabase
       .from("regional_offices")
       .select("id, name, cash_held_gbp, last_collection_date, created_at")
+      .eq("organisation_id", orgId)
       .order("name", { ascending: true });
 
     if (fetchError) {

@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import styles from "./login.module.css";
+import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -55,8 +56,15 @@ export default function LoginPage() {
     <div className={styles.shell}>
       <Card className={styles.card}>
         <CardHeader>
-          <div className={styles.brand}>Kayd</div>
-          <CardTitle>Sign in</CardTitle>
+          {/* <div className={styles.brand}>Kayd</div> */}
+          <Image
+            src="/kayd.png"
+            alt="Kayd logo"
+            width={250}
+            height={0}
+            className={styles.logo}
+          />
+          {/* <CardTitle>Sign in</CardTitle> */}
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className={styles.form}>
@@ -95,7 +103,10 @@ export default function LoginPage() {
 
             <p style={{ fontSize: 14, textAlign: "center" }}>
               Don&apos;t have an account?{" "}
-              <Link href="/signup">Create one</Link>
+              <Link href="/signup"><em>
+                Create one
+              </em>
+              </Link>
             </p>
           </form>
         </CardContent>

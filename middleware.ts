@@ -97,15 +97,18 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // Caller's row — used for both role gating and org scoping below.
+  const { data: staffUser } = await supabase
+    .from("staff_users")
+    .select("role, organisation_id")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const role = staffUser?.role ?? "staff";
+  const orgId = (staffUser?.organisation_id as string | null) ?? null;
+
   // Role-based access for /admin routes
   if (pathname.startsWith("/admin")) {
-    const { data: staffUser } = await supabase
-      .from("staff_users")
-      .select("role")
-      .eq("id", user.id)
-      .maybeSingle();
-
-    const role = staffUser?.role ?? "staff";
 
     if (pathname.startsWith("/admin/team")) {
       if (role !== "admin" && role !== "superadmin") {
@@ -129,9 +132,14 @@ export async function middleware(request: NextRequest) {
   // Verified dashboard users without today's rate → /setup
   const isSetup = pathname.startsWith("/setup");
   const today = new Date().toISOString().slice(0, 10);
+
+  // Without an organisation we can't look up a rate; skip the redirect.
+  if (!orgId) return response;
+
   const { data: rate } = await supabase
     .from("daily_rates")
     .select("id")
+    .eq("organisation_id", orgId)
     .eq("date", today)
     .maybeSingle();
 

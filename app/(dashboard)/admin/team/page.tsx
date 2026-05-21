@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
+import { getOrganisationId } from "@/lib/org";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -30,13 +31,21 @@ export default function TeamPage() {
     if (!user) return;
     setCurrentUserId(user.id);
 
-    // Admin can only see users they invited + themselves
+    const orgId = await getOrganisationId();
+    if (!orgId) {
+      setError("Your account is not attached to an organisation.");
+      setUsers([]);
+      setLoading(false);
+      return;
+    }
+
+    // Admin sees everyone in their organisation.
     const { data, error: fetchError } = await supabase
       .from("staff_users")
       .select(
         "id, email, name, role, status, invited_by, created_at, last_active_at"
       )
-      .or(`id.eq.${user.id},invited_by.eq.${user.id}`)
+      .eq("organisation_id", orgId)
       .order("created_at", { ascending: true });
 
     if (fetchError) {

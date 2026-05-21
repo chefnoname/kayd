@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
+import { getOrganisationId } from "@/lib/org";
 import {
   Table,
   TableBody,
@@ -33,11 +34,17 @@ export function AgentDetailPanel({
     const supabase = createClient();
 
     (async () => {
+      const orgId = await getOrganisationId();
+      if (!orgId) {
+        if (!cancelled) setRows([]);
+        return;
+      }
       const { data } = await supabase
         .from("settlements")
         .select(
           "id, agent_id, date, amount_received_gbp, amount_usd_equivalent, receipt_number, recorded_by, staff_users:recorded_by ( name )"
         )
+        .eq("organisation_id", orgId)
         .eq("agent_id", agent.id)
         .order("date", { ascending: false })
         .limit(7);

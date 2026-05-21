@@ -26,13 +26,20 @@ export async function POST(request: NextRequest) {
 
   const { data: staffUser } = await supabase
     .from("staff_users")
-    .select("role")
+    .select("role, organisation_id")
     .eq("id", user.id)
     .maybeSingle();
 
   const callerRole = staffUser?.role ?? "staff";
+  const callerOrgId = (staffUser?.organisation_id as string | null) ?? null;
   if (callerRole !== "superadmin" && callerRole !== "admin") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+  if (!callerOrgId) {
+    return NextResponse.json(
+      { error: "Your account is not attached to an organisation." },
+      { status: 400 }
+    );
   }
 
   const body = await request.json();
@@ -54,6 +61,22 @@ export async function POST(request: NextRequest) {
 
   // Get the target user's email
   const admin = createAdminClient();
+
+  // Verify the target lives in the caller's organisation
+  const { data: targetRow } = await admin
+    .from("staff_users")
+    .select("id")
+    .eq("id", userId)
+    .eq("organisation_id", callerOrgId)
+    .maybeSingle();
+
+  if (!targetRow) {
+    return NextResponse.json(
+      { error: "User not found in your organisation." },
+      { status: 404 }
+    );
+  }
+
   const { data: targetUser, error: fetchError } =
     await admin.auth.admin.getUserById(userId);
 
