@@ -31,7 +31,7 @@ export default function AdminPage() {
 
     const { data, error: fetchError } = await supabase
       .from("staff_users")
-      .select("id, email, name, role, invited_by, created_at")
+      .select("id, email, name, role, status, invited_by, created_at, last_active_at")
       .order("created_at", { ascending: true });
 
     if (fetchError) {
@@ -44,8 +44,10 @@ export default function AdminPage() {
           email: r.email,
           name: r.name,
           role: r.role as UserRole,
+          status: (r.status ?? "active") as StaffUser["status"],
           invited_by: r.invited_by,
           created_at: r.created_at,
+          last_active_at: r.last_active_at,
         }))
       );
     }
