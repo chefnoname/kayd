@@ -1,0 +1,27 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ece4d7;
+  border-radius: 8px;
+  font-size: 0.925rem;
+  color: var(--kayd-night-shadow);
+  background: #fff;
+  appearance: none;
+}
+
+.select:focus {
+  outline: 2px solid var(--kayd-night);
+  outline-offset: 1px;
+}

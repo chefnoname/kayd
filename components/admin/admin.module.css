@@ -1,0 +1,51 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.tableCard {
+  background: #fff;
+  border: 1px solid #ece4d7;
+  border-radius: 10px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.email {
+  font-weight: 600;
+  color: var(--kayd-night-shadow);
+}
+
+.roleBadge {
+  text-transform: capitalize;
+}
+
+.badgeSuperadmin {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #fde68a;
+}
+
+.badgeAdmin {
+  background: #dbeafe;
+  color: #1e40af;
+  border-color: #bfdbfe;
+}
+
+.badgeStaff {
+  background: #f3f4f6;
+  color: #374151;
+  border-color: #e5e7eb;
+}
+
+.actions {
+  display: inline-flex;
+  gap: 0.35rem;
+}
+
+.empty {
+  text-align: center;
+  color: #8a7e6c;
+  padding: 2.25rem 0;
+}

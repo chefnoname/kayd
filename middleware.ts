@@ -4,10 +4,10 @@ import { createServerClient } from "@supabase/ssr";
 /**
  * Auth middleware:
  *  - Unauthenticated → /login (except /login itself)
- *  - Authenticated without today's rate set → /setup
+ *  - /admin → only superadmin
+ *  - /admin/team → admin or superadmin
+ *  - Authenticated without today's rate set → /setup (skip for /admin routes)
  *  - Otherwise → allow
- *
- * NOTE: today's rate check is performed against the `daily_rates` table.
  */
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -32,7 +32,7 @@ export async function middleware(request: NextRequest) {
         getAll() {
           return request.cookies.getAll();
         },
-        setAll(cookiesToSet) {
+        setAll(cookiesToSet: { name: string; value: string; options?: any }[]) {
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options)
           );
@@ -47,6 +47,7 @@ export async function middleware(request: NextRequest) {
 
   const isLogin = pathname.startsWith("/login");
   const isSetup = pathname.startsWith("/setup");
+  const isAdmin = pathname.startsWith("/admin");
 
   if (!user) {
     if (isLogin) return response;
@@ -62,7 +63,36 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Check today's rate
+  // Role-based access for /admin routes
+  if (isAdmin) {
+    const { data: staffUser } = await supabase
+      .from("staff_users")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    const role = staffUser?.role ?? "staff";
+
+    // /admin/team → admin or superadmin
+    if (pathname.startsWith("/admin/team")) {
+      if (role !== "admin" && role !== "superadmin") {
+        const url = request.nextUrl.clone();
+        url.pathname = "/dashboard";
+        return NextResponse.redirect(url);
+      }
+      return response;
+    }
+
+    // /admin (root) → superadmin only
+    if (role !== "superadmin") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
+    }
+    return response;
+  }
+
+  // Check today's rate (skip for /setup itself)
   const today = new Date().toISOString().slice(0, 10);
   const { data: rate } = await supabase
     .from("daily_rates")
