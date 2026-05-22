@@ -11,6 +11,7 @@ export interface Deposit {
   released_at: string | null;
   released_to: string | null;
   created_at: string;
+  recorded_by: string | null;
 }
 
 export type DepositFilter = "all" | "held" | "released";

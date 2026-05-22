@@ -64,7 +64,7 @@ export function LocationHistoryDrawer({
       }
       const { data, error: fetchError } = await supabase
         .from("collection_pickups")
-        .select("id, office_id, amount_gbp, date, collected_by_name, created_at")
+        .select("id, office_id, amount_gbp, date, collected_by_name, created_at, created_by")
         .eq("organisation_id", orgId)
         .eq("office_id", office.id)
         .order("date", { ascending: false })
@@ -77,6 +77,24 @@ export function LocationHistoryDrawer({
         setError(fetchError.message);
         setRows([]);
       } else {
+        // Resolve recorder names in one batch
+        const creatorIds = [
+          ...new Set(
+            (data ?? []).map((r: any) => r.created_by).filter(Boolean)
+          ),
+        ] as string[];
+
+        const nameMap: Record<string, string> = {};
+        if (creatorIds.length > 0) {
+          const { data: staffRows } = await supabase
+            .from("staff_users")
+            .select("id, name")
+            .in("id", creatorIds);
+          for (const s of staffRows ?? []) {
+            if (s.name) nameMap[s.id] = s.name;
+          }
+        }
+
         setRows(
           (data ?? []).map((r: any) => ({
             id: r.id,
@@ -85,6 +103,7 @@ export function LocationHistoryDrawer({
             date: r.date,
             collected_by_name: r.collected_by_name,
             created_at: r.created_at,
+            recorded_by: r.created_by ? (nameMap[r.created_by] ?? null) : null,
           }))
         );
       }
@@ -120,12 +139,13 @@ export function LocationHistoryDrawer({
                   <TableHead>Date</TableHead>
                   <TableHead className={styles.numericHead}>Amount</TableHead>
                   <TableHead>Collected by</TableHead>
+                  <TableHead>Recorded by</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {rows.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={3} className={styles.empty}>
+                    <TableCell colSpan={4} className={styles.empty}>
                       No collections recorded yet
                     </TableCell>
                   </TableRow>
@@ -137,6 +157,7 @@ export function LocationHistoryDrawer({
                         {formatCurrency(r.amount_gbp, "GBP")}
                       </TableCell>
                       <TableCell>{r.collected_by_name || "—"}</TableCell>
+                      <TableCell>{r.recorded_by || "—"}</TableCell>
                     </TableRow>
                   ))
                 )}

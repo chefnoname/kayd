@@ -5,7 +5,6 @@
   padding: 0.85rem 1.5rem;
   background: var(--kayd-night);
   color: #fff;
-  border-bottom: 3px solid var(--kayd-night-shadow);
   height: 100px;
 }
 
@@ -41,10 +40,18 @@
 }
 
 .rateBadge {
-  background: var(--kayd-sand);
+  background: var(--kayd-sand-shadow);
   color: var(--kayd-night-shadow);
   border: 1px solid var(--kayd-sand-shadow);
   font-weight: 600;
+
+
+  &:hover {
+    background: var(--kayd-sand-shadow);
+    border-color: var(--kayd-sand);
+    color: var(--kayd-night-shadow);
+    cursor: default;
+  }
 }
 
 .user {

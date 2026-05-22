@@ -78,6 +78,10 @@ export function LogCollectionModal({
       return setError("Your account is not attached to an organisation.");
     }
 
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     const { error: insertError } = await supabase
       .from("collection_pickups")
       .insert({
@@ -86,6 +90,7 @@ export function LogCollectionModal({
         amount_gbp: amt,
         date,
         collected_by_name: driverName,
+        created_by: user?.id ?? null,
       });
 
     if (insertError) {

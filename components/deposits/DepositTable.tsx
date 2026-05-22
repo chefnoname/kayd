@@ -70,6 +70,7 @@ export function DepositTable({
               <TableHead>Date received</TableHead>
               <TableHead>Location</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Recorded by</TableHead>
               <TableHead>Notes</TableHead>
               <TableHead className={styles.actionsHead}>Actions</TableHead>
             </TableRow>
@@ -77,7 +78,7 @@ export function DepositTable({
           <TableBody>
             {deposits.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className={styles.empty}>
+                <TableCell colSpan={8} className={styles.empty}>
                   No deposits recorded yet
                 </TableCell>
               </TableRow>
@@ -98,6 +99,9 @@ export function DepositTable({
                     ) : (
                       <Badge className={styles.badgeReleased}>Released</Badge>
                     )}
+                  </TableCell>
+                  <TableCell className={styles.notes}>
+                    {d.recorded_by || "—"}
                   </TableCell>
                   <TableCell className={styles.notes}>
                     {d.notes || "—"}

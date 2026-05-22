@@ -127,7 +127,7 @@ export function AppHeader() {
           className={styles.howToBtn}
           onClick={() => startOnboardingTour()}
         >
-          How To
+          Tutorial
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

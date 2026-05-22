@@ -119,7 +119,7 @@ export function UserManagementTable({
                           variant="outline"
                           onClick={() => onResetPassword(u)}
                         >
-                          Reset PW
+                          Reset
                         </Button>
                       )}
                       {!isSelf && !isInactive && u.role !== "superadmin" && (

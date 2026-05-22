@@ -13,4 +13,5 @@ export interface CollectionPickup {
   date: string;
   collected_by_name: string | null;
   created_at: string;
+  recorded_by: string | null;
 }

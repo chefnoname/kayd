@@ -68,6 +68,9 @@ export function AddDepositModal({
       setSaving(false);
       return setError("Your account is not attached to an organisation.");
     }
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     const { error: insertError } = await supabase
       .from("individual_deposits")
       .insert({
@@ -78,6 +81,7 @@ export function AddDepositModal({
         location: location.trim() || null,
         notes: notes.trim() || null,
         status: "held",
+        created_by: user?.id ?? null,
       });
     setSaving(false);
 

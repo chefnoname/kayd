@@ -37,7 +37,7 @@ export default function DepositsPage() {
     const { data, error: fetchError } = await supabase
       .from("individual_deposits")
       .select(
-        "id, holder_name, amount_usd, date_received, location, notes, status, released_at, released_to, created_at"
+        "id, holder_name, amount_usd, date_received, location, notes, status, released_at, released_to, created_at, created_by"
       )
       .eq("organisation_id", orgId)
       .order("date_received", { ascending: false })
@@ -47,6 +47,24 @@ export default function DepositsPage() {
       setError(fetchError.message);
       setDeposits([]);
     } else {
+      // Resolve recorder names from staff_users in one batch query
+      const creatorIds = [
+        ...new Set(
+          (data ?? []).map((d: any) => d.created_by).filter(Boolean)
+        ),
+      ] as string[];
+
+      const nameMap: Record<string, string> = {};
+      if (creatorIds.length > 0) {
+        const { data: staffRows } = await supabase
+          .from("staff_users")
+          .select("id, name")
+          .in("id", creatorIds);
+        for (const s of staffRows ?? []) {
+          if (s.name) nameMap[s.id] = s.name;
+        }
+      }
+
       setDeposits(
         (data ?? []).map((d: any) => ({
           id: d.id,
@@ -59,6 +77,7 @@ export default function DepositsPage() {
           released_at: d.released_at,
           released_to: d.released_to,
           created_at: d.created_at,
+          recorded_by: d.created_by ? (nameMap[d.created_by] ?? null) : null,
         }))
       );
     }
