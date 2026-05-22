@@ -101,7 +101,7 @@ export function UserManagementTable({
                       {u.role}
                     </Badge>
                   </TableCell>
-                  <TableCell>{formatDate(u.last_active_at)}</TableCell>
+                  <TableCell>{formatDate(u.last_sign_in_at)}</TableCell>
                   <TableCell>
                     <div className={styles.actions}>
                       {canToggle && (

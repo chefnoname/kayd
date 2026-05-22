@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
-import { getOrganisationId } from "@/lib/org";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -30,37 +29,28 @@ export default function AdminPage() {
     } = await supabase.auth.getUser();
     if (user) setCurrentUserId(user.id);
 
-    const orgId = await getOrganisationId();
-    if (!orgId) {
-      setError("Your account is not attached to an organisation.");
+    const res = await fetch("/api/admin/users");
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      setError(body.error ?? "Failed to load users.");
       setUsers([]);
       setLoading(false);
       return;
     }
 
-    const { data, error: fetchError } = await supabase
-      .from("staff_users")
-      .select("id, email, name, role, status, invited_by, created_at, last_active_at")
-      .eq("organisation_id", orgId)
-      .order("created_at", { ascending: true });
-
-    if (fetchError) {
-      setError(fetchError.message);
-      setUsers([]);
-    } else {
-      setUsers(
-        (data ?? []).map((r: any) => ({
-          id: r.id,
-          email: r.email,
-          name: r.name,
-          role: r.role as UserRole,
-          status: (r.status ?? "active") as StaffUser["status"],
-          invited_by: r.invited_by,
-          created_at: r.created_at,
-          last_active_at: r.last_active_at,
-        }))
-      );
-    }
+    const body = await res.json();
+    setUsers(
+      (body.users ?? []).map((r: any) => ({
+        id: r.id,
+        email: r.email,
+        name: r.name,
+        role: r.role as UserRole,
+        status: (r.status ?? "active") as StaffUser["status"],
+        invited_by: r.invited_by,
+        created_at: r.created_at,
+        last_sign_in_at: r.last_sign_in_at,
+      }))
+    );
     setLoading(false);
   }, []);
 

@@ -9,5 +9,5 @@ export interface StaffUser {
   status: UserStatus;
   invited_by: string | null;
   created_at: string;
-  last_active_at: string | null;
+  last_sign_in_at: string | null;
 }
