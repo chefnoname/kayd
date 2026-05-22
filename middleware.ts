@@ -37,6 +37,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // /set-password must always be reachable so invited users can finish
+  // signing up before any of the org / rate gating below kicks in.
+  if (pathname === "/set-password" || pathname.startsWith("/set-password/")) {
+    return NextResponse.next();
+  }
+
   const response = NextResponse.next();
 
   const supabase = createServerClient(

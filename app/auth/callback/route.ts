@@ -2,29 +2,30 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 /**
- * OAuth/email-link callback. Supabase redirects here after the user clicks
+ * OAuth / email-link callback. Supabase redirects here after the user clicks
  * a confirmation, invite, magic-link, or recovery link. We exchange the
- * `code` for a session cookie, then forward to `next` (or sensible default).
+ * `code` for a session cookie and then forward the user.
  *
- *   /auth/callback?code=...&next=/dashboard
+ * Invite detection (in order):
+ *   1. ?type=invite | ?type=recovery in the query string
+ *   2. The session user's email-provider identity has `invited_at`,
+ *      meaning they were created via inviteUserByEmail.
  *
- * For invites and password recovery we override `next` to /set-password so
- * the user is forced to pick a password before entering the app.
+ * Invited / recovery users land on /set-password; everyone else on /dashboard
+ * (or whatever ?next= specified).
  */
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
   const code = searchParams.get("code");
-  const type = searchParams.get("type"); // "signup" | "invite" | "recovery" | "magiclink" | ...
-  let next = searchParams.get("next") ?? "/dashboard";
+  const type = searchParams.get("type");
+  const requestedNext = searchParams.get("next");
 
-  if (type === "invite" || type === "recovery") {
-    next = "/set-password";
-  }
-
-  const response = NextResponse.redirect(new URL(next, origin));
+  // We build the response first so the cookie writer below can attach cookies
+  // to it; the final redirect location is rewritten before returning.
+  const response = NextResponse.redirect(new URL("/dashboard", origin));
 
   if (!code) {
-    return response;
+    return NextResponse.redirect(new URL(requestedNext ?? "/dashboard", origin));
   }
 
   const supabase = createServerClient(
@@ -45,12 +46,40 @@ export async function GET(request: NextRequest) {
   );
 
   const { error } = await supabase.auth.exchangeCodeForSession(code);
-
   if (error) {
     const url = new URL("/login", origin);
     url.searchParams.set("error", error.message);
     return NextResponse.redirect(url);
   }
 
+  // Decide where to send them.
+  let destination = requestedNext ?? "/dashboard";
+
+  if (type === "invite" || type === "recovery") {
+    destination = "/set-password";
+  } else {
+    // Inspect the session user — invited users have invited_at on their
+    // email identity.
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const emailIdentity = user?.identities?.find(
+      (i) => i.provider === "email"
+    );
+    const identityData =
+      (emailIdentity?.identity_data as Record<string, unknown> | undefined) ??
+      undefined;
+
+    const wasInvited =
+      Boolean(identityData?.invited_at) || Boolean((user as any)?.invited_at);
+
+    if (wasInvited) {
+      destination = "/set-password";
+    }
+  }
+
+  response.headers.set("location", new URL(destination, origin).toString());
   return response;
 }
+

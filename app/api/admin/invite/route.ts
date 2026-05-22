@@ -67,18 +67,45 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Use admin client to send invite
+  // Use admin client for both the pre-row insert (RLS would block it
+  // since the row has no id matching auth.uid()) and the invite call.
   const admin = createAdminClient();
 
+  const normalisedEmail = String(email).trim().toLowerCase();
+  const cleanName = String(name).trim();
+
+  // 1) Pre-create the staff_users row in 'pending' state with id=null.
+  //    handle_new_user merges this row with the freshly created auth user
+  //    when inviteUserByEmail fires, matching on (organisation_id, lower(email)).
+  const { error: insertError } = await admin.from("staff_users").insert({
+    id: null,
+    email: normalisedEmail,
+    name: cleanName,
+    role: resolvedRole,
+    status: "pending",
+    invited_by: invited_by || user.id,
+    organisation_id: callerOrgId,
+  });
+
+  if (insertError) {
+    // Duplicate key (already pending or already a member) is the most likely cause.
+    return NextResponse.json(
+      { error: insertError.message },
+      { status: 409 }
+    );
+  }
+
+  // 2) Send the Supabase invite. Once the user clicks the link, the
+  //    handle_new_user trigger fills in id and handle_user_sign_in flips
+  //    status to 'active'.
   const { error: inviteError } = await admin.auth.admin.inviteUserByEmail(
-    email,
+    normalisedEmail,
     {
       data: {
-        name,
+        name: cleanName,
         role: resolvedRole,
         invited_by: invited_by || user.id,
-        // The handle_new_user trigger picks this up so the invitee is
-        // provisioned inside the inviter's organisation as `staff`.
+        // Picked up by handle_new_user so the merge lands in the right org.
         organisation_id: callerOrgId,
       },
       redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || ""}/auth/callback?type=invite`,
@@ -86,6 +113,14 @@ export async function POST(request: NextRequest) {
   );
 
   if (inviteError) {
+    // Roll back the pending row so the admin can retry cleanly.
+    await admin
+      .from("staff_users")
+      .delete()
+      .eq("organisation_id", callerOrgId)
+      .eq("email", normalisedEmail)
+      .is("id", null);
+
     return NextResponse.json(
       { error: inviteError.message },
       { status: 500 }

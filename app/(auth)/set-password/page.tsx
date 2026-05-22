@@ -64,7 +64,7 @@ export default function SetPasswordPage() {
       return;
     }
 
-    router.replace("/dashboard?welcome=1");
+    router.replace("/dashboard");
     router.refresh();
   }
 
@@ -73,7 +73,7 @@ export default function SetPasswordPage() {
       <Card className={styles.card}>
         <CardHeader>
           <div className={styles.brand}>Kayd</div>
-          <CardTitle>Set your password</CardTitle>
+          <CardTitle>Welcome to Kayd — set your password to get started.</CardTitle>
         </CardHeader>
         <CardContent>
           {!ready ? (
