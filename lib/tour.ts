@@ -1,7 +1,4 @@
-"use client";
-
 import { driver, type DriveStep } from "driver.js";
-import "driver.js/dist/driver.css";
 import { createClient } from "@/lib/supabase";
 
 const TOUR_STEPS: DriveStep[] = [
@@ -87,11 +84,9 @@ export function startOnboardingTour(): void {
     popoverClass: "kayd-tour-popover",
     onDestroyStarted: () => {
       void markTourComplete();
-      tour.destroy();
     },
     onDestroyed: () => {
-      // Navigate to setup so the exchange-rate tooltip can be shown there.
-      window.location.href = "/setup?onboarding=1";
+      window.location.href = "/dashboard";
     },
     steps: TOUR_STEPS,
   });

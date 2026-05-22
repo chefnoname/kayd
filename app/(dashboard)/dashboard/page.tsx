@@ -144,6 +144,16 @@ export default function DashboardPage() {
 
   useEffect(() => {
     load();
+
+    // Re-fetch whenever the tab regains focus so balances and activity
+    // are never stale after the user works in another tab or page.
+    function onVisible() {
+      if (document.visibilityState === "visible") load();
+    }
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   }, [load]);
 
   async function patchBalance(patch: Partial<DailyBalance>) {

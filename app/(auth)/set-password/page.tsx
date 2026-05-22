@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import styles from "../login/login.module.css";
+import Image from "next/image";
 
 /**
  * Landing page for invited users (and password resets).
@@ -21,7 +22,9 @@ export default function SetPasswordPage() {
   const supabase = createClient();
 
   const [email, setEmail] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
+  const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +42,17 @@ export default function SetPasswordPage() {
         return;
       }
       setEmail(user.email ?? null);
-      setReady(true);
+      setUserId(user.id);
+
+      // Pre-fill name if the user already has one (e.g. password reset flow)
+      const { data: staffRow } = await supabase
+        .from("staff_users")
+        .select("name")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (active && staffRow?.name) setFullName(staffRow.name);
+
+      if (active) setReady(true);
     })();
     return () => {
       active = false;
@@ -50,20 +63,36 @@ export default function SetPasswordPage() {
     e.preventDefault();
     setError(null);
 
+    const trimmedName = fullName.trim();
+    if (!trimmedName) return setError("Full name is required.");
     if (password.length < 8)
       return setError("Password must be at least 8 characters.");
     if (password !== confirm)
       return setError("Passwords do not match.");
 
     setSaving(true);
-    const { error: updateError } = await supabase.auth.updateUser({ password });
-    setSaving(false);
+
+    // Update password and auth metadata together
+    const { error: updateError } = await supabase.auth.updateUser({
+      password,
+      data: { name: trimmedName },
+    });
 
     if (updateError) {
+      setSaving(false);
       setError(updateError.message);
       return;
     }
 
+    // Persist name to staff_users so the rest of the app can read it
+    if (userId) {
+      await supabase
+        .from("staff_users")
+        .update({ name: trimmedName })
+        .eq("id", userId);
+    }
+
+    setSaving(false);
     router.replace("/dashboard");
     router.refresh();
   }
@@ -72,7 +101,13 @@ export default function SetPasswordPage() {
     <div className={styles.shell}>
       <Card className={styles.card}>
         <CardHeader>
-          <div className={styles.brand}>Kayd</div>
+          <Image
+            src="/kayd.png"
+            alt="Kayd logo"
+            width={175}
+            height={0}
+            className={styles.logo}
+          />
           <CardTitle>Welcome to Kayd — set your password to get started.</CardTitle>
         </CardHeader>
         <CardContent>
@@ -85,6 +120,19 @@ export default function SetPasswordPage() {
                   Signed in as <strong>{email}</strong>
                 </p>
               )}
+
+              <div className={styles.field}>
+                <Label htmlFor="fullName">Full name</Label>
+                <Input
+                  id="fullName"
+                  type="text"
+                  autoComplete="name"
+                  required
+                  placeholder="Your full name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                />
+              </div>
 
               <div className={styles.field}>
                 <Label htmlFor="password">New password</Label>

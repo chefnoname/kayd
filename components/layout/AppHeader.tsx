@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { formatLongDate, toDateString } from "@/lib/utils";
 import { startOnboardingTour } from "@/lib/tour";
+import "driver.js/dist/driver.css";
 import { Button } from "@/components/ui/button";
 import styles from "./AppHeader.module.css";
 
@@ -26,33 +27,57 @@ export function AppHeader() {
   const router = useRouter();
 
   const [rate, setRate] = useState<number | null>(null);
+  const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
 
+  // Fetch identity + name once on mount.
   useEffect(() => {
     let cancelled = false;
-
     (async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
       if (!cancelled && user?.email) setEmail(user.email);
 
+      if (user) {
+        const { data: staffRow } = await supabase
+          .from("staff_users")
+          .select("name")
+          .eq("id", user.id)
+          .maybeSingle();
+        if (!cancelled && staffRow?.name) setName(staffRow.name);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [supabase]);
+
+  // Fetch today's rate on mount AND whenever the tab regains focus,
+  // so the badge never shows a stale rate after visiting /setup.
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchRate() {
       const today = toDateString();
       const orgId = await getOrganisationId();
-      if (!orgId) return;
-
+      if (cancelled || !orgId) return;
       const { data } = await supabase
         .from("daily_rates")
         .select("gbp_to_usd")
         .eq("organisation_id", orgId)
         .eq("date", today)
         .maybeSingle();
+      if (!cancelled) setRate(data ? Number(data.gbp_to_usd) : null);
+    }
 
-      if (!cancelled && data) setRate(Number(data.gbp_to_usd));
-    })();
+    fetchRate();
 
+    function onVisible() {
+      if (document.visibilityState === "visible") fetchRate();
+    }
+    document.addEventListener("visibilitychange", onVisible);
     return () => {
       cancelled = true;
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, [supabase]);
 
@@ -63,14 +88,20 @@ export function AppHeader() {
     router.refresh();
   }
 
-  const initials = email
-    ? email
-        .split("@")[0]
-        .split(/[.\-_]/)
+  const initials = name
+    ? name
+        .split(" ")
         .map((p) => p[0]?.toUpperCase() ?? "")
         .join("")
         .slice(0, 2)
-    : "U";
+    : email
+      ? email
+          .split("@")[0]
+          .split(/[.\-_]/)
+          .map((p) => p[0]?.toUpperCase() ?? "")
+          .join("")
+          .slice(0, 2)
+      : "U";
 
   return (
     <header className={styles.header}>
@@ -109,7 +140,7 @@ export function AppHeader() {
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>{email || "My account"}</DropdownMenuLabel>
+            <DropdownMenuLabel>{name || email || "My account"}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link href="/dashboard/profile">Profile</Link>
