@@ -71,15 +71,23 @@ export async function GET(request: NextRequest) {
   // Decide where to send them.
   let destination = requestedNext ?? "/dashboard";
 
+  // Fetch the session user once — used for both last_active_at and invite detection.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // Stamp last_active_at now that the session is established.
+  // This is more reliable than the DB trigger for PKCE / invite flows.
+  if (user) {
+    await supabase
+      .from("staff_users")
+      .update({ last_active_at: new Date().toISOString() })
+      .eq("id", user.id);
+  }
+
   if (type === "invite" || type === "recovery") {
     destination = "/set-password";
   } else {
-    // Inspect the session user — invited users have invited_at on their
-    // email identity.
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
     const emailIdentity = user?.identities?.find(
       (i) => i.provider === "email"
     );

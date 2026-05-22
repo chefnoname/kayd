@@ -53,7 +53,7 @@ export default function LoginPage() {
     setError(null);
     setLoading(true);
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
+    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -75,6 +75,15 @@ export default function LoginPage() {
       }
       return;
     }
+
+    // Stamp last_active_at immediately — more reliable than the DB trigger.
+    if (signInData.user) {
+      void supabase
+        .from("staff_users")
+        .update({ last_active_at: new Date().toISOString() })
+        .eq("id", signInData.user.id);
+    }
+
     router.push("/dashboard");
     router.refresh();
   }
