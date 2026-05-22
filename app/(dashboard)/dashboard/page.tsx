@@ -152,8 +152,9 @@ export default function DashboardPage() {
         .select("has_seen_tour")
         .eq("id", currentUser.id)
         .maybeSingle();
-      if (staffRow && staffRow.has_seen_tour === false) {
-        // Small delay to let React flush the state updates above to the DOM.
+      // Treat null row, has_seen_tour=false, and has_seen_tour=undefined
+      // all as "not yet seen" so the tour always fires on first signup.
+      if (staffRow?.has_seen_tour !== true) {
         setTimeout(() => startOnboardingTour(), 400);
       }
     }

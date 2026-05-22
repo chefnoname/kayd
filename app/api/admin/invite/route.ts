@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         organisation_id: callerOrgId,
         invited_by: invited_by || user.id,
       },
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || ""}/auth/callback?type=invite`,
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || ""}/auth/callback`,
     }
   );
 
