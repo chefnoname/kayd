@@ -15,6 +15,7 @@ import {
 import { DailyRateInput } from "@/components/setup/DailyRateInput";
 import { RateHistoryStrip } from "@/components/setup/RateHistoryStrip";
 import { formatLongDate, toDateString } from "@/lib/utils";
+import { startSetupTour } from "@/lib/tour";
 import styles from "./setup.module.css";
 
 interface ExistingRate {
@@ -34,6 +35,17 @@ export default function SetupPage() {
 
   // Force RateHistoryStrip to refetch after a save by changing its key
   const [historyVersion, setHistoryVersion] = useState(0);
+
+  // When arriving from the onboarding tour (?onboarding=1), show the
+  // rate-input tooltip once the page has finished loading.
+  useEffect(() => {
+    if (loading) return;
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("onboarding") === "1") {
+      setTimeout(() => startSetupTour(), 300);
+    }
+  }, [loading]);
 
   useEffect(() => {
     let cancelled = false;

@@ -61,7 +61,7 @@ export function DailyRateInput({
         <Input id="rate-date" value={formatLongDate()} readOnly />
       </div>
 
-      <div className={styles.field}>
+      <div className={styles.field} data-tour="rate-input">
         <Label htmlFor="rate">GBP → USD rate today</Label>
         <Input
           id="rate"

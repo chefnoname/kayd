@@ -45,10 +45,26 @@ export async function GET(request: NextRequest) {
     }
   );
 
+  // PKCE constraint: the auth code is single-use and valid for 5 minutes.
+  // The exchange MUST happen on the same browser/device that initiated the
+  // flow (the code verifier is stored locally). If the code has expired,
+  // was already used, or the verifier is missing, we restart the flow.
   const { error } = await supabase.auth.exchangeCodeForSession(code);
   if (error) {
     const url = new URL("/login", origin);
-    url.searchParams.set("error", error.message);
+    const isExpiredOrUsed =
+      error.message.toLowerCase().includes("expired") ||
+      error.message.toLowerCase().includes("already") ||
+      error.message.toLowerCase().includes("invalid") ||
+      error.status === 400 ||
+      error.status === 401;
+
+    url.searchParams.set(
+      "error",
+      isExpiredOrUsed
+        ? "Your sign-in link has expired or was already used. Please sign in again."
+        : error.message
+    );
     return NextResponse.redirect(url);
   }
 
