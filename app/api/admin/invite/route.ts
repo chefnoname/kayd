@@ -67,60 +67,25 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Use admin client for both the pre-row insert (RLS would block it
-  // since the row has no id matching auth.uid()) and the invite call.
   const admin = createAdminClient();
 
   const normalisedEmail = String(email).trim().toLowerCase();
-  const cleanName = String(name).trim();
 
-  // 1) Pre-create the staff_users row in 'pending' state with id=null.
-  //    handle_new_user merges this row with the freshly created auth user
-  //    when inviteUserByEmail fires, matching on (organisation_id, lower(email)).
-  const { error: insertError } = await admin.from("staff_users").insert({
-    id: null,
-    email: normalisedEmail,
-    name: cleanName,
-    role: resolvedRole,
-    status: "pending",
-    invited_by: invited_by || user.id,
-    organisation_id: callerOrgId,
-  });
-
-  if (insertError) {
-    // Duplicate key (already pending or already a member) is the most likely cause.
-    return NextResponse.json(
-      { error: insertError.message },
-      { status: 409 }
-    );
-  }
-
-  // 2) Send the Supabase invite. Once the user clicks the link, the
-  //    handle_new_user trigger fills in id and handle_user_sign_in flips
-  //    status to 'active'.
+  // The trigger handle_new_user creates the staff_users row automatically
+  // when the invited user clicks their link. We only send the invite.
   const { error: inviteError } = await admin.auth.admin.inviteUserByEmail(
     normalisedEmail,
     {
       data: {
-        name: cleanName,
-        role: resolvedRole,
-        invited_by: invited_by || user.id,
-        // Picked up by handle_new_user so the merge lands in the right org.
+        role: "staff",
         organisation_id: callerOrgId,
+        invited_by: invited_by || user.id,
       },
       redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || ""}/auth/callback?type=invite`,
     }
   );
 
   if (inviteError) {
-    // Roll back the pending row so the admin can retry cleanly.
-    await admin
-      .from("staff_users")
-      .delete()
-      .eq("organisation_id", callerOrgId)
-      .eq("email", normalisedEmail)
-      .is("id", null);
-
     return NextResponse.json(
       { error: inviteError.message },
       { status: 500 }

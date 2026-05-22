@@ -19,7 +19,7 @@ import styles from "./InviteModal.module.css";
 interface InviteUserModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onInvited: () => void;
+  onInvited: (email: string) => void;
   /** Whether to allow selecting 'admin' role (superadmin only) */
   allowAdmin?: boolean;
   /** Current user's ID — passed as invited_by metadata */
@@ -78,9 +78,10 @@ export function InviteUserModal({
       return;
     }
 
+    const sentEmail = trimmedEmail;
     reset();
     onOpenChange(false);
-    onInvited();
+    onInvited(sentEmail);
   }
 
   return (

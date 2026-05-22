@@ -148,7 +148,10 @@ export default function TeamPage() {
       <InviteUserModal
         open={inviteOpen}
         onOpenChange={setInviteOpen}
-        onInvited={load}
+        onInvited={(email) => {
+          toast({ title: `Invite sent to ${email}` });
+          load();
+        }}
         allowAdmin={false}
         inviterId={currentUserId}
       />
