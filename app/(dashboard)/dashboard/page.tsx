@@ -15,7 +15,6 @@ import {
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import type { DailyBalance } from "@/components/dashboard/types";
 import { formatLongDate, toDateString, usdToGbp } from "@/lib/utils";
-import { startOnboardingTour } from "@/lib/tour";
 import styles from "./dashboard.module.css";
 
 function yesterdayDate(): Date {
@@ -141,23 +140,6 @@ export default function DashboardPage() {
     );
     setLoadingActivity(false);
 
-    // Auto-start the onboarding tour on first ever load.
-    // Runs here (after all data is fetched) so every tour anchor is in the DOM.
-    const {
-      data: { user: currentUser },
-    } = await supabase.auth.getUser();
-    if (currentUser) {
-      const { data: staffRow } = await supabase
-        .from("staff_users")
-        .select("has_seen_tour")
-        .eq("id", currentUser.id)
-        .maybeSingle();
-      // Treat null row, has_seen_tour=false, and has_seen_tour=undefined
-      // all as "not yet seen" so the tour always fires on first signup.
-      if (staffRow?.has_seen_tour !== true) {
-        setTimeout(() => startOnboardingTour(), 400);
-      }
-    }
   }, [today, yesterday]);
 
   useEffect(() => {

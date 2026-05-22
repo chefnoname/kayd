@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { formatLongDate, toDateString } from "@/lib/utils";
 import { startOnboardingTour } from "@/lib/tour";
+import { Button } from "@/components/ui/button";
 import styles from "./AppHeader.module.css";
 
 export function AppHeader() {
@@ -89,6 +90,14 @@ export function AppHeader() {
       </div>
 
       <div className={styles.user}>
+        <Button
+          variant="outline"
+          size="sm"
+          className={styles.howToBtn}
+          onClick={() => startOnboardingTour()}
+        >
+          How To
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className={styles.avatarBtn} aria-label="Open user menu">
@@ -104,9 +113,6 @@ export function AppHeader() {
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link href="/dashboard/profile">Profile</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => startOnboardingTour()}>
-              Replay tour
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onSelect={onLogout} className={styles.logoutItem}>
