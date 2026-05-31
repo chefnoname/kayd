@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { createClient } from "@/lib/supabase";
 import styles from "./BankDetailsCard.module.css";
 
 interface BankDetailsCardProps {
@@ -19,7 +18,7 @@ interface BankDetailsCardProps {
   accountNumber: string | null;
   editable: boolean;
   orgId: string;
-  onSaved: () => void;
+  onSaved: (data: { bank_name: string | null; sort_code: string | null; account_number: string | null }) => void;
 }
 
 export function BankDetailsCard({
@@ -54,26 +53,35 @@ export function BankDetailsCard({
     setSuccess(false);
     setSaving(true);
 
-    const supabase = createClient();
-    const { error: updateError } = await supabase
-      .from("organisations")
-      .update({
-        bank_name: draftBank.trim() || null,
-        sort_code: draftSort.trim() || null,
-        account_number: draftAccount.trim() || null,
-      })
-      .eq("id", orgId);
-
-    setSaving(false);
-
-    if (updateError) {
-      setError(updateError.message);
+    let result: Response;
+    try {
+      result = await fetch("/api/org/bank-details", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bank_name: draftBank.trim() || null,
+          sort_code: draftSort.trim() || null,
+          account_number: draftAccount.trim() || null,
+        }),
+      });
+    } catch {
+      setSaving(false);
+      setError("Network error — please try again.");
       return;
     }
 
+    setSaving(false);
+
+    if (!result.ok) {
+      const body = await result.json().catch(() => ({}));
+      setError((body as { error?: string }).error ?? "Failed to save bank details.");
+      return;
+    }
+
+    const saved = await result.json();
     setSuccess(true);
     setEditing(false);
-    onSaved();
+    onSaved(saved);
   }
 
   return (

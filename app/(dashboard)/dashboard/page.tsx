@@ -256,7 +256,13 @@ export default function DashboardPage() {
           accountNumber={bankDetails.account_number}
           editable={userRole === "admin"}
           orgId={orgId}
-          onSaved={() => load()}
+          onSaved={(data) =>
+            setBankDetails({
+              bank_name: data.bank_name,
+              sort_code: data.sort_code,
+              account_number: data.account_number,
+            })
+          }
         />
       )}
 
