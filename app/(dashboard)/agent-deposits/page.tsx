@@ -6,37 +6,37 @@ import { createClient } from "@/lib/supabase";
 import { getOrganisationId } from "@/lib/org";
 import { PageHeader } from "@/components/shared/PageHeader";
 import {
-  SettlementForm,
-  type SettlementFormValues,
-} from "@/components/settlement/SettlementForm";
-import { ConversionPreviewCard } from "@/components/settlement/ConversionPreviewCard";
-import { SettlementConfirmModal } from "@/components/settlement/SettlementConfirmModal";
-import type { SettlementAgent } from "@/components/settlement/types";
+  AgentDepositForm,
+  type AgentDepositFormValues,
+} from "@/components/agent-deposits/AgentDepositForm";
+import { ConversionPreviewCard } from "@/components/agent-deposits/ConversionPreviewCard";
+import { AgentDepositConfirmModal } from "@/components/agent-deposits/AgentDepositConfirmModal";
+import type { AgentDepositAgent } from "@/components/agent-deposits/types";
 import { useToast } from "@/components/ui/toast";
 import {
-  calculateSettlement,
+  calculateAgentDeposit,
   formatCurrency,
   toDateString,
 } from "@/lib/utils";
-import styles from "./settlement.module.css";
+import styles from "./agent-deposits.module.css";
 
-const EMPTY_FORM: SettlementFormValues = {
+const EMPTY_FORM: AgentDepositFormValues = {
   agentId: null,
   receivedGBP: "",
   receiptNumber: "",
   notes: "",
 };
 
-function SettlementPageInner() {
+function AgentDepositPageInner() {
   const searchParams = useSearchParams();
   const preselectId = searchParams.get("agentId");
   const { toast } = useToast();
 
-  const [agents, setAgents] = useState<SettlementAgent[]>([]);
+  const [agents, setAgents] = useState<AgentDepositAgent[]>([]);
   const [rate, setRate] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const [form, setForm] = useState<SettlementFormValues>(EMPTY_FORM);
+  const [form, setForm] = useState<AgentDepositFormValues>(EMPTY_FORM);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -121,14 +121,14 @@ function SettlementPageInner() {
       data: { user },
     } = await supabase.auth.getUser();
 
-    const calc = calculateSettlement(
+    const calc = calculateAgentDeposit(
       selectedAgent.balance_usd,
       receivedGBP,
       rate
     );
 
-    // 1) Insert settlement row
-    const { error: insertError } = await supabase.from("settlements").insert({
+    // 1) Insert agent deposit row
+    const { error: insertError } = await supabase.from("agent_deposits").insert({
       organisation_id: orgId,
       agent_id: selectedAgent.id,
       date: today,
@@ -148,12 +148,12 @@ function SettlementPageInner() {
       return;
     }
 
-    // 2) Update agent balance + last_settlement
+    // 2) Update agent balance + last_agent_deposit
     const { error: updateError } = await supabase
       .from("agents")
       .update({
         balance_usd: calc.newBalance,
-        last_settlement: today,
+        last_agent_deposit: today,
         updated_at: new Date().toISOString(),
       })
       .eq("organisation_id", orgId)
@@ -184,7 +184,7 @@ function SettlementPageInner() {
   return (
     <div>
       <PageHeader
-        title="Record settlement"
+        title="Record Agent Deposit"
         description="Log cash received from an agent. Today's rate is applied automatically."
       />
 
@@ -193,7 +193,7 @@ function SettlementPageInner() {
           {loading ? (
             <p>Loading…</p>
           ) : (
-            <SettlementForm
+            <AgentDepositForm
               agents={agents}
               values={form}
               onChange={setForm}
@@ -214,7 +214,7 @@ function SettlementPageInner() {
         </div>
       </div>
 
-      <SettlementConfirmModal
+      <AgentDepositConfirmModal
         open={confirmOpen}
         agent={selectedAgent}
         receivedGBP={receivedGBP}
@@ -230,10 +230,10 @@ function SettlementPageInner() {
 }
 
 // Page wraps inner component in Suspense because useSearchParams requires it.
-export default function SettlementPage() {
+export default function AgentDepositPage() {
   return (
     <Suspense fallback={<p>Loading…</p>}>
-      <SettlementPageInner />
+      <AgentDepositPageInner />
     </Suspense>
   );
 }

@@ -6,27 +6,27 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AgentSelector } from "./AgentSelector";
-import type { SettlementAgent } from "./types";
-import styles from "./SettlementForm.module.css";
+import type { AgentDepositAgent } from "./types";
+import styles from "./AgentDepositForm.module.css";
 
-export interface SettlementFormValues {
+export interface AgentDepositFormValues {
   agentId: string | null;
   receivedGBP: string;
   receiptNumber: string;
   notes: string;
 }
 
-interface SettlementFormProps {
-  agents: SettlementAgent[];
-  values: SettlementFormValues;
-  onChange: (next: SettlementFormValues) => void;
+interface AgentDepositFormProps {
+  agents: AgentDepositAgent[];
+  values: AgentDepositFormValues;
+  onChange: (next: AgentDepositFormValues) => void;
   onSubmit: () => void;
   errorMessage?: string | null;
   submitting?: boolean;
   rateMissing?: boolean;
 }
 
-export function SettlementForm({
+export function AgentDepositForm({
   agents,
   values,
   onChange,
@@ -34,7 +34,7 @@ export function SettlementForm({
   errorMessage,
   submitting,
   rateMissing,
-}: SettlementFormProps) {
+}: AgentDepositFormProps) {
   const numericAmount = Number(values.receivedGBP);
   const validAmount =
     values.receivedGBP !== "" &&
@@ -47,9 +47,9 @@ export function SettlementForm({
     !rateMissing &&
     !submitting;
 
-  function patch<K extends keyof SettlementFormValues>(
+  function patch<K extends keyof AgentDepositFormValues>(
     key: K,
-    val: SettlementFormValues[K]
+    val: AgentDepositFormValues[K]
   ) {
     onChange({ ...values, [key]: val });
   }
@@ -116,13 +116,13 @@ export function SettlementForm({
         <Alert variant="destructive">
           <AlertDescription>
             Today's GBP→USD rate has not been set. Visit Daily Setup before
-            recording a settlement.
+            recording an agent deposit.
           </AlertDescription>
         </Alert>
       )}
 
       <Button type="submit" disabled={!canSubmit} className={styles.submit}>
-        {submitting ? "Saving…" : "Record Settlement"}
+        {submitting ? "Saving…" : "Record Agent Deposit"}
       </Button>
     </form>
   );

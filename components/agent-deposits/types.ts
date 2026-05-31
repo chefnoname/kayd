@@ -1,4 +1,4 @@
-export interface SettlementAgent {
+export interface AgentDepositAgent {
   id: string;
   name: string;
   city: string;

@@ -72,7 +72,7 @@ export function AgentTable({
             <TableHead>City</TableHead>
             <TableHead>Owes (USD)</TableHead>
             <TableHead>GBP Equivalent</TableHead>
-            <TableHead>Last Settlement</TableHead>
+            <TableHead>Last Agent Deposit</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className={styles.actionHead}>Action</TableHead>
           </TableRow>
@@ -113,8 +113,8 @@ export function AgentTable({
                       : "—"}
                   </TableCell>
                   <TableCell>
-                    {agent.last_settlement
-                      ? formatLongDate(new Date(agent.last_settlement))
+                    {agent.last_agent_deposit
+                      ? formatLongDate(new Date(agent.last_agent_deposit))
                       : "Never"}
                   </TableCell>
                   <TableCell>
@@ -131,7 +131,7 @@ export function AgentTable({
                       size="sm"
                       onClick={(e) => {
                         e.stopPropagation();
-                        router.push(`/settlement?agentId=${agent.id}`);
+                        router.push(`/agent-deposits?agentId=${agent.id}`);
                       }}
                     >
                       Settle
@@ -145,7 +145,7 @@ export function AgentTable({
                       <AgentDetailPanel
                         agent={agent}
                         onSettle={() =>
-                          router.push(`/settlement?agentId=${agent.id}`)
+                          router.push(`/agent-deposits?agentId=${agent.id}`)
                         }
                         onEdit={() => onEditAgent(agent)}
                       />

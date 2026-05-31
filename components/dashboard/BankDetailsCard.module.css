@@ -1,0 +1,95 @@
+.header {
+  display: flex;
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.7rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--kayd-sand-shadow);
+  font-weight: 600;
+}
+
+.editBtn {
+  color: #8a7e6c;
+  height: 28px;
+  width: 28px;
+}
+
+.editBtn:hover {
+  color: var(--kayd-night);
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.fieldRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.9rem;
+  gap: 1rem;
+}
+
+.fieldLabel {
+  color: #6b6b6b;
+  font-size: 0.85rem;
+}
+
+.fieldValue {
+  font-weight: 500;
+  color: var(--kayd-night-shadow);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.notConfigured {
+  font-size: 0.875rem;
+  color: #8a7e6c;
+}
+
+.editFields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.editField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.editField label {
+  font-size: 0.8rem;
+  color: #6b6b6b;
+}
+
+.editActions {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+
+.input {
+  height: 36px;
+}
+
+.error {
+  font-size: 0.8rem;
+  color: #8a1f1f;
+  margin-top: 0.4rem;
+}
+
+.success {
+  font-size: 0.8rem;
+  color: #1e6b3c;
+  margin-top: 0.4rem;
+}

@@ -15,7 +15,7 @@ const TOUR_STEPS: DriveStep[] = [
     popover: {
       title: "Set your daily rate",
       description:
-        "Before recording any settlements, set today's GBP to USD exchange rate. Everything converts from this.",
+        "Before recording any agent deposits, set today's GBP to USD exchange rate. Everything converts from this.",
     },
   },
   {
@@ -27,9 +27,9 @@ const TOUR_STEPS: DriveStep[] = [
     },
   },
   {
-    element: '[data-tour="nav-settlement"]',
+    element: '[data-tour="nav-agent-deposits"]',
     popover: {
-      title: "Record a settlement",
+      title: "Record an agent deposit",
       description:
         "When an agent delivers cash, record it here. The system converts at today's rate and updates their balance automatically.",
     },
@@ -47,7 +47,7 @@ const TOUR_STEPS: DriveStep[] = [
     popover: {
       title: "Almost there",
       description:
-        "Before you can record settlements, set today's GBP → USD exchange rate. Let's do that now.",
+        "Before you can record agent deposits, set today's GBP → USD exchange rate. Let's do that now.",
       doneBtnText: "Set exchange rate →",
     },
   },

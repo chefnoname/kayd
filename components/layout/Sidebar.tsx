@@ -30,10 +30,10 @@ const nav: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/agents", label: "Agents", icon: Users, tourId: "nav-agents" },
   {
-    href: "/settlement",
-    label: "Settlement",
+    href: "/agent-deposits",
+    label: "Agent Deposits",
     icon: Banknote,
-    tourId: "nav-settlement",
+    tourId: "nav-agent-deposits",
   },
   { href: "/deposits", label: "Deposits", icon: PiggyBank },
   { href: "/locations", label: "Locations", icon: MapPin },

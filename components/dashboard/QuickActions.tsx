@@ -22,10 +22,10 @@ export function QuickActions() {
       <CardContent className={styles.actions}>
         <Button
           className={styles.action}
-          onClick={() => router.push("/settlement")}
+          onClick={() => router.push("/agent-deposits")}
         >
           <Banknote size={16} />
-          <span>Record Settlement</span>
+          <span>Record Agent Deposit</span>
         </Button>
         <Button
           variant="outline"

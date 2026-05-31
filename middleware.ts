@@ -135,6 +135,14 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
+  // Redirect old /settlement path to /agent-deposits
+  if (pathname === "/settlement" || pathname.startsWith("/settlement/")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/agent-deposits";
+    // Preserve query params (e.g. ?agentId=...)
+    return NextResponse.redirect(url);
+  }
+
   // Verified dashboard users without today's rate → /setup
   const isSetup = pathname.startsWith("/setup");
   const today = new Date().toISOString().slice(0, 10);

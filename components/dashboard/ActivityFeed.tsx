@@ -66,7 +66,7 @@ export function ActivityFeed({ rows, loading }: ActivityFeedProps) {
             {!loading && rows.length === 0 && (
               <TableRow>
                 <TableCell colSpan={5} className={styles.muted}>
-                  No settlements recorded yet today
+                  No agent deposits recorded yet today
                 </TableCell>
               </TableRow>
             )}

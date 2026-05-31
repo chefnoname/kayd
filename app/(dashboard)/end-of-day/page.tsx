@@ -47,7 +47,7 @@ export default function EndOfDayPage() {
     const [
       { data: balanceRow, error: balanceErr },
       { data: rateRow },
-      { data: settlementRows },
+      { data: depositRows },
       { data: agentRows },
     ] = await Promise.all([
       supabase
@@ -65,7 +65,7 @@ export default function EndOfDayPage() {
         .eq("date", today)
         .maybeSingle(),
       supabase
-        .from("settlements")
+        .from("agent_deposits")
         .select("amount_received_gbp")
         .eq("organisation_id", orgId)
         .eq("date", today),
@@ -85,7 +85,7 @@ export default function EndOfDayPage() {
     const todayRate = rateRow ? Number(rateRow.gbp_to_usd) : null;
     setRate(todayRate);
 
-    const collections = (settlementRows ?? []).reduce(
+    const collections = (depositRows ?? []).reduce(
       (sum: number, r: any) => sum + Number(r.amount_received_gbp),
       0
     );

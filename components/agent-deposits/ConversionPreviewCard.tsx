@@ -7,12 +7,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { calculateSettlement, formatCurrency } from "@/lib/utils";
-import type { SettlementAgent } from "./types";
+import { calculateAgentDeposit, formatCurrency } from "@/lib/utils";
+import type { AgentDepositAgent } from "./types";
 import styles from "./ConversionPreviewCard.module.css";
 
 interface ConversionPreviewCardProps {
-  agent: SettlementAgent | null;
+  agent: AgentDepositAgent | null;
   receivedGBP: number;
   rate: number | null;
 }
@@ -31,7 +31,7 @@ export function ConversionPreviewCard({
         <CardContent>
           <p className={styles.muted}>
             Today's GBP→USD rate has not been set. Set it in Daily Setup before
-            recording a settlement.
+            recording an agent deposit.
           </p>
         </CardContent>
       </Card>
@@ -39,7 +39,7 @@ export function ConversionPreviewCard({
   }
 
   const balance = agent?.balance_usd ?? 0;
-  const calc = calculateSettlement(balance, receivedGBP || 0, rate);
+  const calc = calculateAgentDeposit(balance, receivedGBP || 0, rate);
 
   const overpaymentBy =
     calc.isOverpayment ? Math.abs(calc.newBalance) : 0;
@@ -71,7 +71,7 @@ export function ConversionPreviewCard({
           strong
         />
 
-        {receivedGBP > 0 && calc.isFullSettlement && (
+        {receivedGBP > 0 && calc.isFullDeposit && (
           <div className={`${styles.alert} ${styles.success}`}>
             <CheckCircle2 size={16} />
             <span>This settles the account in full</span>

@@ -10,13 +10,13 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
-import { calculateSettlement, formatCurrency } from "@/lib/utils";
-import type { SettlementAgent } from "./types";
-import styles from "./SettlementConfirmModal.module.css";
+import { calculateAgentDeposit, formatCurrency } from "@/lib/utils";
+import type { AgentDepositAgent } from "./types";
+import styles from "./AgentDepositConfirmModal.module.css";
 
-interface SettlementConfirmModalProps {
+interface AgentDepositConfirmModalProps {
   open: boolean;
-  agent: SettlementAgent | null;
+  agent: AgentDepositAgent | null;
   receivedGBP: number;
   rate: number;
   receiptNumber: string;
@@ -26,7 +26,7 @@ interface SettlementConfirmModalProps {
   onCancel: () => void;
 }
 
-export function SettlementConfirmModal({
+export function AgentDepositConfirmModal({
   open,
   agent,
   receivedGBP,
@@ -36,17 +36,17 @@ export function SettlementConfirmModal({
   submitting,
   onConfirm,
   onCancel,
-}: SettlementConfirmModalProps) {
+}: AgentDepositConfirmModalProps) {
   if (!agent) return null;
 
-  const calc = calculateSettlement(agent.balance_usd, receivedGBP, rate);
+  const calc = calculateAgentDeposit(agent.balance_usd, receivedGBP, rate);
   const overpaymentBy = calc.isOverpayment ? Math.abs(calc.newBalance) : 0;
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onCancel()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Confirm settlement</DialogTitle>
+          <DialogTitle>Confirm agent deposit</DialogTitle>
           <DialogDescription>
             Review before writing this to the ledger.
           </DialogDescription>
@@ -74,7 +74,7 @@ export function SettlementConfirmModal({
           <Row label="Receipt no." value={receiptNumber} />
           {notes && <Row label="Notes" value={notes} />}
 
-          {calc.isFullSettlement && (
+          {calc.isFullDeposit && (
             <div className={`${styles.alert} ${styles.success}`}>
               <CheckCircle2 size={16} />
               <span>This settles the account in full</span>

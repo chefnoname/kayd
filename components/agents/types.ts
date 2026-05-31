@@ -4,11 +4,11 @@ export interface Agent {
   city: string;
   phone: string | null;
   balance_usd: number;
-  last_settlement: string | null;
+  last_agent_deposit: string | null;
   status: "active" | "inactive";
 }
 
-export interface SettlementRow {
+export interface AgentDepositRow {
   id: string;
   agent_id: string;
   date: string;

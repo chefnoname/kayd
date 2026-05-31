@@ -50,7 +50,7 @@ export default function AgentsPage() {
       supabase
         .from("agents")
         .select(
-          "id, name, city, phone, balance_usd, last_settlement, status"
+          "id, name, city, phone, balance_usd, last_agent_deposit, status"
         )
         .eq("organisation_id", orgId)
         .order("name", { ascending: true }),
@@ -69,7 +69,7 @@ export default function AgentsPage() {
         city: r.city,
         phone: r.phone,
         balance_usd: Number(r.balance_usd),
-        last_settlement: r.last_settlement,
+        last_agent_deposit: r.last_agent_deposit,
         status: r.status,
       }))
     );
@@ -91,7 +91,7 @@ export default function AgentsPage() {
         case "in_debt":
           return a.status === "active" && a.balance_usd > 0;
         case "settled_today":
-          return a.last_settlement === today;
+          return a.last_agent_deposit === today;
         case "inactive":
           return a.status === "inactive";
         case "all":
@@ -110,7 +110,7 @@ export default function AgentsPage() {
   );
 
   const settledTodayCount = useMemo(
-    () => agents.filter((a) => a.last_settlement === today).length,
+    () => agents.filter((a) => a.last_agent_deposit === today).length,
     [agents, today]
   );
 

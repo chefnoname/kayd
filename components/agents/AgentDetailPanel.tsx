@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatLongDate } from "@/lib/utils";
-import type { Agent, SettlementRow } from "./types";
+import type { Agent, AgentDepositRow } from "./types";
 import styles from "./AgentDetailPanel.module.css";
 
 interface AgentDetailPanelProps {
@@ -27,7 +27,7 @@ export function AgentDetailPanel({
   onSettle,
   onEdit,
 }: AgentDetailPanelProps) {
-  const [rows, setRows] = useState<SettlementRow[] | null>(null);
+  const [rows, setRows] = useState<AgentDepositRow[] | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -40,7 +40,7 @@ export function AgentDetailPanel({
         return;
       }
       const { data } = await supabase
-        .from("settlements")
+        .from("agent_deposits")
         .select(
           "id, agent_id, date, amount_received_gbp, amount_usd_equivalent, receipt_number, recorded_by, staff_users:recorded_by ( name )"
         )
@@ -51,7 +51,7 @@ export function AgentDetailPanel({
 
       if (cancelled) return;
 
-      const mapped: SettlementRow[] = (data ?? []).map((r: any) => ({
+      const mapped: AgentDepositRow[] = (data ?? []).map((r: any) => ({
         id: r.id,
         agent_id: r.agent_id,
         date: r.date,
@@ -95,17 +95,17 @@ export function AgentDetailPanel({
           </div>
         </div>
         <div>
-          <div className={styles.label}>Last settlement</div>
+          <div className={styles.label}>Last agent deposit</div>
           <div className={styles.value}>
-            {agent.last_settlement
-              ? formatLongDate(new Date(agent.last_settlement))
+            {agent.last_agent_deposit
+              ? formatLongDate(new Date(agent.last_agent_deposit))
               : "Never"}
           </div>
         </div>
       </div>
 
       <div className={styles.section}>
-        <div className={styles.sectionTitle}>Recent settlements</div>
+        <div className={styles.sectionTitle}>Recent agent deposits</div>
         <Table>
           <TableHeader>
             <TableRow>
@@ -127,7 +127,7 @@ export function AgentDetailPanel({
             {rows && rows.length === 0 && (
               <TableRow>
                 <TableCell colSpan={5} className={styles.muted}>
-                  No settlements recorded yet.
+                  No agent deposits recorded yet.
                 </TableCell>
               </TableRow>
             )}
@@ -149,7 +149,7 @@ export function AgentDetailPanel({
       </div>
 
       <div className={styles.actions}>
-        <Button onClick={onSettle}>Record Settlement</Button>
+        <Button onClick={onSettle}>Record Agent Deposit</Button>
         <Button variant="outline" onClick={onEdit}>
           Edit Agent
         </Button>

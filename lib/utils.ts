@@ -89,35 +89,35 @@ export function formatLongDate(d: Date = new Date()): string {
   }).format(d);
 }
 
-export interface SettlementCalculation {
+export interface AgentDepositCalculation {
   usdEquivalent: number;
   newBalance: number;
   isOverpayment: boolean;
-  isFullSettlement: boolean;
+  isFullDeposit: boolean;
 }
 
 /**
- * Core settlement maths. All values rounded to 2 dp.
+ * Core agent-deposit maths. All values rounded to 2 dp.
  *
  * - `usdEquivalent` = `receivedGBP * rate`
  * - `newBalance`    = `agentBalanceUSD - usdEquivalent` (may go negative on overpayment)
  * - `isOverpayment` = payment strictly exceeds the balance
- * - `isFullSettlement` = payment exactly clears the balance (within 1¢)
+ * - `isFullDeposit` = payment exactly clears the balance (within 1¢)
  */
-export function calculateSettlement(
+export function calculateAgentDeposit(
   agentBalanceUSD: number,
   receivedGBP: number,
   rate: number
-): SettlementCalculation {
+): AgentDepositCalculation {
   const usdEquivalent = convertGBPtoUSD(receivedGBP, rate);
   const newBalance = Math.round((agentBalanceUSD - usdEquivalent) * 100) / 100;
-  const isFullSettlement = Math.abs(newBalance) < 0.005;
+  const isFullDeposit = Math.abs(newBalance) < 0.005;
   const isOverpayment = newBalance < -0.005;
   return {
     usdEquivalent,
     newBalance,
     isOverpayment,
-    isFullSettlement,
+    isFullDeposit,
   };
 }
 

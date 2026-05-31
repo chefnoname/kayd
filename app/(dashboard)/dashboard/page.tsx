@@ -13,6 +13,8 @@ import {
   type ActivityRow,
 } from "@/components/dashboard/ActivityFeed";
 import { QuickActions } from "@/components/dashboard/QuickActions";
+import { BankDetailsCard } from "@/components/dashboard/BankDetailsCard";
+import { CollectionMetrics } from "@/components/dashboard/CollectionMetrics";
 import type { DailyBalance } from "@/components/dashboard/types";
 import { formatLongDate, toDateString, usdToGbp } from "@/lib/utils";
 import styles from "./dashboard.module.css";
@@ -32,13 +34,49 @@ export default function DashboardPage() {
   const [agentDebtGBP, setAgentDebtGBP] = useState<number>(0);
   const [activity, setActivity] = useState<ActivityRow[]>([]);
   const [loadingActivity, setLoadingActivity] = useState(true);
+  const [orgId, setOrgId] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string>("staff");
+  const [bankDetails, setBankDetails] = useState<{
+    bank_name: string | null;
+    sort_code: string | null;
+    account_number: string | null;
+  }>({ bank_name: null, sort_code: null, account_number: null });
 
   const load = useCallback(async () => {
     const supabase = createClient();
-    const orgId = await getOrganisationId();
-    if (!orgId) {
+    const fetchedOrgId = await getOrganisationId();
+    if (!fetchedOrgId) {
       setLoadingActivity(false);
       return;
+    }
+    const orgId = fetchedOrgId;
+    setOrgId(orgId);
+
+    // Fetch user role
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      const { data: staffRow } = await supabase
+        .from("staff_users")
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (staffRow) setUserRole(staffRow.role);
+    }
+
+    // Fetch bank details
+    const { data: orgRow } = await supabase
+      .from("organisations")
+      .select("bank_name, sort_code, account_number")
+      .eq("id", orgId)
+      .maybeSingle();
+    if (orgRow) {
+      setBankDetails({
+        bank_name: orgRow.bank_name,
+        sort_code: orgRow.sort_code,
+        account_number: orgRow.account_number,
+      });
     }
 
     // Today's rate
@@ -116,10 +154,10 @@ export default function DashboardPage() {
     );
     setAgentDebtGBP(todayRate ? usdToGbp(totalDebtUSD, todayRate) : 0);
 
-    // Today's activity — last 10 settlements
+    // Today's activity — last 10 agent deposits
     setLoadingActivity(true);
-    const { data: settlementRows } = await supabase
-      .from("settlements")
+    const { data: depositRows } = await supabase
+      .from("agent_deposits")
       .select(
         "id, amount_received_gbp, amount_usd_equivalent, receipt_number, created_at, agents:agent_id ( name )"
       )
@@ -129,7 +167,7 @@ export default function DashboardPage() {
       .limit(10);
 
     setActivity(
-      (settlementRows ?? []).map((r: any) => ({
+      (depositRows ?? []).map((r: any) => ({
         id: r.id,
         agent_name: r.agents?.name ?? "Unknown",
         amount_received_gbp: Number(r.amount_received_gbp),
@@ -210,6 +248,19 @@ export default function DashboardPage() {
           }
         />
       )}
+
+      {orgId && (
+        <BankDetailsCard
+          bankName={bankDetails.bank_name}
+          sortCode={bankDetails.sort_code}
+          accountNumber={bankDetails.account_number}
+          editable={userRole === "admin"}
+          orgId={orgId}
+          onSaved={() => load()}
+        />
+      )}
+
+      {orgId && <CollectionMetrics orgId={orgId} />}
 
       <div className={styles.bottomGrid}>
         <ActivityFeed rows={activity} loading={loadingActivity} />
