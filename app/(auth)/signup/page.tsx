@@ -83,6 +83,15 @@ function SignupForm() {
                     />
                 </CardHeader>
                 <CardContent>
+                    {prefillEmail && (
+                        <Alert style={{ marginBottom: 16 }}>
+                            <AlertDescription>
+                                We couldn&apos;t find an account with that email.
+                                <br />
+                                Create one below to get started.
+                            </AlertDescription>
+                        </Alert>
+                    )}
                     <form onSubmit={onSubmit} className={styles.form}>
                         <div className={styles.field}>
                             <Label htmlFor="name">Full name</Label>
