@@ -10,7 +10,6 @@ import {
   PiggyBank,
   MapPin,
   CalendarCheck,
-  Settings,
   Shield,
   UsersRound,
   UserCircle,
@@ -43,7 +42,6 @@ const nav: NavItem[] = [
     icon: CalendarCheck,
     tourId: "nav-end-of-day",
   },
-  { href: "/setup", label: "Setup", icon: Settings },
   { href: "/admin", label: "Admin", icon: Shield, roles: ["superadmin"] },
   {
     href: "/admin/team",

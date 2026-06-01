@@ -8,7 +8,7 @@ import { createServerClient } from "@supabase/ssr";
  *  - Authenticated but email not verified → /verify-email
  *  - /admin (root) → superadmin only
  *  - /admin/team → admin or superadmin (staff → /dashboard?denied=team)
- *  - Verified user without today's rate → /setup
+ *  - Redirect old /settlement → /agent-deposits
  */
 const PUBLIC_PATHS = [
   "/login",
@@ -140,26 +140,6 @@ export async function middleware(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/agent-deposits";
     // Preserve query params (e.g. ?agentId=...)
-    return NextResponse.redirect(url);
-  }
-
-  // Verified dashboard users without today's rate → /setup
-  const isSetup = pathname.startsWith("/setup");
-  const today = new Date().toISOString().slice(0, 10);
-
-  // Without an organisation we can't look up a rate; skip the redirect.
-  if (!orgId) return response;
-
-  const { data: rate } = await supabase
-    .from("daily_rates")
-    .select("id")
-    .eq("organisation_id", orgId)
-    .eq("date", today)
-    .maybeSingle();
-
-  if (!rate && !isSetup) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/setup";
     return NextResponse.redirect(url);
   }
 

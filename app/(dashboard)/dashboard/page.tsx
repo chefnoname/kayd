@@ -65,17 +65,14 @@ export default function DashboardPage() {
       if (staffRow) setUserRole(staffRow.role);
     }
 
-    // Fetch bank details
-    const { data: orgRow } = await supabase
-      .from("organisations")
-      .select("bank_name, sort_code, account_number")
-      .eq("id", orgId)
-      .maybeSingle();
-    if (orgRow) {
+    // Fetch bank details via the server route (uses admin client, bypasses RLS)
+    const bankRes = await fetch("/api/org/bank-details").catch(() => null);
+    if (bankRes?.ok) {
+      const bankData = await bankRes.json();
       setBankDetails({
-        bank_name: orgRow.bank_name,
-        sort_code: orgRow.sort_code,
-        account_number: orgRow.account_number,
+        bank_name: bankData.bank_name,
+        sort_code: bankData.sort_code,
+        account_number: bankData.account_number,
       });
     }
 

@@ -52,7 +52,7 @@ export function AppHeader() {
   }, [supabase]);
 
   // Fetch today's rate on mount AND whenever the tab regains focus,
-  // so the badge never shows a stale rate after visiting /setup.
+  // so the badge never shows a stale rate after navigating away.
   useEffect(() => {
     let cancelled = false;
 

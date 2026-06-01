@@ -47,8 +47,8 @@ const TOUR_STEPS: DriveStep[] = [
     popover: {
       title: "Almost there",
       description:
-        "Before you can record agent deposits, set today's GBP → USD exchange rate. Let's do that now.",
-      doneBtnText: "Set exchange rate →",
+        "Use these shortcuts to quickly navigate to your most common tasks.",
+      doneBtnText: "Done",
     },
   },
 ];
@@ -71,7 +71,7 @@ async function markTourComplete(): Promise<void> {
 
 /**
  * Main onboarding tour (dashboard). On completion, marks has_seen_tour=true
- * and navigates to /setup?onboarding=1 so the rate-input tooltip fires there.
+ * and returns to the dashboard.
  */
 export function startOnboardingTour(): void {
   if (typeof window === "undefined") return;
@@ -94,30 +94,3 @@ export function startOnboardingTour(): void {
   tour.drive();
 }
 
-/**
- * Single-step setup tooltip. Called on /setup when ?onboarding=1 is present.
- * Points at the rate input and explains what to do — no further navigation.
- */
-export function startSetupTour(): void {
-  if (typeof window === "undefined") return;
-
-  const setupTour = driver({
-    allowClose: true,
-    overlayClickBehavior: "close",
-    smoothScroll: true,
-    popoverClass: "kayd-tour-popover",
-    steps: [
-      {
-        element: '[data-tour="rate-input"]',
-        popover: {
-          title: "Set today's exchange rate",
-          description:
-            "Enter today's GBP → USD rate to get started. Everything in the system converts from this number.",
-          doneBtnText: "Got it",
-        },
-      },
-    ],
-  });
-
-  setupTour.drive();
-}

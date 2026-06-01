@@ -1,0 +1,31 @@
+name: Fetch Daily Exchange Rates
+
+on:
+  schedule:
+    # 07:00 UTC Monday–Friday
+    - cron: "0 7 * * 1-5"
+  workflow_dispatch:
+
+jobs:
+  fetch-rates:
+    name: Push today's USD/GBP rate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call rate fetch endpoint
+        run: |
+          response=$(curl --silent --write-out "\n%{http_code}" \
+            --max-time 30 \
+            -X POST "${{ secrets.APP_URL }}/api/rates/fetch" \
+            -H "Authorization: Bearer ${{ secrets.RATES_API_SECRET }}" \
+            -H "Content-Type: application/json")
+
+          body=$(echo "$response" | head -n -1)
+          status=$(echo "$response" | tail -n 1)
+
+          echo "Status: $status"
+          echo "Response: $body"
+
+          if [ "$status" -lt 200 ] || [ "$status" -ge 300 ]; then
+            echo "::error::Rate fetch failed with HTTP $status"
+            exit 1
+          fi
