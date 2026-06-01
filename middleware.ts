@@ -3,9 +3,8 @@ import { createServerClient } from "@supabase/ssr";
 
 /**
  * Auth middleware:
- *  - Public routes: /login, /signup, /verify-email, /set-password, /auth/*
+ *  - Public routes: /login, /signup, /set-password, /auth/*
  *  - Unauthenticated → /login
- *  - Authenticated but email not verified → /verify-email
  *  - /admin (root) → superadmin only
  *  - /admin/team → admin or superadmin (staff → /dashboard?denied=team)
  *  - Redirect old /settlement → /agent-deposits
@@ -13,7 +12,6 @@ import { createServerClient } from "@supabase/ssr";
 const PUBLIC_PATHS = [
   "/login",
   "/signup",
-  "/verify-email",
   "/set-password",
   "/auth",
 ];
@@ -76,23 +74,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  const emailConfirmed = Boolean(user.email_confirmed_at);
-
-  // Signed in but email not verified → /verify-email holding page.
-  // /set-password and /auth/* must remain reachable so invited users can
-  // complete their flow.
-  if (!emailConfirmed) {
-    const allowedUnverified =
-      pathname.startsWith("/verify-email") ||
-      pathname.startsWith("/set-password") ||
-      pathname.startsWith("/auth");
-    if (allowedUnverified) return response;
-    const url = request.nextUrl.clone();
-    url.pathname = "/verify-email";
-    return NextResponse.redirect(url);
-  }
-
-  // Authenticated + verified → bounce off auth-only pages
+  // Authenticated → bounce off auth-only pages
   if (
     pathname.startsWith("/login") ||
     pathname.startsWith("/signup") ||

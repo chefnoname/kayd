@@ -71,12 +71,21 @@ export function AppHeader() {
 
     fetchRate();
 
+    // Re-fetch rate once the auth session is established (handles initial load
+    // where the session may not be ready when the effect first fires).
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN" || event === "INITIAL_SESSION") {
+        fetchRate();
+      }
+    });
+
     function onVisible() {
       if (document.visibilityState === "visible") fetchRate();
     }
     document.addEventListener("visibilitychange", onVisible);
     return () => {
       cancelled = true;
+      subscription.unsubscribe();
       document.removeEventListener("visibilitychange", onVisible);
     };
   }, [supabase]);

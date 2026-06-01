@@ -68,7 +68,7 @@ export function AgentTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Agent Name</TableHead>
+            <TableHead>Agent Code</TableHead>
             <TableHead>City</TableHead>
             <TableHead>Owes (USD)</TableHead>
             <TableHead>GBP Equivalent</TableHead>

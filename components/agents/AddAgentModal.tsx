@@ -103,7 +103,7 @@ export function AddAgentModal({
 
         <form onSubmit={onSubmit} className={styles.form}>
           <div className={styles.field}>
-            <Label htmlFor="agent-name">Full Name</Label>
+            <Label htmlFor="agent-name">Agent Code</Label>
             <Input
               id="agent-name"
               value={name}

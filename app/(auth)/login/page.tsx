@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
@@ -12,11 +12,12 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import styles from "./login.module.css";
 import Image from "next/image";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(searchParams.get("email") ?? "");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -62,17 +63,11 @@ export default function LoginPage() {
 
     if (signInError) {
       const msg = signInError.message.toLowerCase();
-      if (
-        msg.includes("email not confirmed") ||
-        msg.includes("not confirmed") ||
-        msg.includes("email_not_confirmed")
-      ) {
-        setError(
-          "Please verify your email before logging in. Check your inbox for the confirmation link."
-        );
-      } else {
-        setError(signInError.message);
+      if (msg.includes("invalid login credentials")) {
+        router.push(`/signup?email=${encodeURIComponent(email)}`);
+        return;
       }
+      setError(signInError.message);
       return;
     }
 
@@ -92,7 +87,6 @@ export default function LoginPage() {
     <div className={styles.shell}>
       <Card className={styles.card}>
         <CardHeader>
-          {/* <div className={styles.brand}>Kayd</div> */}
           <Image
             src="/kayd.png"
             alt="Kayd logo"
@@ -100,7 +94,6 @@ export default function LoginPage() {
             height={0}
             className={styles.logo}
           />
-          {/* <CardTitle>Sign in</CardTitle> */}
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className={styles.form}>
@@ -139,14 +132,21 @@ export default function LoginPage() {
 
             <p style={{ fontSize: 14, textAlign: "center" }}>
               Don&apos;t have an account?{" "}
-              <Link href="/signup"><strong>
-                Create one
-              </strong>
+              <Link href={`/signup${email ? `?email=${encodeURIComponent(email)}` : ""}`}>
+                <strong>Create one</strong>
               </Link>
             </p>
           </form>
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   );
 }

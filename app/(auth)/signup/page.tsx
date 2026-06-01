@@ -1,25 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Image from "next/image";
 import styles from "../login/login.module.css";
 
-export default function SignupPage() {
+function SignupForm() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
     const supabase = createClient();
 
+    const prefillEmail = searchParams.get("email") ?? "";
+
     const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
+    const [email, setEmail] = useState(prefillEmail);
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-    const [sent, setSent] = useState(false);
+
+    const nameRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (prefillEmail) {
+            nameRef.current?.focus();
+        }
+    }, [prefillEmail]);
 
     async function onSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -54,40 +66,8 @@ export default function SignupPage() {
             return;
         }
 
-        setSent(true);
-    }
-
-    if (sent) {
-        return (
-            <div className={styles.shell}>
-                <Card className={styles.card}>
-                    <CardHeader>
-                        <Image
-                            src="/kayd.png"
-                            alt="Kayd logo"
-                            width={250}
-                            height={0}
-                            className={styles.logo}
-                        />
-                        <CardTitle>Check your email</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p>
-                            We&apos;ve sent a confirmation link to{" "}
-                            <strong>{email}</strong>. Click it to verify your account, then
-                            sign in.
-                        </p>
-                        <div style={{ marginTop: 16 }}>
-                            <Link href="/login">
-                                <strong>
-                                    Back to sign in
-                                </strong>
-                            </Link>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-        );
+        router.push("/dashboard?verify_email=true");
+        router.refresh();
     }
 
     return (
@@ -108,6 +88,7 @@ export default function SignupPage() {
                             <Label htmlFor="name">Full name</Label>
                             <Input
                                 id="name"
+                                ref={nameRef}
                                 required
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
@@ -148,15 +129,22 @@ export default function SignupPage() {
                         </Button>
 
                         <p style={{ fontSize: 14, textAlign: "center" }}>
-                            Already have an account? <Link href="/login">
-                                <strong>
-                                    Sign in
-                                </strong>
+                            Already have an account?{" "}
+                            <Link href={`/login${email ? `?email=${encodeURIComponent(email)}` : ""}`}>
+                                <strong>Sign in</strong>
                             </Link>
                         </p>
                     </form>
                 </CardContent>
             </Card>
         </div>
+    );
+}
+
+export default function SignupPage() {
+    return (
+        <Suspense fallback={null}>
+            <SignupForm />
+        </Suspense>
     );
 }
