@@ -246,24 +246,24 @@ export default function DashboardPage() {
           onSaveCashInSafe={(next) =>
             patchBalance({ cash_in_safe_gbp: next })
           }
-        />
-      )}
-
-      {orgId && (
-        <BankDetailsCard
-          bankName={bankDetails.bank_name}
-          sortCode={bankDetails.sort_code}
-          accountNumber={bankDetails.account_number}
-          editable={userRole === "admin"}
-          orgId={orgId}
-          onSaved={(data) =>
-            setBankDetails({
-              bank_name: data.bank_name,
-              sort_code: data.sort_code,
-              account_number: data.account_number,
-            })
-          }
-        />
+        >
+          {orgId && (
+            <BankDetailsCard
+              bankName={bankDetails.bank_name}
+              sortCode={bankDetails.sort_code}
+              accountNumber={bankDetails.account_number}
+              editable={userRole === "admin"}
+              orgId={orgId}
+              onSaved={(data) =>
+                setBankDetails({
+                  bank_name: data.bank_name,
+                  sort_code: data.sort_code,
+                  account_number: data.account_number,
+                })
+              }
+            />
+          )}
+        </BalanceSummaryRow>
       )}
 
       {orgId && <CollectionMetrics orgId={orgId} />}

@@ -1,14 +1,19 @@
+.card {
+  background: linear-gradient(135deg, var(--kayd-tint-green-start) 0%, var(--kayd-tint-green-end) 100%);
+  border: 1px solid var(--kayd-tint-green-border);
+}
+
 .label {
   font-size: 0.75rem !important;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--kayd-sand-shadow);
+  color: #0f6e56;
   font-weight: 600;
 }
 
 .value {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--kayd-night-shadow);
+  color: #04342c;
   font-variant-numeric: tabular-nums;
 }

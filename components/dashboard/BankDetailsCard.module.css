@@ -1,3 +1,8 @@
+.card {
+  background: linear-gradient(135deg, var(--kayd-tint-blue-start) 0%, var(--kayd-tint-blue-end) 100%);
+  border: 1px solid var(--kayd-tint-blue-border);
+}
+
 .header {
   display: flex;
   flex-direction: row !important;
@@ -10,12 +15,12 @@
   font-size: 0.7rem !important;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--kayd-sand-shadow);
+  color: #185fa5;
   font-weight: 600;
 }
 
 .editBtn {
-  color: #8a7e6c;
+  color: #85b7eb;
   height: 28px;
   width: 28px;
 }
@@ -39,13 +44,13 @@
 }
 
 .fieldLabel {
-  color: #6b6b6b;
+  color: #378add;
   font-size: 0.85rem;
 }
 
 .fieldValue {
   font-weight: 500;
-  color: var(--kayd-night-shadow);
+  color: #042c53;
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
@@ -72,10 +77,25 @@
   color: #6b6b6b;
 }
 
-.editActions {
-  display: flex;
-  gap: 0.4rem;
-  margin-top: 0.25rem;
+.countrySelect {
+  height: 36px;
+  width: 100%;
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius) - 2px);
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-size: 0.875rem;
+  padding: 0 0.75rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.countrySelect:focus {
+  box-shadow: 0 0 0 2px hsl(var(--ring));
+}
+
+.dialogFooter {
+  margin-top: 0.75rem;
 }
 
 .input {
@@ -88,8 +108,4 @@
   margin-top: 0.4rem;
 }
 
-.success {
-  font-size: 0.8rem;
-  color: #1e6b3c;
-  margin-top: 0.4rem;
-}
+

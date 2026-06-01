@@ -4,4 +4,15 @@
   --kayd-sand-shadow: #c89666;
   --kayd-night: #2d545e;
   --kayd-night-shadow: #12343b;
+
+  /* Card tint palette */
+  --kayd-tint-green-start: #e1f5ee;
+  --kayd-tint-green-end: #f0faf5;
+  --kayd-tint-green-border: #9fe1cb;
+  --kayd-tint-blue-start: #e6f1fb;
+  --kayd-tint-blue-end: #f2f7fc;
+  --kayd-tint-blue-border: #b5d4f4;
+  --kayd-tint-amber-start: #faeeda;
+  --kayd-tint-amber-end: #fdf6ec;
+  --kayd-tint-amber-border: #fac775;
 }

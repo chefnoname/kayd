@@ -1,15 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, Pencil, X } from "lucide-react";
+import { Pencil } from "lucide-react";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { formatCurrency } from "@/lib/utils";
 import styles from "./EditableStatCard.module.css";
 
@@ -28,16 +36,25 @@ export function EditableStatCard({
   editable = false,
   onSave,
 }: EditableStatCardProps) {
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(String(value));
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!editing) setDraft(String(value));
-  }, [value, editing]);
+  function openDialog() {
+    setDraft(String(value));
+    setError(null);
+    setDialogOpen(true);
+  }
 
-  async function commit() {
+  function closeDialog() {
+    if (saving) return;
+    setDialogOpen(false);
+    setError(null);
+  }
+
+  async function commit(e: React.FormEvent) {
+    e.preventDefault();
     setError(null);
     const next = Number(draft);
     if (!Number.isFinite(next) || next < 0) {
@@ -48,68 +65,67 @@ export function EditableStatCard({
     setSaving(true);
     try {
       await onSave(next);
-      setEditing(false);
-    } catch (e: any) {
-      setError(e?.message ?? "Save failed.");
+      setDialogOpen(false);
+    } catch (err: any) {
+      setError(err?.message ?? "Save failed.");
     } finally {
       setSaving(false);
     }
   }
 
   return (
-    <Card>
-      <CardHeader className={styles.header}>
-        <CardTitle className={styles.label}>{label}</CardTitle>
-        {editable && !editing && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setEditing(true)}
-            aria-label={`Edit ${label}`}
-            className={styles.editBtn}
-          >
-            <Pencil size={14} />
-          </Button>
-        )}
-      </CardHeader>
-      <CardContent>
-        {editing ? (
-          <div className={styles.editRow}>
-            <Input
-              type="number"
-              min="0"
-              step="0.01"
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              autoFocus
-              className={styles.input}
-            />
+    <>
+      <Card className={styles.card}>
+        <CardHeader className={styles.header}>
+          <CardTitle className={styles.label}>{label}</CardTitle>
+          {editable && (
             <Button
+              variant="ghost"
               size="icon"
-              onClick={commit}
-              disabled={saving}
-              aria-label="Save"
+              onClick={openDialog}
+              aria-label={`Edit ${label}`}
+              className={styles.editBtn}
             >
-              <Check size={14} />
+              <Pencil size={14} />
             </Button>
-            <Button
-              size="icon"
-              variant="outline"
-              onClick={() => {
-                setEditing(false);
-                setError(null);
-              }}
-              disabled={saving}
-              aria-label="Cancel"
-            >
-              <X size={14} />
-            </Button>
-          </div>
-        ) : (
+          )}
+        </CardHeader>
+        <CardContent>
           <div className={styles.value}>{formatCurrency(value, currency)}</div>
-        )}
-        {error && <div className={styles.error}>{error}</div>}
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      <Dialog open={dialogOpen} onOpenChange={closeDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit {label}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={commit}>
+            <div className={styles.dialogField}>
+              <Label htmlFor={`edit-${label}`}>{label} ({currency})</Label>
+              <Input
+                id={`edit-${label}`}
+                type="number"
+                min="0"
+                step="0.01"
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                autoFocus
+                className={styles.input}
+              />
+              {error && <div className={styles.error}>{error}</div>}
+            </div>
+            <DialogFooter className={styles.dialogFooter}>
+              <Button type="button" variant="outline" onClick={closeDialog} disabled={saving}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={saving}>
+                {saving ? "Saving…" : "Save"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

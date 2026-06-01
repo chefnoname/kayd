@@ -15,7 +15,7 @@ interface StatCardProps {
 
 export function StatCard({ label, displayValue }: StatCardProps) {
   return (
-    <Card>
+    <Card className={styles.card}>
       <CardHeader>
         <CardTitle className={styles.label}>{label}</CardTitle>
       </CardHeader>

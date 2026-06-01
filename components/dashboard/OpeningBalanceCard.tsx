@@ -19,7 +19,7 @@ export function OpeningBalanceCard({
   yesterday,
 }: OpeningBalanceCardProps) {
   return (
-    <Card>
+    <Card className={styles.card}>
       <CardHeader>
         <CardTitle className={styles.label}>
           Opening Balance — carried from {formatLongDate(yesterday)}
