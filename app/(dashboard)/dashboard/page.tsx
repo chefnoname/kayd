@@ -83,7 +83,17 @@ export default function DashboardPage() {
       .eq("organisation_id", orgId)
       .eq("date", today)
       .maybeSingle();
-    const todayRate = rateRow ? Number(rateRow.gbp_to_usd) : null;
+    let todayRate = rateRow ? Number(rateRow.gbp_to_usd) : null;
+
+    // Auto-seed rate for new orgs that joined after today's cron run
+    if (!todayRate) {
+      const seedRes = await fetch("/api/rates/seed", { method: "POST" }).catch(() => null);
+      if (seedRes?.ok) {
+        const seedData = await seedRes.json();
+        todayRate = seedData.gbp_to_usd ?? null;
+      }
+    }
+
     setRate(todayRate);
 
     // Today's DailyBalance — create if missing using yesterday's closing
@@ -106,21 +116,37 @@ export default function DashboardPage() {
 
       const opening = prevRow ? Number(prevRow.closing_gbp) : 0;
 
-      const { data: inserted } = await supabase
+      const { data: upserted } = await supabase
         .from("daily_balances")
-        .insert({
-          organisation_id: orgId,
-          date: today,
-          opening_gbp: opening,
-          cash_in_safe_gbp: opening,
-          closing_gbp: opening,
-        })
+        .upsert(
+          {
+            organisation_id: orgId,
+            date: today,
+            opening_gbp: opening,
+            cash_in_safe_gbp: opening,
+            closing_gbp: opening,
+          },
+          { onConflict: "organisation_id,date", ignoreDuplicates: true }
+        )
         .select(
           "id, date, opening_gbp, system_limit_usd, cash_in_safe_gbp, total_agent_debt_gbp, collections_today_gbp, closing_gbp, is_closed, discrepancy"
         )
-        .single();
+        .maybeSingle();
 
-      balanceRow = inserted ?? null;
+      // If ignoreDuplicates suppressed the row (already existed), fetch it
+      if (upserted) {
+        balanceRow = upserted;
+      } else {
+        const { data: existing } = await supabase
+          .from("daily_balances")
+          .select(
+            "id, date, opening_gbp, system_limit_usd, cash_in_safe_gbp, total_agent_debt_gbp, collections_today_gbp, closing_gbp, is_closed, discrepancy"
+          )
+          .eq("organisation_id", orgId)
+          .eq("date", today)
+          .maybeSingle();
+        balanceRow = existing ?? null;
+      }
     }
 
     if (balanceRow) {
