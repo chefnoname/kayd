@@ -117,6 +117,8 @@ export function AddLocationModal({
               step="0.01"
               value={cash}
               onChange={(e) => setCash(e.target.value)}
+              onFocus={() => { if (cash === "0") setCash(""); }}
+              onBlur={() => { if (cash === "") setCash("0"); }}
               required
             />
           </div>
