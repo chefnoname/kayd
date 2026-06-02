@@ -1,0 +1,20 @@
+# Kayd App — Cline Project Rules
+
+Project: Kayd # update with your actual app description
+Stack: React Native / Next.js / Node # update to match your actual stack
+Styling: Tailwind / NativeWind # update as needed
+
+# Coding conventions
+- Use TypeScript strictly, no implicit any
+- Functional components only, no class components
+- Keep components small and single-responsibility
+- Always handle loading and error states
+
+# Pipeline reminder
+- Stage 02 (scaffold) and 05 (review): switch model to Claude Sonnet 4.6
+- Stage 03 (implement) and 04 (tests): stay on DeepSeek V3
+
+# Do not
+- Do not modify .env files
+- Do not install new packages without asking first
+- Do not rewrite existing logic unless explicitly asked
