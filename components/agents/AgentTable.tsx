@@ -1,7 +1,5 @@
 "use client";
 
-import { Fragment } from "react";
-import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -12,30 +10,28 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  formatCurrency,
-  formatLongDate,
-  usdToGbp,
-} from "@/lib/utils";
-import { AgentDetailPanel } from "./AgentDetailPanel";
+import { formatCurrency, formatLongDate, usdToGbp } from "@/lib/utils";
 import type { Agent } from "./types";
 import styles from "./AgentTable.module.css";
 
 interface AgentTableProps {
   agents: Agent[];
   todayRate: number | null;
-  expandedId: string | null;
-  onToggleExpand: (id: string) => void;
+  onRowClick: (agent: Agent) => void;
+  sortField: string | null;
+  sortDir: "asc" | "desc";
+  onSortChange: (field: string) => void;
   onEditAgent: (agent: Agent) => void;
   onAddAgent: () => void;
+  onDeleteAgent: (agentId: string) => void;
 }
 
 function balanceVariant(
   balance: number
 ): "default" | "secondary" | "destructive" {
-  if (balance === 0) return "secondary"; // green via custom class
+  if (balance === 0) return "secondary";
   if (balance > 10000) return "destructive";
-  return "default"; // amber via custom class
+  return "default";
 }
 
 function balanceClass(balance: number): string {
@@ -47,13 +43,14 @@ function balanceClass(balance: number): string {
 export function AgentTable({
   agents,
   todayRate,
-  expandedId,
-  onToggleExpand,
+  onRowClick,
+  sortField,
+  sortDir,
+  onSortChange,
   onEditAgent,
   onAddAgent,
+  onDeleteAgent,
 }: AgentTableProps) {
-  const router = useRouter();
-
   if (agents.length === 0) {
     return (
       <div className={styles.empty}>
@@ -69,12 +66,21 @@ export function AgentTable({
         <TableHeader>
           <TableRow>
             <TableHead>Agent Code</TableHead>
-            <TableHead>City</TableHead>
-            <TableHead>Owes (USD)</TableHead>
-            <TableHead>GBP Equivalent</TableHead>
-            <TableHead>Last Agent Deposit</TableHead>
+            <TableHead>Company</TableHead>
+            <TableHead>Owes</TableHead>
+            <TableHead>In GBP</TableHead>
+            <TableHead
+              className={styles.sortableHead}
+              onClick={() => onSortChange("created_at")}
+            >
+              Date Added
+              {sortField === "created_at" && (
+                <span className={styles.sortArrow}>
+                  {sortDir === "asc" ? "▲" : "▼"}
+                </span>
+              )}
+            </TableHead>
             <TableHead>Status</TableHead>
-            <TableHead className={styles.actionHead}>Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -84,75 +90,55 @@ export function AgentTable({
               todayRate && todayRate > 0
                 ? usdToGbp(agent.balance_usd, todayRate)
                 : null;
-            const isExpanded = expandedId === agent.id;
 
             return (
-              <Fragment key={agent.id}>
-                <TableRow
-                  onClick={() => onToggleExpand(agent.id)}
-                  className={`${styles.row} ${inactive ? styles.inactive : ""} ${
-                    isExpanded ? styles.expanded : ""
-                  }`}
-                  data-state={isExpanded ? "selected" : undefined}
-                >
-                  <TableCell className={styles.nameCell}>
-                    {agent.name}
-                  </TableCell>
-                  <TableCell>{agent.city}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={balanceVariant(agent.balance_usd)}
-                      className={balanceClass(agent.balance_usd)}
-                    >
-                      {formatCurrency(agent.balance_usd, "USD")}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {gbpEquivalent !== null
-                      ? formatCurrency(gbpEquivalent, "GBP")
-                      : "—"}
-                  </TableCell>
-                  <TableCell>
-                    {agent.last_agent_deposit
-                      ? formatLongDate(new Date(agent.last_agent_deposit))
-                      : "Never"}
-                  </TableCell>
-                  <TableCell>
-                    <span
-                      className={`${styles.statusPill} ${
-                        inactive ? styles.statusInactive : styles.statusActive
-                      }`}
-                    >
-                      {agent.status}
-                    </span>
-                  </TableCell>
-                  <TableCell className={styles.actionCell}>
-                    <Button
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(`/agent-deposits?agentId=${agent.id}`);
-                      }}
-                    >
-                      Settle
-                    </Button>
-                  </TableCell>
-                </TableRow>
-
-                {isExpanded && (
-                  <TableRow className={styles.detailRow}>
-                    <TableCell colSpan={7} className={styles.detailCell}>
-                      <AgentDetailPanel
-                        agent={agent}
-                        onSettle={() =>
-                          router.push(`/agent-deposits?agentId=${agent.id}`)
-                        }
-                        onEdit={() => onEditAgent(agent)}
-                      />
-                    </TableCell>
-                  </TableRow>
-                )}
-              </Fragment>
+              <TableRow
+                key={agent.id}
+                onClick={() => onRowClick(agent)}
+                className={`${styles.row} ${inactive ? styles.inactive : ""}`}
+              >
+                <TableCell className={styles.nameCell}>{agent.name}</TableCell>
+                <TableCell className={styles.nameCell}>
+                  {agent.collection_company_name || "—"}
+                </TableCell>
+                <TableCell>
+                  <Badge
+                    variant={balanceVariant(agent.balance_usd)}
+                    className={balanceClass(agent.balance_usd)}
+                  >
+                    {formatCurrency(agent.balance_usd, "USD")}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  {gbpEquivalent !== null
+                    ? formatCurrency(gbpEquivalent, "GBP")
+                    : "—"}
+                </TableCell>
+                <TableCell>
+                  {formatLongDate(new Date(agent.created_at))}
+                </TableCell>
+                <TableCell>
+                  <span
+                    className={`${styles.statusPill} ${
+                      inactive ? styles.statusInactive : styles.statusActive
+                    }`}
+                  >
+                    {agent.status}
+                  </span>
+                </TableCell>
+                <TableCell className={styles.actionCell}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRowClick(agent);
+                    }}
+                  >
+                    More Info
+                  </Button>
+                </TableCell>
+              </TableRow>
             );
           })}
         </TableBody>
@@ -160,4 +146,3 @@ export function AgentTable({
     </div>
   );
 }
-

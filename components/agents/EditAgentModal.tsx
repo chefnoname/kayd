@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { createClient } from "@/lib/supabase";
 import { getOrganisationId } from "@/lib/org";
-import type { Agent } from "./types";
+import type { Agent, CollectionCompany } from "./types";
 import styles from "./AgentModal.module.css";
 
 interface EditAgentModalProps {
@@ -36,6 +36,8 @@ export function EditAgentModal({
   const [phone, setPhone] = useState("");
   const [balance, setBalance] = useState("0");
   const [active, setActive] = useState(true);
+  const [collectionCompanyId, setCollectionCompanyId] = useState("");
+  const [companies, setCompanies] = useState<CollectionCompany[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -46,8 +48,24 @@ export function EditAgentModal({
     setPhone(agent.phone ?? "");
     setBalance(String(agent.balance_usd));
     setActive(agent.status === "active");
+    setCollectionCompanyId(agent.collection_company_id ?? "");
     setError(null);
   }, [agent]);
+
+  useEffect(() => {
+    if (!open) return;
+    (async () => {
+      const supabase = createClient();
+      const orgId = await getOrganisationId();
+      if (!orgId) return;
+      const { data } = await supabase
+        .from("collection_companies")
+        .select("id, name")
+        .eq("organisation_id", orgId)
+        .order("name");
+      setCompanies(data ?? []);
+    })();
+  }, [open]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -79,6 +97,7 @@ export function EditAgentModal({
         phone: phone.trim() || null,
         balance_usd: numericBalance,
         status: active ? "active" : "inactive",
+        collection_company_id: collectionCompanyId || null,
         updated_at: new Date().toISOString(),
       })
       .eq("organisation_id", orgId)
@@ -143,6 +162,27 @@ export function EditAgentModal({
               onChange={(e) => setBalance(e.target.value)}
               required
             />
+          </div>
+
+          <div className={styles.field}>
+            <Label htmlFor="edit-company">Collection Company</Label>
+            <select
+              id="edit-company"
+              className={styles.select}
+              value={collectionCompanyId}
+              onChange={(e) => setCollectionCompanyId(e.target.value)}
+            >
+              <option value="">
+                {companies.length === 0
+                  ? "No companies — add one on Agents page"
+                  : "None (optional)"}
+              </option>
+              {companies.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <label className={styles.toggle}>

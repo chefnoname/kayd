@@ -6,15 +6,20 @@
   -webkit-overflow-scrolling: touch;
 }
 
+.tableWrap table {
+  font-size: 0.8125rem;
+}
+
+.tableWrap th,
+.tableWrap td {
+  padding: 0.45rem 0.75rem;
+}
+
 .row {
   cursor: pointer;
 }
 
 .row:hover {
-  background: #fbf2e3;
-}
-
-.expanded {
   background: #fbf2e3;
 }
 
@@ -35,26 +40,27 @@
   text-align: right;
 }
 
-.detailRow {
-  background: #fbf7f0;
+.sortableHead {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.detailRow:hover {
-  background: #fbf7f0;
-}
-
-.detailCell {
-  padding: 0 !important;
+.sortArrow {
+  font-size: 0.7rem;
+  color: var(--kayd-sand-shadow);
 }
 
 /* Status pill */
 .statusPill {
   display: inline-block;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   font-weight: 700;
-  padding: 0.2rem 0.55rem;
+  padding: 0.15rem 0.45rem;
   border-radius: 999px;
 }
 

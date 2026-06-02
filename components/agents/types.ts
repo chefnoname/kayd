@@ -6,6 +6,12 @@ export interface Agent {
   balance_usd: number;
   last_agent_deposit: string | null;
   status: "active" | "inactive";
+  collection_company_id: string | null;
+  collection_company_name?: string | null;
+  created_at: string;
+  deleted_at?: string | null;
+  deleted_by?: string | null;
+  deleted_by_name?: string | null;
 }
 
 export interface AgentDepositRow {
@@ -17,4 +23,9 @@ export interface AgentDepositRow {
   receipt_number: string | null;
   recorded_by: string | null;
   recorded_by_name?: string | null;
+}
+
+export interface CollectionCompany {
+  id: string;
+  name: string;
 }

@@ -60,4 +60,29 @@
 .actions {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.deleteBtn {
+  margin-left: auto;
+  color: #d33;
+  border-color: #d33;
+}
+
+.deleteBtn:hover {
+  background: #fef2f2;
+}
+
+.deleteConfirm {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.deleteWarn {
+  font-size: 0.8rem;
+  color: #d33;
+  font-weight: 500;
 }

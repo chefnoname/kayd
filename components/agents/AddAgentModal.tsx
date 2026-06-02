@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { createClient } from "@/lib/supabase";
 import { getOrganisationId } from "@/lib/org";
+import type { CollectionCompany } from "./types";
 import styles from "./AgentModal.module.css";
 
 interface AddAgentModalProps {
@@ -32,14 +33,32 @@ export function AddAgentModal({
   const [city, setCity] = useState("");
   const [phone, setPhone] = useState("");
   const [balance, setBalance] = useState("0");
+  const [collectionCompanyId, setCollectionCompanyId] = useState("");
+  const [companies, setCompanies] = useState<CollectionCompany[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    (async () => {
+      const supabase = createClient();
+      const orgId = await getOrganisationId();
+      if (!orgId) return;
+      const { data } = await supabase
+        .from("collection_companies")
+        .select("id, name")
+        .eq("organisation_id", orgId)
+        .order("name");
+      setCompanies(data ?? []);
+    })();
+  }, [open]);
 
   function reset() {
     setName("");
     setCity("");
     setPhone("");
     setBalance("0");
+    setCollectionCompanyId("");
     setError(null);
     setSaving(false);
   }
@@ -72,6 +91,7 @@ export function AddAgentModal({
       phone: phone.trim() || null,
       balance_usd: numericBalance,
       status: "active",
+      collection_company_id: collectionCompanyId || null,
     });
     setSaving(false);
 
@@ -141,6 +161,27 @@ export function AddAgentModal({
               onChange={(e) => setBalance(e.target.value)}
               required
             />
+          </div>
+
+          <div className={styles.field}>
+            <Label htmlFor="agent-company">Collection Company</Label>
+            <select
+              id="agent-company"
+              className={styles.select}
+              value={collectionCompanyId}
+              onChange={(e) => setCollectionCompanyId(e.target.value)}
+            >
+              <option value="">
+                {companies.length === 0
+                  ? "No companies — add one below"
+                  : "Select collection company (optional)"}
+              </option>
+              {companies.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           {error && (

@@ -35,3 +35,20 @@
   color: #6b6b6b;
   grid-column: 3;
 }
+
+.select {
+  height: 36px;
+  width: 100%;
+  border: 1px solid hsl(var(--input));
+  border-radius: calc(var(--radius) - 2px);
+  background: transparent;
+  padding: 0 0.75rem;
+  font-size: 0.875rem;
+  color: var(--kayd-night-shadow);
+  appearance: auto;
+}
+
+.select:focus {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}

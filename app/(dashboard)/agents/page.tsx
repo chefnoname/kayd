@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { getOrganisationId } from "@/lib/org";
 import { PageHeader } from "@/components/shared/PageHeader";
@@ -18,21 +19,27 @@ import {
 import { AgentTable } from "@/components/agents/AgentTable";
 import { AddAgentModal } from "@/components/agents/AddAgentModal";
 import { EditAgentModal } from "@/components/agents/EditAgentModal";
+import { AgentDetailModal } from "@/components/agents/AgentDetailModal";
+import { CollectionCompanyList } from "@/components/agents/CollectionCompanyList";
 import type { Agent } from "@/components/agents/types";
 import { formatCurrency, toDateString } from "@/lib/utils";
 import styles from "./agents.module.css";
 
 export default function AgentsPage() {
+  const router = useRouter();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [todayRate, setTodayRate] = useState<number | null>(null);
 
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<AgentFilter>("all");
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [sortField, setSortField] = useState<"created_at" | null>(null);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
   const [addOpen, setAddOpen] = useState(false);
   const [editAgent, setEditAgent] = useState<Agent | null>(null);
+  const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
 
   const today = toDateString();
 
@@ -50,9 +57,10 @@ export default function AgentsPage() {
       supabase
         .from("agents")
         .select(
-          "id, name, city, phone, balance_usd, last_agent_deposit, status"
+          "id, name, city, phone, balance_usd, last_agent_deposit, status, collection_company_id, created_at, collection_companies(name)"
         )
         .eq("organisation_id", orgId)
+        .is("deleted_at", null)
         .order("name", { ascending: true }),
       supabase
         .from("daily_rates")
@@ -71,6 +79,9 @@ export default function AgentsPage() {
         balance_usd: Number(r.balance_usd),
         last_agent_deposit: r.last_agent_deposit,
         status: r.status,
+        collection_company_id: r.collection_company_id,
+        collection_company_name: r.collection_companies?.name ?? null,
+        created_at: r.created_at,
       }))
     );
     setTodayRate(rateRow ? Number(rateRow.gbp_to_usd) : null);
@@ -101,6 +112,17 @@ export default function AgentsPage() {
     });
   }, [agents, query, filter, today]);
 
+  const sorted = useMemo(() => {
+    if (!sortField) return filtered;
+    const copy = [...filtered];
+    copy.sort((a, b) => {
+      const aVal = new Date(a[sortField]).getTime();
+      const bVal = new Date(b[sortField]).getTime();
+      return sortDir === "asc" ? aVal - bVal : bVal - aVal;
+    });
+    return copy;
+  }, [filtered, sortField, sortDir]);
+
   const totalOutstanding = useMemo(
     () =>
       agents
@@ -113,6 +135,28 @@ export default function AgentsPage() {
     () => agents.filter((a) => a.last_agent_deposit === today).length,
     [agents, today]
   );
+
+  async function handleDeleteAgent(agentId: string) {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { error } = await supabase
+      .from("agents")
+      .update({
+        deleted_at: new Date().toISOString(),
+        deleted_by: user.id,
+      })
+      .eq("id", agentId);
+
+    if (error) {
+      alert(`Failed to delete agent: ${error.message}`);
+      return;
+    }
+    setDetailOpen(false);
+    setSelectedAgent(null);
+    load();
+  }
 
   return (
     <div className={styles.page}>
@@ -176,16 +220,29 @@ export default function AgentsPage() {
         </Card>
       ) : (
         <AgentTable
-          agents={filtered}
+          agents={sorted}
           todayRate={todayRate}
-          expandedId={expandedId}
-          onToggleExpand={(id) =>
-            setExpandedId((curr) => (curr === id ? null : id))
-          }
+          onRowClick={(agent) => {
+            setSelectedAgent(agent);
+            setDetailOpen(true);
+          }}
+          sortField={sortField}
+          sortDir={sortDir}
+          onSortChange={(field) => {
+            if (sortField === field) {
+              setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+            } else {
+              setSortField(field as "created_at");
+              setSortDir("desc");
+            }
+          }}
           onEditAgent={(a) => setEditAgent(a)}
           onAddAgent={() => setAddOpen(true)}
+          onDeleteAgent={handleDeleteAgent}
         />
       )}
+
+      <CollectionCompanyList />
 
       <AddAgentModal
         open={addOpen}
@@ -199,6 +256,25 @@ export default function AgentsPage() {
           if (!o) setEditAgent(null);
         }}
         onSaved={load}
+      />
+      <AgentDetailModal
+        agent={selectedAgent}
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        onSettle={() => {
+          if (selectedAgent) {
+            router.push(`/agent-deposits?agentId=${selectedAgent.id}`);
+          }
+        }}
+        onEdit={() => {
+          if (selectedAgent) {
+            setDetailOpen(false);
+            setEditAgent(selectedAgent);
+          }
+        }}
+        onDelete={() => {
+          if (selectedAgent) handleDeleteAgent(selectedAgent.id);
+        }}
       />
     </div>
   );

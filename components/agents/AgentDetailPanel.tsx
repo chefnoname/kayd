@@ -20,14 +20,17 @@ interface AgentDetailPanelProps {
   agent: Agent;
   onSettle: () => void;
   onEdit: () => void;
+  onDelete: () => void;
 }
 
 export function AgentDetailPanel({
   agent,
   onSettle,
   onEdit,
+  onDelete,
 }: AgentDetailPanelProps) {
   const [rows, setRows] = useState<AgentDepositRow[] | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -110,8 +113,8 @@ export function AgentDetailPanel({
           <TableHeader>
             <TableRow>
               <TableHead>Date</TableHead>
-              <TableHead>Received (GBP)</TableHead>
-              <TableHead>Converted (USD)</TableHead>
+              <TableHead>Received</TableHead>
+              <TableHead>Converted</TableHead>
               <TableHead>Receipt No.</TableHead>
               <TableHead>Recorded By</TableHead>
             </TableRow>
@@ -153,6 +156,28 @@ export function AgentDetailPanel({
         <Button variant="outline" onClick={onEdit}>
           Edit Agent
         </Button>
+        {confirmDelete ? (
+          <div className={styles.deleteConfirm}>
+            <span className={styles.deleteWarn}>Delete this agent? This cannot be undone.</span>
+            <Button
+              variant="destructive"
+              onClick={() => { setConfirmDelete(false); onDelete(); }}
+            >
+              Confirm Delete
+            </Button>
+            <Button variant="outline" onClick={() => setConfirmDelete(false)}>
+              Cancel
+            </Button>
+          </div>
+        ) : (
+          <Button
+            variant="outline"
+            className={styles.deleteBtn}
+            onClick={() => setConfirmDelete(true)}
+          >
+            Delete Agent
+          </Button>
+        )}
       </div>
     </div>
   );

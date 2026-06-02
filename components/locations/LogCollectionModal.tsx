@@ -17,6 +17,7 @@ import { createClient } from "@/lib/supabase";
 import { getOrganisationId } from "@/lib/org";
 import { formatCurrency, toDateString } from "@/lib/utils";
 import type { RegionalOffice } from "./types";
+import type { CollectionCompany } from "@/components/agents/types";
 import styles from "./LocationModal.module.css";
 
 interface LogCollectionModalProps {
@@ -35,6 +36,8 @@ export function LogCollectionModal({
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(toDateString());
   const [driver, setDriver] = useState("");
+  const [companies, setCompanies] = useState<CollectionCompany[]>([]);
+  const [selectedCompanyId, setSelectedCompanyId] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -43,8 +46,21 @@ export function LogCollectionModal({
       setAmount("");
       setDate(toDateString());
       setDriver("");
+      setSelectedCompanyId("");
       setError(null);
       setSaving(false);
+
+      (async () => {
+        const supabase = createClient();
+        const orgId = await getOrganisationId();
+        if (!orgId) return;
+        const { data } = await supabase
+          .from("collection_companies")
+          .select("id, name")
+          .eq("organisation_id", orgId)
+          .order("name");
+        setCompanies(data ?? []);
+      })();
     }
   }, [open, office]);
 
@@ -68,7 +84,7 @@ export function LogCollectionModal({
       );
     }
     if (!date) return setError("Date is required.");
-    if (!driverName) return setError("Driver name is required.");
+    if (!selectedCompanyId) return setError("Please select a collection company.");
 
     setSaving(true);
     const supabase = createClient();
@@ -90,6 +106,7 @@ export function LogCollectionModal({
         amount_gbp: amt,
         date,
         collected_by_name: driverName,
+        collection_company_id: selectedCompanyId || null,
         created_by: user?.id ?? null,
       });
 
@@ -171,13 +188,29 @@ export function LogCollectionModal({
 
           <div className={styles.field}>
             <Label htmlFor="collection-driver">Collected by</Label>
-            <Input
+            <select
               id="collection-driver"
-              value={driver}
-              onChange={(e) => setDriver(e.target.value)}
+              className={styles.select}
+              value={selectedCompanyId}
+              onChange={(e) => {
+                const companyId = e.target.value;
+                setSelectedCompanyId(companyId);
+                const company = companies.find((c) => c.id === companyId);
+                setDriver(company?.name ?? "");
+              }}
               required
-              placeholder="Driver name"
-            />
+            >
+              <option value="">
+                {companies.length === 0
+                  ? "No companies — add one on the Agents page"
+                  : "Select collection company"}
+              </option>
+              {companies.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           {error && (
