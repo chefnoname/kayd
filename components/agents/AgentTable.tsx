@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatLongDate, usdToGbp } from "@/lib/utils";
+import { UNCOLLECTED_BALANCE_THRESHOLD } from "@/lib/constants";
 import type { Agent } from "./types";
 import styles from "./AgentTable.module.css";
 
@@ -30,13 +31,13 @@ function balanceVariant(
   balance: number
 ): "default" | "secondary" | "destructive" {
   if (balance === 0) return "secondary";
-  if (balance > 10000) return "destructive";
+  if (balance >= UNCOLLECTED_BALANCE_THRESHOLD) return "destructive";
   return "default";
 }
 
 function balanceClass(balance: number): string {
   if (balance === 0) return styles.green;
-  if (balance > 10000) return styles.red;
+  if (balance >= UNCOLLECTED_BALANCE_THRESHOLD) return styles.red;
   return styles.amber;
 }
 

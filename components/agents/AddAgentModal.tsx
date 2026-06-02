@@ -159,6 +159,8 @@ export function AddAgentModal({
               step="0.01"
               value={balance}
               onChange={(e) => setBalance(e.target.value)}
+              onFocus={() => { if (balance === "0") setBalance(""); }}
+              onBlur={() => { if (balance === "") setBalance("0"); }}
               required
             />
           </div>

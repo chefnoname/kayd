@@ -110,6 +110,8 @@ export function EditableStatCard({
                 step="0.01"
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
+                onFocus={() => { if (draft === "0") setDraft(""); }}
+                onBlur={() => { if (draft === "") setDraft("0"); }}
                 autoFocus
                 className={styles.input}
               />

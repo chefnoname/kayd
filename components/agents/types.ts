@@ -9,9 +9,6 @@ export interface Agent {
   collection_company_id: string | null;
   collection_company_name?: string | null;
   created_at: string;
-  deleted_at?: string | null;
-  deleted_by?: string | null;
-  deleted_by_name?: string | null;
 }
 
 export interface AgentDepositRow {

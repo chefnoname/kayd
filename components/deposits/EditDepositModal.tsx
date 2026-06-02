@@ -131,6 +131,8 @@ export function EditDepositModal({
                 step="0.01"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
+                onFocus={() => { if (amount === "0") setAmount(""); }}
+                onBlur={() => { if (amount === "") setAmount("0"); }}
                 required
                 disabled={locked}
               />

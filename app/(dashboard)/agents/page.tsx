@@ -40,7 +40,6 @@ export default function AgentsPage() {
   const [editAgent, setEditAgent] = useState<Agent | null>(null);
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
-
   const today = toDateString();
 
   const load = useCallback(async () => {
@@ -60,7 +59,6 @@ export default function AgentsPage() {
           "id, name, city, phone, balance_usd, last_agent_deposit, status, collection_company_id, created_at, collection_companies(name)"
         )
         .eq("organisation_id", orgId)
-        .is("deleted_at", null)
         .order("name", { ascending: true }),
       supabase
         .from("daily_rates")
@@ -138,15 +136,10 @@ export default function AgentsPage() {
 
   async function handleDeleteAgent(agentId: string) {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
 
     const { error } = await supabase
       .from("agents")
-      .update({
-        deleted_at: new Date().toISOString(),
-        deleted_by: user.id,
-      })
+      .delete()
       .eq("id", agentId);
 
     if (error) {

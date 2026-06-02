@@ -47,18 +47,18 @@ export function CollectionMetrics({ orgId }: CollectionMetricsProps) {
         { count: releasedCount },
       ] = await Promise.all([
         supabase
-          .from("collection_pickups")
-          .select("amount_gbp")
+          .from("agent_deposits")
+          .select("amount_received_gbp")
           .eq("organisation_id", orgId)
           .eq("date", today),
         supabase
-          .from("collection_pickups")
-          .select("amount_gbp")
+          .from("agent_deposits")
+          .select("amount_received_gbp")
           .eq("organisation_id", orgId)
           .gte("date", monday),
         supabase
-          .from("collection_pickups")
-          .select("amount_gbp")
+          .from("agent_deposits")
+          .select("amount_received_gbp")
           .eq("organisation_id", orgId)
           .gte("date", firstOfMonth),
         supabase
@@ -75,7 +75,7 @@ export function CollectionMetrics({ orgId }: CollectionMetricsProps) {
       if (cancelled) return;
 
       const sumGBP = (rows: any[] | null) =>
-        (rows ?? []).reduce((sum: number, r: any) => sum + Number(r.amount_gbp), 0);
+        (rows ?? []).reduce((sum: number, r: any) => sum + Number(r.amount_received_gbp), 0);
 
       setDailyGBP(sumGBP(dailyRows));
       setWeeklyGBP(sumGBP(weeklyRows));

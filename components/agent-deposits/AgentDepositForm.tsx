@@ -80,6 +80,8 @@ export function AgentDepositForm({
           placeholder="e.g. 10000"
           value={values.receivedGBP}
           onChange={(e) => patch("receivedGBP", e.target.value)}
+          onFocus={() => { if (values.receivedGBP === "0") patch("receivedGBP", ""); }}
+          onBlur={() => { if (values.receivedGBP === "") patch("receivedGBP", "0"); }}
           required
         />
       </div>

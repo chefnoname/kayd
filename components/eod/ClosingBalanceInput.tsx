@@ -27,6 +27,8 @@ export function ClosingBalanceInput({
         placeholder="e.g. 105000"
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onFocus={() => { if (value === "0") onChange(""); }}
+        onBlur={() => { if (value === "") onChange("0"); }}
         disabled={disabled}
       />
       <p className={styles.hint}>

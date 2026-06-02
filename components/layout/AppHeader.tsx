@@ -20,7 +20,14 @@ import { formatLongDate, toDateString } from "@/lib/utils";
 import { startOnboardingTour } from "@/lib/tour";
 import "driver.js/dist/driver.css";
 import { Button } from "@/components/ui/button";
+import { HighBalanceWarningDialog } from "@/components/shared/HighBalanceWarningDialog";
+import { UNCOLLECTED_BALANCE_THRESHOLD } from "@/lib/constants";
 import styles from "./AppHeader.module.css";
+
+/** sessionStorage key — cleared on logout so fresh login re-triggers the modal. */
+const SESSION_KEY = "highBalanceWarningShown";
+
+type HighBalanceAgent = { id: string; name: string; balance_usd: number };
 
 export function AppHeader() {
   const supabase = createClient();
@@ -29,6 +36,11 @@ export function AppHeader() {
   const [rate, setRate] = useState<number | null>(null);
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
+
+  // High-balance warning state
+  const [highBalanceAgents, setHighBalanceAgents] = useState<HighBalanceAgent[]>([]);
+  const [warningOpen, setWarningOpen] = useState(false);
+  const [showWarningBtn, setShowWarningBtn] = useState(false);
 
   // Fetch identity + name once on mount.
   useEffect(() => {
@@ -90,7 +102,84 @@ export function AppHeader() {
     };
   }, [supabase]);
 
+  // High-balance check: runs on mount and whenever the tab regains focus.
+  // - First trigger this session → shows modal + sets sessionStorage flag
+  // - Subsequent triggers → button stays visible but modal does not re-pop
+  // - Balance drops below threshold mid-session → button is hidden
+  useEffect(() => {
+    let cancelled = false;
+
+    async function checkHighBalance() {
+      const orgId = await getOrganisationId();
+      if (cancelled || !orgId) return;
+      const { data } = await supabase
+        .from("agents")
+        .select("id, name, balance_usd")
+        .eq("organisation_id", orgId)
+        .eq("status", "active")
+        .gte("balance_usd", UNCOLLECTED_BALANCE_THRESHOLD);
+      if (cancelled) return;
+      const breaching: HighBalanceAgent[] = (data ?? []).map((a: any) => ({
+        id: a.id,
+        name: a.name,
+        balance_usd: Number(a.balance_usd),
+      }));
+      if (breaching.length > 0) {
+        setShowWarningBtn(true);
+        // Only auto-open the modal once per browser session.
+        if (!sessionStorage.getItem(SESSION_KEY)) {
+          sessionStorage.setItem(SESSION_KEY, "true");
+          setHighBalanceAgents(breaching);
+          setWarningOpen(true);
+        }
+      } else {
+        // All agents back below threshold — hide the button.
+        setShowWarningBtn(false);
+      }
+    }
+
+    checkHighBalance();
+
+    function onVisible() {
+      if (document.visibilityState === "visible") checkHighBalance();
+    }
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      cancelled = true;
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [supabase]);
+
+  /**
+   * Re-fetch breaching agents at click time so the modal always shows
+   * up-to-date data (never stale from the initial load).
+   */
+  async function handleWarningClick() {
+    const orgId = await getOrganisationId();
+    if (!orgId) return;
+    const { data } = await supabase
+      .from("agents")
+      .select("id, name, balance_usd")
+      .eq("organisation_id", orgId)
+      .eq("status", "active")
+      .gte("balance_usd", UNCOLLECTED_BALANCE_THRESHOLD);
+    const fresh: HighBalanceAgent[] = (data ?? []).map((a: any) => ({
+      id: a.id,
+      name: a.name,
+      balance_usd: Number(a.balance_usd),
+    }));
+    setHighBalanceAgents(fresh);
+    if (fresh.length === 0) {
+      // Threshold no longer breached — hide the button.
+      setShowWarningBtn(false);
+    } else {
+      setWarningOpen(true);
+    }
+  }
+
   async function onLogout() {
+    // Clear session flag so the modal fires again on next login.
+    sessionStorage.removeItem(SESSION_KEY);
     await supabase.auth.signOut();
     clearOrganisationCache();
     router.push("/login");
@@ -130,6 +219,16 @@ export function AppHeader() {
       </div>
 
       <div className={styles.user}>
+        {showWarningBtn && (
+          <Button
+            variant="outline"
+            size="sm"
+            className={styles.warningBtn}
+            onClick={handleWarningClick}
+          >
+            ⚠ High Balance
+          </Button>
+        )}
         <Button
           variant="outline"
           size="sm"
@@ -161,6 +260,12 @@ export function AppHeader() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      <HighBalanceWarningDialog
+        agents={highBalanceAgents}
+        open={warningOpen}
+        onOpenChange={setWarningOpen}
+      />
     </header>
   );
 }

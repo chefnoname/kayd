@@ -158,7 +158,7 @@ export function AgentDetailPanel({
         </Button>
         {confirmDelete ? (
           <div className={styles.deleteConfirm}>
-            <span className={styles.deleteWarn}>Delete this agent? This cannot be undone.</span>
+            <span className={styles.deleteWarn}>Permanently delete this agent? This cannot be undone.</span>
             <Button
               variant="destructive"
               onClick={() => { setConfirmDelete(false); onDelete(); }}

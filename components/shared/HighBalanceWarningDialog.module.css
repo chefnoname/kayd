@@ -1,0 +1,40 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid var(--border, #e5e7eb);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.agentName {
+  font-weight: 500;
+}
+
+.balance {
+  color: #d33;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.icon {
+  color: #d33;
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
