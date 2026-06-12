@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { DailyRateBadge } from "@/components/dashboard/DailyRateBadge";
 import { AlertsBanner } from "@/components/dashboard/AlertsBanner";
 import { OpeningBalanceCard } from "@/components/dashboard/OpeningBalanceCard";
+import { AgentDebtCard } from "@/components/dashboard/AgentDebtCard";
 import { BalanceSummaryRow } from "@/components/dashboard/BalanceSummaryRow";
 import {
   ActivityFeed,
@@ -287,17 +288,19 @@ export default function DashboardPage() {
       )}
 
       {balance && (
-        <OpeningBalanceCard
-          openingGBP={balance.opening_gbp}
-          yesterday={yesterdayDate()}
-        />
+        <div className={styles.topCards}>
+          <OpeningBalanceCard
+            openingGBP={balance.opening_gbp}
+            yesterday={yesterdayDate()}
+          />
+          <AgentDebtCard totalAgentDebtGBP={agentDebtGBP} />
+        </div>
       )}
 
       {balance && (
         <BalanceSummaryRow
           systemLimitUSD={balance.system_limit_usd}
           cashInSafeGBP={balance.cash_in_safe_gbp}
-          totalAgentDebtGBP={agentDebtGBP}
           onSaveSystemLimit={(next) =>
             patchBalance({ system_limit_usd: next })
           }

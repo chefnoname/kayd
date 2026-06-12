@@ -11,6 +11,7 @@ import { DepositTable } from "@/components/deposits/DepositTable";
 import { AddDepositModal } from "@/components/deposits/AddDepositModal";
 import { EditDepositModal } from "@/components/deposits/EditDepositModal";
 import { ReleaseDepositModal } from "@/components/deposits/ReleaseDepositModal";
+import { DepositDetailModal } from "@/components/deposits/DepositDetailModal";
 import type { Deposit, DepositFilter } from "@/components/deposits/types";
 import styles from "./deposits.module.css";
 
@@ -23,6 +24,7 @@ export default function DepositsPage() {
   const [addOpen, setAddOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Deposit | null>(null);
   const [releaseTarget, setReleaseTarget] = useState<Deposit | null>(null);
+  const [detailTarget, setDetailTarget] = useState<Deposit | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -131,6 +133,7 @@ export default function DepositsPage() {
           onFilterChange={setFilter}
           onRelease={(d) => setReleaseTarget(d)}
           onEdit={(d) => setEditTarget(d)}
+          onRowClick={(d) => setDetailTarget(d)}
         />
       )}
 
@@ -156,6 +159,16 @@ export default function DepositsPage() {
         }}
         deposit={releaseTarget}
         onReleased={load}
+      />
+
+      <DepositDetailModal
+        deposit={detailTarget}
+        open={detailTarget !== null}
+        onOpenChange={(v) => {
+          if (!v) setDetailTarget(null);
+        }}
+        onEdit={(d) => setEditTarget(d)}
+        onRelease={(d) => setReleaseTarget(d)}
       />
     </div>
   );

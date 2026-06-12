@@ -20,6 +20,7 @@ interface DepositTableProps {
   onFilterChange: (f: DepositFilter) => void;
   onRelease: (d: Deposit) => void;
   onEdit: (d: Deposit) => void;
+  onRowClick: (d: Deposit) => void;
 }
 
 const FILTERS: { key: DepositFilter; label: string }[] = [
@@ -42,6 +43,7 @@ export function DepositTable({
   onFilterChange,
   onRelease,
   onEdit,
+  onRowClick,
 }: DepositTableProps) {
   return (
     <div className={styles.wrap}>
@@ -84,7 +86,11 @@ export function DepositTable({
               </TableRow>
             ) : (
               deposits.map((d) => (
-                <TableRow key={d.id}>
+                <TableRow
+                  key={d.id}
+                  className={styles.clickableRow}
+                  onClick={() => onRowClick(d)}
+                >
                   <TableCell className={styles.holder}>
                     {d.holder_name}
                   </TableCell>
@@ -111,7 +117,7 @@ export function DepositTable({
                       {d.status === "held" && (
                         <Button
                           size="sm"
-                          onClick={() => onRelease(d)}
+                          onClick={(e) => { e.stopPropagation(); onRelease(d); }}
                           className={styles.releaseBtn}
                         >
                           Release
@@ -120,7 +126,7 @@ export function DepositTable({
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => onEdit(d)}
+                        onClick={(e) => { e.stopPropagation(); onEdit(d); }}
                         disabled={d.status === "released"}
                       >
                         Edit

@@ -22,33 +22,17 @@ type NavItem = {
   label: string;
   icon: typeof LayoutDashboard;
   roles?: string[];
-  tourId?: string;
 };
 
 const nav: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/agents", label: "Agents", icon: Users, tourId: "nav-agents" },
-  {
-    href: "/agent-deposits",
-    label: "Agent Deposits",
-    icon: Banknote,
-    tourId: "nav-agent-deposits",
-  },
+  { href: "/agents", label: "Agents", icon: Users },
+  { href: "/agent-deposits", label: "Agent Deposits", icon: Banknote },
   { href: "/deposits", label: "Deposits", icon: PiggyBank },
   { href: "/locations", label: "Locations", icon: MapPin },
-  {
-    href: "/end-of-day",
-    label: "End of Day",
-    icon: CalendarCheck,
-    tourId: "nav-end-of-day",
-  },
+  { href: "/end-of-day", label: "End of Day", icon: CalendarCheck },
   { href: "/admin", label: "Admin", icon: Shield, roles: ["superadmin"] },
-  {
-    href: "/admin/team",
-    label: "My Team",
-    icon: UsersRound,
-    roles: ["admin"],
-  },
+  { href: "/admin/team", label: "My Team", icon: UsersRound, roles: ["admin"] },
   { href: "/dashboard/profile", label: "Profile", icon: UserCircle },
 ];
 
@@ -87,14 +71,13 @@ export function Sidebar() {
   return (
     <aside className={styles.sidebar}>
       <nav className={styles.nav}>
-        {visibleNav.map(({ href, label, icon: Icon, tourId }) => {
+        {visibleNav.map(({ href, label, icon: Icon }) => {
           const active =
             pathname === href || pathname.startsWith(href + "/");
           return (
             <Link
               key={href}
               href={href}
-              data-tour={tourId}
               className={`${styles.link} ${active ? styles.active : ""}`}
             >
               <Icon size={18} aria-hidden />

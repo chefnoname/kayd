@@ -48,6 +48,15 @@
   -webkit-overflow-scrolling: touch;
 }
 
+.clickableRow {
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.clickableRow:hover {
+  background: #fdf8f0;
+}
+
 .holder {
   font-weight: 600;
   color: var(--kayd-night-shadow);

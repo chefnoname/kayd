@@ -69,13 +69,7 @@ describe("Story 6 — Epic C codebase cleanup", () => {
     expect(sidebar).not.toContain('"Setup"');
   });
 
-  test("AC-6: tour.ts does not export startSetupTour", () => {
-    const tour = fs.readFileSync(path.join(ROOT, "lib/tour.ts"), "utf-8");
-    expect(tour).not.toContain("startSetupTour");
-  });
-
-  test("AC-6: tour.ts does not reference /setup path", () => {
-    const tour = fs.readFileSync(path.join(ROOT, "lib/tour.ts"), "utf-8");
-    expect(tour).not.toContain("/setup");
+  test("AC-6: tour.ts has been removed entirely", () => {
+    expect(exists("lib/tour.ts")).toBe(false);
   });
 });

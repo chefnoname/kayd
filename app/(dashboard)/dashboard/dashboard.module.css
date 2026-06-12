@@ -17,6 +17,18 @@
   color: #6b6b6b;
 }
 
+.topCards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .topCards {
+    grid-template-columns: 1fr;
+  }
+}
+
 .summaryGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

@@ -17,8 +17,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { formatLongDate, toDateString } from "@/lib/utils";
-import { startOnboardingTour } from "@/lib/tour";
-import "driver.js/dist/driver.css";
 import { Button } from "@/components/ui/button";
 import { HighBalanceWarningDialog } from "@/components/shared/HighBalanceWarningDialog";
 import { UNCOLLECTED_BALANCE_THRESHOLD } from "@/lib/constants";
@@ -213,7 +211,7 @@ export function AppHeader() {
 
       <div className={styles.meta}>
         <span className={styles.date}>{formatLongDate()}</span>
-        <Badge className={styles.rateBadge} data-tour="daily-rate-badge">
+        <Badge className={styles.rateBadge}>
           {rate ? `GBP→USD ${rate.toFixed(4)}` : "Rate not set"}
         </Badge>
       </div>
@@ -229,14 +227,6 @@ export function AppHeader() {
             ⚠ High Balance
           </Button>
         )}
-        <Button
-          variant="outline"
-          size="sm"
-          className={styles.howToBtn}
-          onClick={() => startOnboardingTour()}
-        >
-          Tutorial
-        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className={styles.avatarBtn} aria-label="Open user menu">
