@@ -20,6 +20,11 @@
   .date {
     display: none;
   }
+  .rateGroup {
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: center;
+  }
 }
 
 .brand {
@@ -39,12 +44,17 @@
   color: rgba(255, 255, 255, 0.85);
 }
 
+.rateGroup {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .rateBadge {
   background: var(--kayd-sand-shadow);
   color: var(--kayd-night-shadow);
   border: 1px solid var(--kayd-sand-shadow);
   font-weight: 600;
-
+  white-space: nowrap;
 
   &:hover {
     background: var(--kayd-sand-shadow);
@@ -89,6 +99,22 @@
 }
 .logout:hover {
   background: var(--kayd-sand-shadow);
+  color: #fff;
+}
+
+.outstandingBtn {
+  background: transparent;
+  border: 1px solid #f59e0b;
+  color: #f59e0b;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.outstandingBtn:hover {
+  background: #f59e0b;
+  border-color: #f59e0b;
   color: #fff;
 }
 

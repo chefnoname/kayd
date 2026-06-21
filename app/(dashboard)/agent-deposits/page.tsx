@@ -34,6 +34,9 @@ function AgentDepositPageInner() {
 
   const [agents, setAgents] = useState<AgentDepositAgent[]>([]);
   const [rate, setRate] = useState<number | null>(null);
+  const [sendRate, setSendRate] = useState<number | null>(null);
+  const [receiveRate, setReceiveRate] = useState<number | null>(null);
+  const [rateDate, setRateDate] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const [form, setForm] = useState<AgentDepositFormValues>(EMPTY_FORM);
@@ -51,20 +54,29 @@ function AgentDepositPageInner() {
       setLoading(false);
       return;
     }
-    const [{ data: agentRows }, { data: rateRow }] = await Promise.all([
-      supabase
-        .from("agents")
-        .select("id, name, city, balance_usd, status")
-        .eq("organisation_id", orgId)
-        .eq("status", "active")
-        .order("name", { ascending: true }),
-      supabase
-        .from("daily_rates")
-        .select("gbp_to_usd")
-        .eq("organisation_id", orgId)
-        .eq("date", today)
-        .maybeSingle(),
-    ]);
+    const [{ data: agentRows }, { data: rateRow }, { data: rateEntry }] =
+      await Promise.all([
+        supabase
+          .from("agents")
+          .select("id, name, city, balance_usd, status")
+          .eq("organisation_id", orgId)
+          .eq("status", "active")
+          .order("name", { ascending: true }),
+        supabase
+          .from("daily_rates")
+          .select("gbp_to_usd")
+          .eq("organisation_id", orgId)
+          .eq("date", today)
+          .maybeSingle(),
+        supabase
+          .from("rate_entries")
+          .select("send_rate, receive_rate, date")
+          .eq("organisation_id", orgId)
+          .eq("date", today)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+      ]);
 
     setAgents(
       (agentRows ?? []).map((r: any) => ({
@@ -75,6 +87,9 @@ function AgentDepositPageInner() {
       }))
     );
     setRate(rateRow ? Number(rateRow.gbp_to_usd) : null);
+    setSendRate(rateEntry ? Number(rateEntry.send_rate) : null);
+    setReceiveRate(rateEntry ? Number(rateEntry.receive_rate) : null);
+    setRateDate(rateEntry ? rateEntry.date : null);
     setLoading(false);
   }, [today]);
 
@@ -210,6 +225,9 @@ function AgentDepositPageInner() {
             agent={selectedAgent}
             receivedGBP={receivedGBP}
             rate={rate}
+            sendRate={sendRate}
+            receiveRate={receiveRate}
+            rateDate={rateDate}
           />
         </div>
       </div>

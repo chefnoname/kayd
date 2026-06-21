@@ -1,13 +1,17 @@
 /** Agents with balance_usd at or above this value trigger a warning popup. */
 export const UNCOLLECTED_BALANCE_THRESHOLD = 10000;
 
+/** How often (ms) to poll rate_entries for updated send/receive rates. */
+export const RATE_REFRESH_INTERVAL_MS = 60_000;
+
 /**
- * Collections older than this many hours with no receipt confirmation
- * trigger the follow-up popup on dashboard load.
+ * RATE_GATE_MODE controls when the mandatory rate-entry modal appears.
  *
- * UAT:        0.167  (~10 minutes)
- * Production: 72     (3 days)
+ * 'login'  — modal fires on every login regardless of whether rates
+ *            were already entered today. Use this for UAT testing.
+ * 'daily'  — modal fires once per calendar day. If rates have already
+ *            been submitted today, the gate is skipped. Use for production.
  *
- * Change this single value to switch between UAT and production timing.
+ * This is a one-line change to switch between modes.
  */
-export const COLLECTION_FOLLOWUP_HOURS = 0; // Set to 0.167 for UAT (10 min), 72 for production (3 days)
+export const RATE_GATE_MODE: "login" | "daily" = "login";

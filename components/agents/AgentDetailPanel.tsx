@@ -45,7 +45,7 @@ export function AgentDetailPanel({
       const { data } = await supabase
         .from("agent_deposits")
         .select(
-          "id, agent_id, date, amount_received_gbp, amount_usd_equivalent, receipt_number, recorded_by, staff_users:recorded_by ( name )"
+          "id, agent_id, date, amount_received_gbp, amount_usd_equivalent, rate_used, receipt_number, recorded_by, staff_users:recorded_by ( name )"
         )
         .eq("organisation_id", orgId)
         .eq("agent_id", agent.id)
@@ -60,6 +60,7 @@ export function AgentDetailPanel({
         date: r.date,
         amount_received_gbp: Number(r.amount_received_gbp),
         amount_usd_equivalent: Number(r.amount_usd_equivalent),
+        rate_used: Number(r.rate_used),
         receipt_number: r.receipt_number,
         recorded_by: r.recorded_by,
         recorded_by_name: r.staff_users?.name ?? null,
@@ -114,6 +115,7 @@ export function AgentDetailPanel({
             <TableRow>
               <TableHead>Date</TableHead>
               <TableHead>Received</TableHead>
+              <TableHead>Rate</TableHead>
               <TableHead>Converted</TableHead>
               <TableHead>Receipt No.</TableHead>
               <TableHead>Recorded By</TableHead>
@@ -122,14 +124,14 @@ export function AgentDetailPanel({
           <TableBody>
             {rows === null && (
               <TableRow>
-                <TableCell colSpan={5} className={styles.muted}>
+                <TableCell colSpan={6} className={styles.muted}>
                   Loading…
                 </TableCell>
               </TableRow>
             )}
             {rows && rows.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className={styles.muted}>
+                <TableCell colSpan={6} className={styles.muted}>
                   No agent deposits recorded yet.
                 </TableCell>
               </TableRow>
@@ -139,6 +141,9 @@ export function AgentDetailPanel({
                 <TableCell>{formatLongDate(new Date(r.date))}</TableCell>
                 <TableCell>
                   {formatCurrency(r.amount_received_gbp, "GBP")}
+                </TableCell>
+                <TableCell className={styles.rateCell}>
+                  {r.rate_used.toFixed(4)}
                 </TableCell>
                 <TableCell>
                   {formatCurrency(r.amount_usd_equivalent, "USD")}

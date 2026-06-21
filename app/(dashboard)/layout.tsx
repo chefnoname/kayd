@@ -3,6 +3,7 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { ToastProvider } from "@/components/ui/toast";
 import { AccessDeniedToast } from "@/components/shared/AccessDeniedToast";
 import { EmailVerificationToast } from "@/components/shared/EmailVerificationToast";
+import { RateGateProvider } from "@/components/shared/RateGateProvider";
 import { Suspense } from "react";
 import styles from "./layout.module.css";
 
@@ -17,13 +18,15 @@ export default function DashboardLayout({
         <AccessDeniedToast />
         <EmailVerificationToast />
       </Suspense>
-      <div className={styles.shell}>
-        <AppHeader />
-        <div className={styles.body}>
-          <Sidebar />
-          <main className={styles.main}>{children}</main>
+      <RateGateProvider>
+        <div className={styles.shell}>
+          <AppHeader />
+          <div className={styles.body}>
+            <Sidebar />
+            <main className={styles.main}>{children}</main>
+          </div>
         </div>
-      </div>
+      </RateGateProvider>
     </ToastProvider>
   );
 }

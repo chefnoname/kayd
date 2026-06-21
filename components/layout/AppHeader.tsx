@@ -19,7 +19,8 @@ import {
 import { formatLongDate, toDateString } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { HighBalanceWarningDialog } from "@/components/shared/HighBalanceWarningDialog";
-import { UNCOLLECTED_BALANCE_THRESHOLD } from "@/lib/constants";
+import { UNCOLLECTED_BALANCE_THRESHOLD, RATE_REFRESH_INTERVAL_MS } from "@/lib/constants";
+import { useRateGate } from "@/components/shared/RateGateProvider";
 import styles from "./AppHeader.module.css";
 
 /** sessionStorage key — cleared on logout so fresh login re-triggers the modal. */
@@ -30,10 +31,20 @@ type HighBalanceAgent = { id: string; name: string; balance_usd: number };
 export function AppHeader() {
   const supabase = createClient();
   const router = useRouter();
+  const { gateCleared, sendRate: ctxSendRate, receiveRate: ctxReceiveRate } = useRateGate();
 
   const [rate, setRate] = useState<number | null>(null);
+  const [polledSendRate, setPolledSendRate] = useState<number | null>(null);
+  const [polledReceiveRate, setPolledReceiveRate] = useState<number | null>(null);
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
+
+  // Prefer context values (immediate on gate submission), fall back to polled.
+  const displaySendRate = ctxSendRate ?? polledSendRate;
+  const displayReceiveRate = ctxReceiveRate ?? polledReceiveRate;
+
+  // Outstanding collections count
+  const [outstandingCount, setOutstandingCount] = useState(0);
 
   // High-balance warning state
   const [highBalanceAgents, setHighBalanceAgents] = useState<HighBalanceAgent[]>([]);
@@ -100,11 +111,84 @@ export function AppHeader() {
     };
   }, [supabase]);
 
-  // High-balance check: runs on mount and whenever the tab regains focus.
+  // Poll rate_entries every 60s for send/receive rates.
+  // Also refreshes on visibility change.
+  useEffect(() => {
+    if (!gateCleared) return;
+
+    let cancelled = false;
+
+    async function fetchRateEntries() {
+      const today = toDateString();
+      const orgId = await getOrganisationId();
+      if (cancelled || !orgId) return;
+      const { data } = await supabase
+        .from("rate_entries")
+        .select("send_rate, receive_rate")
+        .eq("organisation_id", orgId)
+        .eq("date", today)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!cancelled && data) {
+        setPolledSendRate(Number(data.send_rate));
+        setPolledReceiveRate(Number(data.receive_rate));
+      }
+    }
+
+    fetchRateEntries();
+
+    const interval = setInterval(fetchRateEntries, RATE_REFRESH_INTERVAL_MS);
+
+    function onVisible() {
+      if (document.visibilityState === "visible") fetchRateEntries();
+    }
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [supabase, gateCleared]);
+
+  // Outstanding collections: count of active agents with balance > 0.
+  // Refreshes on mount, visibility change, and auth state.
+  useEffect(() => {
+    if (!gateCleared) return;
+
+    let cancelled = false;
+
+    async function fetchOutstanding() {
+      const orgId = await getOrganisationId();
+      if (cancelled || !orgId) return;
+      const { count } = await supabase
+        .from("agents")
+        .select("id", { count: "exact", head: true })
+        .eq("organisation_id", orgId)
+        .eq("status", "active")
+        .gt("balance_usd", 0);
+      if (!cancelled) setOutstandingCount(count ?? 0);
+    }
+
+    fetchOutstanding();
+
+    function onVisible() {
+      if (document.visibilityState === "visible") fetchOutstanding();
+    }
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      cancelled = true;
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [supabase, gateCleared]);
+
+  // High-balance check: only runs AFTER rate gate is cleared (AC-8).
   // - First trigger this session → shows modal + sets sessionStorage flag
   // - Subsequent triggers → button stays visible but modal does not re-pop
   // - Balance drops below threshold mid-session → button is hidden
   useEffect(() => {
+    if (!gateCleared) return;
+
     let cancelled = false;
 
     async function checkHighBalance() {
@@ -146,7 +230,7 @@ export function AppHeader() {
       cancelled = true;
       document.removeEventListener("visibilitychange", onVisible);
     };
-  }, [supabase]);
+  }, [supabase, gateCleared]);
 
   /**
    * Re-fetch breaching agents at click time so the modal always shows
@@ -176,8 +260,9 @@ export function AppHeader() {
   }
 
   async function onLogout() {
-    // Clear session flag so the modal fires again on next login.
+    // Clear session flags so modals fire again on next login.
     sessionStorage.removeItem(SESSION_KEY);
+    sessionStorage.removeItem("rateGateCleared");
     await supabase.auth.signOut();
     clearOrganisationCache();
     router.push("/login");
@@ -186,37 +271,60 @@ export function AppHeader() {
 
   const initials = name
     ? name
-        .split(" ")
+      .split(" ")
+      .map((p) => p[0]?.toUpperCase() ?? "")
+      .join("")
+      .slice(0, 2)
+    : email
+      ? email
+        .split("@")[0]
+        .split(/[.\-_]/)
         .map((p) => p[0]?.toUpperCase() ?? "")
         .join("")
         .slice(0, 2)
-    : email
-      ? email
-          .split("@")[0]
-          .split(/[.\-_]/)
-          .map((p) => p[0]?.toUpperCase() ?? "")
-          .join("")
-          .slice(0, 2)
       : "U";
 
   return (
     <header className={styles.header}>
-       <Image
-            src="/kayd.png"
-            alt="Kayd logo"
-            width={175}
-            height={0}
-            className={styles.logo}
-          />
+      <Image
+        src="/kayd.png"
+        alt="Kayd logo"
+        width={175}
+        height={0}
+        className={styles.logo}
+      />
 
       <div className={styles.meta}>
         <span className={styles.date}>{formatLongDate()}</span>
+        {/* {displaySendRate || displayReceiveRate ? (
+          <div className={styles.rateGroup}>
+            <Badge className={styles.rateBadge}>
+              Send {displaySendRate?.toFixed(4) ?? "—"}
+            </Badge>
+            <Badge className={styles.rateBadge}>
+              Receive {displayReceiveRate?.toFixed(4) ?? "—"}
+            </Badge>
+          </div>
+        ) : (
+          */
+        }
         <Badge className={styles.rateBadge}>
           {rate ? `GBP→USD ${rate.toFixed(4)}` : "Rate not set"}
         </Badge>
+        {/* )}  */}
       </div>
 
       <div className={styles.user}>
+        {outstandingCount > 0 && (
+          <Button
+            variant="outline"
+            size="sm"
+            className={styles.outstandingBtn}
+            onClick={() => router.push("/agents?filter=in_debt")}
+          >
+            ⚠ Collections: {outstandingCount}
+          </Button>
+        )}
         {showWarningBtn && (
           <Button
             variant="outline"

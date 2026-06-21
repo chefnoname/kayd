@@ -90,6 +90,24 @@
   color: #8a1f1f !important;
 }
 
+/* Profit/Loss indicators */
+.plProfit {
+  color: #1e6b3c;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.plLoss {
+  color: #8a1f1f;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.plNeutral {
+  color: #6b6b6b;
+  font-variant-numeric: tabular-nums;
+}
+
 /* Empty */
 .empty {
   display: flex;

@@ -15,12 +15,18 @@ interface ConversionPreviewCardProps {
   agent: AgentDepositAgent | null;
   receivedGBP: number;
   rate: number | null;
+  sendRate?: number | null;
+  receiveRate?: number | null;
+  rateDate?: string | null;
 }
 
 export function ConversionPreviewCard({
   agent,
   receivedGBP,
   rate,
+  sendRate,
+  receiveRate,
+  rateDate,
 }: ConversionPreviewCardProps) {
   if (!rate) {
     return (
@@ -50,7 +56,19 @@ export function ConversionPreviewCard({
         <CardTitle>Live preview</CardTitle>
       </CardHeader>
       <CardContent className={styles.content}>
-        <Row label="Today's rate" value={`£1 = $${rate.toFixed(4)}`} />
+        {sendRate != null && (
+          <Row label="Send rate" value={`£1 = $${sendRate.toFixed(4)}`} />
+        )}
+        {receiveRate != null && (
+          <Row label="Receive rate" value={`£1 = $${receiveRate.toFixed(4)}`} />
+        )}
+        {!sendRate && !receiveRate && (
+          <Row label="Today's rate" value={`£1 = $${rate.toFixed(4)}`} />
+        )}
+        {rateDate && (
+          <Row label="Rate date" value={rateDate} />
+        )}
+        <Divider />
         <Row
           label="Cash received"
           value={formatCurrency(receivedGBP || 0, "GBP")}

@@ -9,6 +9,8 @@ export interface Agent {
   collection_company_id: string | null;
   collection_company_name?: string | null;
   created_at: string;
+  /** Profit/loss amount based on rate differential × balance. Null when no data. */
+  profit_loss?: number | null;
 }
 
 export interface AgentDepositRow {
@@ -17,6 +19,7 @@ export interface AgentDepositRow {
   date: string;
   amount_received_gbp: number;
   amount_usd_equivalent: number;
+  rate_used: number;
   receipt_number: string | null;
   recorded_by: string | null;
   recorded_by_name?: string | null;

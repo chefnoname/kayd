@@ -70,6 +70,7 @@ export function AgentTable({
             <TableHead>Company</TableHead>
             <TableHead>Owes</TableHead>
             <TableHead>In GBP</TableHead>
+            <TableHead>Rate P/L</TableHead>
             <TableHead
               className={styles.sortableHead}
               onClick={() => onSortChange("created_at")}
@@ -116,6 +117,9 @@ export function AgentTable({
                     : "—"}
                 </TableCell>
                 <TableCell>
+                  <ProfitLossIndicator value={agent.profit_loss ?? null} />
+                </TableCell>
+                <TableCell>
                   {formatLongDate(new Date(agent.created_at))}
                 </TableCell>
                 <TableCell>
@@ -145,5 +149,19 @@ export function AgentTable({
         </TableBody>
       </Table>
     </div>
+  );
+}
+
+function ProfitLossIndicator({ value }: { value: number | null }) {
+  if (value == null || Math.abs(value) < 0.005) {
+    return <span className={styles.plNeutral}>{formatCurrency(0, "USD")}</span>;
+  }
+  if (value > 0) {
+    return (
+      <span className={styles.plProfit}>+{formatCurrency(value, "USD")}</span>
+    );
+  }
+  return (
+    <span className={styles.plLoss}>{formatCurrency(value, "USD")}</span>
   );
 }

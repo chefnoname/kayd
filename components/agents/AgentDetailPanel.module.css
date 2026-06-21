@@ -52,6 +52,11 @@
   color: var(--kayd-night);
 }
 
+.rateCell {
+  font-variant-numeric: tabular-nums;
+  color: #6b6b6b;
+}
+
 .muted {
   text-align: center;
   color: #8a7e6c;

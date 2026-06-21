@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { getOrganisationId } from "@/lib/org";
 import { PageHeader } from "@/components/shared/PageHeader";
@@ -27,12 +27,14 @@ import styles from "./agents.module.css";
 
 export default function AgentsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [todayRate, setTodayRate] = useState<number | null>(null);
 
+  const initialFilter = (searchParams.get("filter") as AgentFilter) || "all";
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<AgentFilter>("all");
+  const [filter, setFilter] = useState<AgentFilter>(initialFilter);
   const [sortField, setSortField] = useState<"created_at" | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
@@ -52,7 +54,12 @@ export default function AgentsPage() {
       return;
     }
 
-    const [{ data: agentRows }, { data: rateRow }] = await Promise.all([
+    const [
+      { data: agentRows },
+      { data: rateRow },
+      { data: rateEntry },
+      { data: depositRows },
+    ] = await Promise.all([
       supabase
         .from("agents")
         .select(
@@ -66,21 +73,60 @@ export default function AgentsPage() {
         .eq("organisation_id", orgId)
         .eq("date", today)
         .maybeSingle(),
+      supabase
+        .from("rate_entries")
+        .select("receive_rate")
+        .eq("organisation_id", orgId)
+        .eq("date", today)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      supabase
+        .from("agent_deposits")
+        .select("agent_id, rate_used, created_at")
+        .eq("organisation_id", orgId)
+        .order("created_at", { ascending: false }),
     ]);
 
+    // Build a map of each agent's most recent deposit rate
+    const lastDepositRate: Record<string, number> = {};
+    for (const d of depositRows ?? []) {
+      if (!lastDepositRate[d.agent_id]) {
+        lastDepositRate[d.agent_id] = Number(d.rate_used);
+      }
+    }
+
+    const todayReceiveRate = rateEntry ? Number(rateEntry.receive_rate) : null;
+
     setAgents(
-      (agentRows ?? []).map((r: any) => ({
-        id: r.id,
-        name: r.name,
-        city: r.city,
-        phone: r.phone,
-        balance_usd: Number(r.balance_usd),
-        last_agent_deposit: r.last_agent_deposit,
-        status: r.status,
-        collection_company_id: r.collection_company_id,
-        collection_company_name: r.collection_companies?.name ?? null,
-        created_at: r.created_at,
-      }))
+      (agentRows ?? []).map((r: any) => {
+        const balance = Number(r.balance_usd);
+        const depositRate = lastDepositRate[r.id] ?? null;
+        let profitLoss: number | null = null;
+
+        if (
+          todayReceiveRate != null &&
+          depositRate != null &&
+          balance > 0
+        ) {
+          profitLoss =
+            Math.round((todayReceiveRate - depositRate) * balance * 100) / 100;
+        }
+
+        return {
+          id: r.id,
+          name: r.name,
+          city: r.city,
+          phone: r.phone,
+          balance_usd: balance,
+          last_agent_deposit: r.last_agent_deposit,
+          status: r.status,
+          collection_company_id: r.collection_company_id,
+          collection_company_name: r.collection_companies?.name ?? null,
+          created_at: r.created_at,
+          profit_loss: profitLoss,
+        };
+      })
     );
     setTodayRate(rateRow ? Number(rateRow.gbp_to_usd) : null);
     setLoading(false);

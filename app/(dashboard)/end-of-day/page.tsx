@@ -171,6 +171,11 @@ export default function EndOfDayPage() {
       setError("Your account is not attached to an organisation.");
       return;
     }
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     const signedDiscrepancy = discrepancy
       ? discrepancy.direction === "over"
         ? discrepancy.amount
@@ -189,6 +194,7 @@ export default function EndOfDayPage() {
         is_closed: true,
         notes: reasonRequired ? reason.trim() : null,
         closed_at: new Date().toISOString(),
+        closed_by: user?.id ?? null,
         updated_at: new Date().toISOString(),
       })
       .eq("organisation_id", orgId)

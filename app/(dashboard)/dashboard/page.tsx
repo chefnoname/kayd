@@ -17,8 +17,6 @@ import { QuickActions } from "@/components/dashboard/QuickActions";
 import { BankDetailsCard } from "@/components/dashboard/BankDetailsCard";
 import { CollectionMetrics } from "@/components/dashboard/CollectionMetrics";
 import type { DailyBalance } from "@/components/dashboard/types";
-import { CollectionFollowUpDialog, type PendingCollection } from "@/components/collections/CollectionFollowUpDialog";
-import { COLLECTION_FOLLOWUP_HOURS } from "@/lib/constants";
 import { formatLongDate, toDateString, usdToGbp } from "@/lib/utils";
 import styles from "./dashboard.module.css";
 
@@ -39,8 +37,6 @@ export default function DashboardPage() {
   const [loadingActivity, setLoadingActivity] = useState(true);
   const [orgId, setOrgId] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string>("staff");
-  const [pendingCollections, setPendingCollections] = useState<PendingCollection[]>([]);
-  const [followUpOpen, setFollowUpOpen] = useState(false);
   const [bankDetails, setBankDetails] = useState<{
     bank_name: string | null;
     sort_code: string | null;
@@ -208,20 +204,6 @@ export default function DashboardPage() {
     );
     setLoadingActivity(false);
 
-    const thresholdISO = new Date(Date.now() - COLLECTION_FOLLOWUP_HOURS * 60 * 60 * 1000).toISOString();
-    const { data: followUpRows } = await supabase
-      .from("collection_pickups")
-      .select("id, amount_gbp, date, created_at, collection_companies(name)")
-      .eq("organisation_id", orgId)
-      .is("receipt_status", null)
-      .lt("created_at", thresholdISO);
-    setPendingCollections((followUpRows ?? []).map((r: any) => ({
-      id: r.id,
-      company_name: r.collection_companies?.name ?? "Unknown",
-      amount_gbp: Number(r.amount_gbp),
-      created_at: r.created_at,
-    })));
-
   }, [today, yesterday]);
 
   useEffect(() => {
@@ -237,21 +219,6 @@ export default function DashboardPage() {
       document.removeEventListener("visibilitychange", onVisible);
     };
   }, [load]);
-
-  useEffect(() => {
-    if (pendingCollections.length > 0) setFollowUpOpen(true);
-  }, [pendingCollections]);
-
-  async function confirmCollection(id: string, received: boolean) {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    const { error } = await supabase.from("collection_pickups").update({
-      receipt_status: received ? "received" : "not_received",
-      receipt_confirmed_at: new Date().toISOString(),
-      receipt_confirmed_by: user?.id ?? null,
-    }).eq("id", id);
-    if (error) throw new Error(`Failed to save: ${error.message}`);
-  }
 
   async function patchBalance(patch: Partial<DailyBalance>) {
     if (!balance) return;
@@ -333,12 +300,6 @@ export default function DashboardPage() {
         <ActivityFeed rows={activity} loading={loadingActivity} />
         <QuickActions />
       </div>
-      <CollectionFollowUpDialog
-        collections={pendingCollections}
-        open={followUpOpen}
-        onOpenChange={setFollowUpOpen}
-        onConfirm={confirmCollection}
-      />
     </div>
   );
 }
