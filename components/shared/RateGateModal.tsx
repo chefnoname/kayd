@@ -93,7 +93,7 @@ export function RateGateModal({ open, onSubmitted }: RateGateModalProps) {
 
             <div className={styles.field}>
               <label htmlFor="rg-receive" className={styles.label}>
-                Receive rate (GBP → USD)
+                Receive rate (USD → GBP)
               </label>
               <input
                 id="rg-receive"
