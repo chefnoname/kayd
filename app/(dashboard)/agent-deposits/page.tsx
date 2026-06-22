@@ -149,6 +149,7 @@ function AgentDepositPageInner() {
       date: today,
       amount_received_gbp: receivedGBP,
       rate_used: rate,
+      rate_type: "receive",
       amount_usd_equivalent: calc.usdEquivalent,
       new_agent_balance_usd: calc.newBalance,
       receipt_number: form.receiptNumber.trim(),

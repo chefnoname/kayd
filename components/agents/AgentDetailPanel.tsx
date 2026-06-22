@@ -45,7 +45,7 @@ export function AgentDetailPanel({
       const { data } = await supabase
         .from("agent_deposits")
         .select(
-          "id, agent_id, date, amount_received_gbp, amount_usd_equivalent, rate_used, receipt_number, recorded_by, staff_users:recorded_by ( name )"
+          "id, agent_id, date, amount_received_gbp, amount_usd_equivalent, rate_used, rate_type, receipt_number, recorded_by, staff_users:recorded_by ( name )"
         )
         .eq("organisation_id", orgId)
         .eq("agent_id", agent.id)
@@ -61,6 +61,7 @@ export function AgentDetailPanel({
         amount_received_gbp: Number(r.amount_received_gbp),
         amount_usd_equivalent: Number(r.amount_usd_equivalent),
         rate_used: Number(r.rate_used),
+        rate_type: (r.rate_type ?? "receive") as "send" | "receive",
         receipt_number: r.receipt_number,
         recorded_by: r.recorded_by,
         recorded_by_name: r.staff_users?.name ?? null,
@@ -143,7 +144,10 @@ export function AgentDetailPanel({
                   {formatCurrency(r.amount_received_gbp, "GBP")}
                 </TableCell>
                 <TableCell className={styles.rateCell}>
-                  {r.rate_used.toFixed(4)}
+                  <span>{r.rate_used.toFixed(4)}</span>
+                  <span className={r.rate_type === "send" ? styles.rateLabelSend : styles.rateLabelReceive}>
+                    {r.rate_type === "send" ? "Send" : "Receive"}
+                  </span>
                 </TableCell>
                 <TableCell>
                   {formatCurrency(r.amount_usd_equivalent, "USD")}

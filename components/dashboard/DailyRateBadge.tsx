@@ -19,7 +19,7 @@ export function DailyRateBadge({ rate }: DailyRateBadgeProps) {
   }
   return (
     <Badge className={styles.badge}>
-      Today's rate: £1 = ${rate.toFixed(4)}
+      Today's recieve rate: £1 = ${rate.toFixed(4)}
     </Badge>
   );
 }

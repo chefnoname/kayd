@@ -80,13 +80,16 @@ export function AppHeader() {
     async function fetchRate() {
       const today = toDateString();
       const orgId = await getOrganisationId();
+
       if (cancelled || !orgId) return;
+
       const { data } = await supabase
         .from("daily_rates")
         .select("gbp_to_usd")
         .eq("organisation_id", orgId)
         .eq("date", today)
         .maybeSingle();
+
       if (!cancelled) setRate(data ? Number(data.gbp_to_usd) : null);
     }
 
@@ -296,22 +299,14 @@ export function AppHeader() {
 
       <div className={styles.meta}>
         <span className={styles.date}>{formatLongDate()}</span>
-        {/* {displaySendRate || displayReceiveRate ? (
-          <div className={styles.rateGroup}>
-            <Badge className={styles.rateBadge}>
-              Send {displaySendRate?.toFixed(4) ?? "—"}
-            </Badge>
-            <Badge className={styles.rateBadge}>
-              Receive {displayReceiveRate?.toFixed(4) ?? "—"}
-            </Badge>
-          </div>
-        ) : (
-          */
-        }
-        <Badge className={styles.rateBadge}>
-          {rate ? `GBP→USD ${rate.toFixed(4)}` : "Rate not set"}
-        </Badge>
-        {/* )}  */}
+        <div className={styles.sendReceiveRate}>
+          <Badge className={styles.rateBadge}>
+            {displayReceiveRate ? `GBP→USD ${displayReceiveRate.toFixed(4)}` : "Rate not set"}
+          </Badge>
+          <Badge className={styles.rateBadge}>
+            {displaySendRate ? `USD→GBP ${displaySendRate.toFixed(4)}` : "Rate not set"}
+          </Badge>
+        </div>
       </div>
 
       <div className={styles.user}>

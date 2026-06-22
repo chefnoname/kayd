@@ -45,6 +45,7 @@ export function Sidebar() {
   const [role, setRole] = useState<string>("staff");
   const [sendRate, setSendRate] = useState<number | null>(null);
   const [receiveRate, setReceiveRate] = useState<number | null>(null);
+  const [rateTimestamp, setRateTimestamp] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -69,7 +70,7 @@ export function Sidebar() {
       if (!orgId || cancelled) return;
       const { data: rateData } = await supabase
         .from("rate_entries")
-        .select("send_rate, receive_rate")
+        .select("send_rate, receive_rate, created_at")
         .eq("organisation_id", orgId)
         .eq("date", toDateString())
         .order("created_at", { ascending: false })
@@ -79,6 +80,7 @@ export function Sidebar() {
       if (!cancelled && rateData) {
         setSendRate(Number(rateData.send_rate));
         setReceiveRate(Number(rateData.receive_rate));
+        setRateTimestamp(rateData.created_at ?? null);
       }
     })();
 
@@ -124,6 +126,17 @@ export function Sidebar() {
               <span className={styles.rateRowLabel}>Receive</span>
               <span className={styles.rateRowValue}>{receiveRate.toFixed(4)}</span>
             </div>
+          )}
+          {rateTimestamp && (
+            <span className={styles.rateTimestamp}>
+              Set{" "}
+              {new Date(rateTimestamp).toLocaleString("en-GB", {
+                day: "numeric",
+                month: "short",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </span>
           )}
         </div>
       )}

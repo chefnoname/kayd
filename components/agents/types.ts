@@ -20,6 +20,7 @@ export interface AgentDepositRow {
   amount_received_gbp: number;
   amount_usd_equivalent: number;
   rate_used: number;
+  rate_type: "send" | "receive";
   receipt_number: string | null;
   recorded_by: string | null;
   recorded_by_name?: string | null;

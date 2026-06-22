@@ -242,7 +242,7 @@ export default function DashboardPage() {
         actions={
           <div className={styles.topRow}>
             <span className={styles.dateLine}>{formatLongDate()}</span>
-            <DailyRateBadge rate={rate} />
+            {/* <DailyRateBadge rate={rate} /> */}
           </div>
         }
       />
