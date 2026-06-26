@@ -21,6 +21,8 @@ import { Button } from "@/components/ui/button";
 import { HighBalanceWarningDialog } from "@/components/shared/HighBalanceWarningDialog";
 import { UNCOLLECTED_BALANCE_THRESHOLD, RATE_REFRESH_INTERVAL_MS } from "@/lib/constants";
 import { useRateGate } from "@/components/shared/RateGateProvider";
+import { useAtom } from "jotai";
+import { rateAtom } from "@/lib/atoms";
 import styles from "./AppHeader.module.css";
 
 /** sessionStorage key — cleared on logout so fresh login re-triggers the modal. */
@@ -31,17 +33,11 @@ type HighBalanceAgent = { id: string; name: string; balance_usd: number };
 export function AppHeader() {
   const supabase = createClient();
   const router = useRouter();
-  const { gateCleared, sendRate: ctxSendRate, receiveRate: ctxReceiveRate } = useRateGate();
+  const { gateCleared } = useRateGate();
+  const [rates, setRates] = useAtom(rateAtom);
 
-  const [rate, setRate] = useState<number | null>(null);
-  const [polledSendRate, setPolledSendRate] = useState<number | null>(null);
-  const [polledReceiveRate, setPolledReceiveRate] = useState<number | null>(null);
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-
-  // Prefer context values (immediate on gate submission), fall back to polled.
-  const displaySendRate = ctxSendRate ?? polledSendRate;
-  const displayReceiveRate = ctxReceiveRate ?? polledReceiveRate;
 
   // Outstanding collections count
   const [outstandingCount, setOutstandingCount] = useState(0);
@@ -72,50 +68,8 @@ export function AppHeader() {
     return () => { cancelled = true; };
   }, [supabase]);
 
-  // Fetch today's rate on mount AND whenever the tab regains focus,
-  // so the badge never shows a stale rate after navigating away.
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchRate() {
-      const today = toDateString();
-      const orgId = await getOrganisationId();
-
-      if (cancelled || !orgId) return;
-
-      const { data } = await supabase
-        .from("daily_rates")
-        .select("gbp_to_usd")
-        .eq("organisation_id", orgId)
-        .eq("date", today)
-        .maybeSingle();
-
-      if (!cancelled) setRate(data ? Number(data.gbp_to_usd) : null);
-    }
-
-    fetchRate();
-
-    // Re-fetch rate once the auth session is established (handles initial load
-    // where the session may not be ready when the effect first fires).
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_IN" || event === "INITIAL_SESSION") {
-        fetchRate();
-      }
-    });
-
-    function onVisible() {
-      if (document.visibilityState === "visible") fetchRate();
-    }
-    document.addEventListener("visibilitychange", onVisible);
-    return () => {
-      cancelled = true;
-      subscription.unsubscribe();
-      document.removeEventListener("visibilitychange", onVisible);
-    };
-  }, [supabase]);
-
-  // Poll rate_entries every 60s for send/receive rates.
-  // Also refreshes on visibility change.
+  // Poll rate_entries every 60s and write to the Jotai atom so every
+  // consumer (AppHeader badges, Sidebar rate box) stays in sync.
   useEffect(() => {
     if (!gateCleared) return;
 
@@ -127,15 +81,18 @@ export function AppHeader() {
       if (cancelled || !orgId) return;
       const { data } = await supabase
         .from("rate_entries")
-        .select("send_rate, receive_rate")
+        .select("send_rate, receive_rate, created_at")
         .eq("organisation_id", orgId)
         .eq("date", today)
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
       if (!cancelled && data) {
-        setPolledSendRate(Number(data.send_rate));
-        setPolledReceiveRate(Number(data.receive_rate));
+        setRates({
+          sendRate: Number(data.send_rate),
+          receiveRate: Number(data.receive_rate),
+          timestamp: data.created_at ?? null,
+        });
       }
     }
 
@@ -152,7 +109,7 @@ export function AppHeader() {
       clearInterval(interval);
       document.removeEventListener("visibilitychange", onVisible);
     };
-  }, [supabase, gateCleared]);
+  }, [supabase, gateCleared, setRates]);
 
   // Outstanding collections: count of active agents with balance > 0.
   // Refreshes on mount, visibility change, and auth state.
@@ -299,12 +256,12 @@ export function AppHeader() {
 
       <div className={styles.meta}>
         <span className={styles.date}>{formatLongDate()}</span>
-        <div className={styles.sendReceiveRate}>
+        <div className={styles.rateGroup}>
           <Badge className={styles.rateBadge}>
-            {displayReceiveRate ? `GBP→USD ${displayReceiveRate.toFixed(4)}` : "Rate not set"}
+            GBP→USD {rates.sendRate?.toFixed(4) ?? "—"}
           </Badge>
           <Badge className={styles.rateBadge}>
-            {displaySendRate ? `USD→GBP ${displaySendRate.toFixed(4)}` : "Rate not set"}
+            USD→GBP {rates.receiveRate?.toFixed(4) ?? "—"}
           </Badge>
         </div>
       </div>

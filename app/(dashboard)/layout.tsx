@@ -4,6 +4,8 @@ import { ToastProvider } from "@/components/ui/toast";
 import { AccessDeniedToast } from "@/components/shared/AccessDeniedToast";
 import { EmailVerificationToast } from "@/components/shared/EmailVerificationToast";
 import { RateGateProvider } from "@/components/shared/RateGateProvider";
+import { SessionTimeoutProvider } from "@/components/shared/SessionTimeoutProvider";
+import { JotaiProvider } from "@/components/shared/JotaiProvider";
 import { Suspense } from "react";
 import styles from "./layout.module.css";
 
@@ -18,15 +20,19 @@ export default function DashboardLayout({
         <AccessDeniedToast />
         <EmailVerificationToast />
       </Suspense>
-      <RateGateProvider>
-        <div className={styles.shell}>
-          <AppHeader />
-          <div className={styles.body}>
-            <Sidebar />
-            <main className={styles.main}>{children}</main>
-          </div>
-        </div>
-      </RateGateProvider>
+      <JotaiProvider>
+        <SessionTimeoutProvider>
+          <RateGateProvider>
+            <div className={styles.shell}>
+              <AppHeader />
+              <div className={styles.body}>
+                <Sidebar />
+                <main className={styles.main}>{children}</main>
+              </div>
+            </div>
+          </RateGateProvider>
+        </SessionTimeoutProvider>
+      </JotaiProvider>
     </ToastProvider>
   );
 }

@@ -15,9 +15,9 @@ import {
   UsersRound,
   UserCircle,
 } from "lucide-react";
+import { useAtomValue } from "jotai";
 import { createClient } from "@/lib/supabase";
-import { getOrganisationId } from "@/lib/org";
-import { toDateString } from "@/lib/utils";
+import { rateAtom } from "@/lib/atoms";
 import styles from "./Sidebar.module.css";
 
 type NavItem = {
@@ -42,11 +42,10 @@ const nav: NavItem[] = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const rates = useAtomValue(rateAtom);
   const [role, setRole] = useState<string>("staff");
-  const [sendRate, setSendRate] = useState<number | null>(null);
-  const [receiveRate, setReceiveRate] = useState<number | null>(null);
-  const [rateTimestamp, setRateTimestamp] = useState<string | null>(null);
 
+  // Fetch role once on mount.
   useEffect(() => {
     let cancelled = false;
     const supabase = createClient();
@@ -64,24 +63,6 @@ export function Sidebar() {
         .maybeSingle();
 
       if (!cancelled && data) setRole(data.role);
-
-      // Fetch today's rates
-      const orgId = await getOrganisationId();
-      if (!orgId || cancelled) return;
-      const { data: rateData } = await supabase
-        .from("rate_entries")
-        .select("send_rate, receive_rate, created_at")
-        .eq("organisation_id", orgId)
-        .eq("date", toDateString())
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (!cancelled && rateData) {
-        setSendRate(Number(rateData.send_rate));
-        setReceiveRate(Number(rateData.receive_rate));
-        setRateTimestamp(rateData.created_at ?? null);
-      }
     })();
 
     return () => {
@@ -112,25 +93,25 @@ export function Sidebar() {
         })}
       </nav>
 
-      {(sendRate != null || receiveRate != null) && (
+      {(rates.sendRate != null || rates.receiveRate != null) && (
         <div className={styles.rateBox}>
           <span className={styles.rateBoxTitle}>Today&apos;s Rates</span>
-          {sendRate != null && (
+          {rates.sendRate != null && (
             <div className={styles.rateRow}>
               <span className={styles.rateRowLabel}>Send</span>
-              <span className={styles.rateRowValue}>{sendRate.toFixed(4)}</span>
+              <span className={styles.rateRowValue}>{rates.sendRate.toFixed(4)}</span>
             </div>
           )}
-          {receiveRate != null && (
+          {rates.receiveRate != null && (
             <div className={styles.rateRow}>
               <span className={styles.rateRowLabel}>Receive</span>
-              <span className={styles.rateRowValue}>{receiveRate.toFixed(4)}</span>
+              <span className={styles.rateRowValue}>{rates.receiveRate.toFixed(4)}</span>
             </div>
           )}
-          {rateTimestamp && (
+          {rates.timestamp && (
             <span className={styles.rateTimestamp}>
               Set{" "}
-              {new Date(rateTimestamp).toLocaleString("en-GB", {
+              {new Date(rates.timestamp).toLocaleString("en-GB", {
                 day: "numeric",
                 month: "short",
                 hour: "2-digit",

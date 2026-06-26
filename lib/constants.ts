@@ -14,4 +14,21 @@ export const RATE_REFRESH_INTERVAL_MS = 60_000;
  *
  * This is a one-line change to switch between modes.
  */
-export const RATE_GATE_MODE: "login" | "daily" = "login";
+export const RATE_GATE_MODE: "login" | "daily" = "daily";
+
+/**
+ * SESSION_TIMEOUT_MINUTES — inactivity timeout before automatic logout.
+ * Overridden at runtime by the org-level setting in the database (if set).
+ *
+ * UAT:  set to 1 to verify the full flow within 90 seconds.
+ * Prod: set to 480 (8 hours).
+ */
+export const SESSION_TIMEOUT_MINUTES = 1.5; // UAT value — change to 480 for production
+
+/**
+ * SESSION_WARNING_MINUTES — how many minutes before timeout the warning appears.
+ *
+ * UAT:  set to 0.5 (30 seconds).
+ * Prod: set to 5.
+ */
+export const SESSION_WARNING_MINUTES = 1; // UAT value — change to 5 for production
