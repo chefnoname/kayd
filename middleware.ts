@@ -1,9 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { LANG_COOKIE, isLocale } from "@/components/landing/i18n";
 
 /**
  * Auth middleware:
- *  - Public routes: /login, /signup, /set-password, /auth/*
+ *  - / → /home (marketing landing page, always public)
+ *  - Public routes: /home, /login, /signup, /set-password, /auth/*
  *  - Unauthenticated → /login
  *  - /admin (root) → superadmin only
  *  - /admin/team → admin or superadmin (staff → /dashboard?denied=team)
@@ -33,6 +35,29 @@ export async function middleware(request: NextRequest) {
     pathname.includes(".")
   ) {
     return NextResponse.next();
+  }
+
+  // The site root always lands on the marketing page, signed in or not.
+  // Query params (e.g. ?lang=so) carry through.
+  if (pathname === "/") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/home";
+    return NextResponse.redirect(url);
+  }
+
+  // Public marketing landing page — no session lookup needed.
+  // An explicit ?lang= choice is remembered for later visits.
+  if (pathname === "/home") {
+    const response = NextResponse.next();
+    const lang = request.nextUrl.searchParams.get("lang");
+    if (isLocale(lang)) {
+      response.cookies.set(LANG_COOKIE, lang, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 365,
+        sameSite: "lax",
+      });
+    }
+    return response;
   }
 
   // /set-password must always be reachable so invited users can finish

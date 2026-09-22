@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      :root { --navy: #0b1a48; --navy-2: #1c2a5c; --gold: #d9a838; --gold-text: #9a6f14; --cream: #f7f4ef; --muted: #6b6f80; }
+      html, body {
+        width: 1920px; height: 1080px; overflow: hidden; background: var(--cream);
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased; color: var(--navy);
+      }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--cream); }
+
+      /* soft brand backdrop */
+      .bg-glow { position: absolute; width: 1400px; height: 1400px; border-radius: 50%; left: 260px; top: -500px;
+        background: radial-gradient(circle, rgba(217,168,56,0.16), rgba(217,168,56,0) 62%); pointer-events: none; }
+
+      /* ---- Intro / outro ---- */
+      .card-scene { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; }
+      .logo { width: 620px; height: auto; display: block; }
+      .hook { margin-top: 44px; font-size: 76px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.08; text-align: center; max-width: 1500px; color: var(--navy); }
+      .hook em { font-style: normal; color: var(--gold-text); }
+      .hook-sub { margin-top: 22px; font-size: 34px; font-weight: 600; color: var(--muted); }
+      .outro-tag { margin-top: 30px; font-size: 54px; font-weight: 800; letter-spacing: -0.02em; color: var(--navy); }
+      .outro-url { margin-top: 18px; font-size: 32px; font-weight: 600; color: var(--gold-text); letter-spacing: 0.02em; }
+
+      /* ---- Screen frames ---- */
+      .frame {
+        position: absolute; left: 200px; top: 190px; width: 1520px; height: 855px; border-radius: 18px; overflow: hidden;
+        box-shadow: 0 40px 90px -30px rgba(11,26,72,0.45), 0 0 0 1px rgba(11,26,72,0.08); background: #f7f4ef; opacity: 0;
+      }
+      .screen { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform: scale(0.7917); transform-origin: top left; }
+
+      /* ---- Captions ---- */
+      .cap { position: absolute; left: 200px; top: 62px; opacity: 0; }
+      .cap .k { font-size: 22px; font-weight: 800; letter-spacing: 0.14em; color: var(--gold-text); }
+      .cap .h { margin-top: 8px; font-size: 52px; font-weight: 800; letter-spacing: -0.025em; color: var(--navy); line-height: 1.1; }
+      .cap .h b { color: var(--gold-text); font-weight: 800; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="34" data-width="1920" data-height="1080">
+      <div class="bg-glow" id="glow"></div>
+
+      <!-- INTRO 0–3.2 -->
+      <div class="card-scene" id="intro">
+        <img class="logo" src="assets/brand/kayd-logo.png" alt="Kayd" id="intro-logo" />
+        <div class="hook" id="intro-hook">Money that moved on <em>trust</em> for 1,200 years.</div>
+        <div class="hook-sub" id="intro-sub">Now the day closes on time.</div>
+      </div>
+
+      <!-- SCREENS (real app captures, mounted as sub-compositions) -->
+      <div class="frame" id="f-dash">
+        <div class="screen clip" id="sc-dash" data-composition-id="sc-dash" data-composition-src="compositions/dashboard.html" data-start="2.9" data-duration="6.7" data-track-index="1"></div>
+      </div>
+      <div class="cap" id="c-dash"><div class="k">01 · DASHBOARD</div><div class="h">Your whole cash position. <b>One screen.</b></div></div>
+
+      <div class="frame" id="f-agents">
+        <div class="screen clip" id="sc-agents" data-composition-id="sc-agents" data-composition-src="compositions/agents.html" data-start="9.2" data-duration="6.2" data-track-index="2"></div>
+      </div>
+      <div class="cap" id="c-agents"><div class="k">02 · AGENTS</div><div class="h">Every agent's balance, <b>live.</b></div></div>
+
+      <div class="frame" id="f-dep">
+        <div class="screen clip" id="sc-dep" data-composition-id="sc-dep" data-composition-src="compositions/deposit.html" data-start="15.0" data-duration="7.8" data-track-index="3"></div>
+      </div>
+      <div class="cap" id="c-dep"><div class="k">03 · AGENT DEPOSITS</div><div class="h">Today's rate, <b>applied automatically.</b></div></div>
+
+      <div class="frame" id="f-eod">
+        <div class="screen clip" id="sc-eod" data-composition-id="sc-eod" data-composition-src="compositions/endofday.html" data-start="22.4" data-duration="7.9" data-track-index="4"></div>
+      </div>
+      <div class="cap" id="c-eod"><div class="k">04 · END OF DAY</div><div class="h">Discrepancies caught <b>before sign-off.</b></div></div>
+
+      <!-- OUTRO 23.0–26.5 -->
+      <div class="card-scene" id="outro">
+        <img class="logo" src="assets/brand/kayd-logo.png" alt="Kayd" id="outro-logo" />
+        <div class="outro-tag" id="outro-tag">The ledger that closes itself.</div>
+        <div class="outro-url" id="outro-url">kayd.live</div>
+      </div>
+
+      <!-- ===== AUDIO ===== -->
+      <audio id="bg-music" data-start="0" data-duration="34" data-track-index="10" data-volume="0.55" data-fade-in="0.8" data-fade-out="2.6"
+             src="assets/music/london-akh-nasheed.mp3"></audio>
+      <audio id="sfx-in1" data-start="3.05" data-duration="0.6" data-track-index="11" data-volume="0.5" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <audio id="sfx-in2" data-start="9.45" data-duration="0.6" data-track-index="12" data-volume="0.5" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <audio id="sfx-in3" data-start="15.2" data-duration="0.6" data-track-index="13" data-volume="0.5" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <audio id="sfx-in4" data-start="22.6" data-duration="0.6" data-track-index="14" data-volume="0.5" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <!-- cursor clicks -->
+      <audio id="sfx-c1" data-start="7.7" data-duration="0.3" data-track-index="15" data-volume="0.5" src="assets/sfx/ui/click2.ogg"></audio>
+      <audio id="sfx-c2" data-start="13.7" data-duration="0.3" data-track-index="16" data-volume="0.5" src="assets/sfx/ui/click2.ogg"></audio>
+      <audio id="sfx-c3" data-start="16.4" data-duration="0.3" data-track-index="17" data-volume="0.45" src="assets/sfx/ui/click2.ogg"></audio>
+      <audio id="sfx-c4" data-start="17.4" data-duration="0.3" data-track-index="18" data-volume="0.45" src="assets/sfx/ui/click2.ogg"></audio>
+      <audio id="sfx-c5" data-start="21.5" data-duration="0.3" data-track-index="19" data-volume="0.5" src="assets/sfx/ui/click2.ogg"></audio>
+      <audio id="sfx-c6" data-start="24.6" data-duration="0.3" data-track-index="20" data-volume="0.45" src="assets/sfx/ui/click2.ogg"></audio>
+      <!-- typing ticks -->
+      <audio id="sfx-k1" data-start="17.65" data-duration="0.2" data-track-index="21" data-volume="0.4" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-k2" data-start="17.95" data-duration="0.2" data-track-index="22" data-volume="0.4" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-k3" data-start="24.85" data-duration="0.2" data-track-index="23" data-volume="0.4" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="sfx-k4" data-start="25.25" data-duration="0.2" data-track-index="24" data-volume="0.4" src="assets/sfx/interface/click_003.ogg"></audio>
+      <!-- discrepancy impact + outro bell -->
+      <audio id="sfx-r4" data-start="26.1" data-duration="0.5" data-track-index="25" data-volume="0.75" src="assets/sfx/impact/impactSoft_medium_001.ogg"></audio>
+      <audio id="sfx-out" data-start="30.4" data-duration="1.2" data-track-index="26" data-volume="0.5" src="assets/sfx/impact/impactBell_heavy_000.ogg"></audio>
+      <script>
+        window.__timelines = window.__timelines || {};
+        const tl = gsap.timeline({ paused: true });
+
+        // ---- resting states (seek-safe) ----
+        tl.set(["#intro", "#outro"], { opacity: 0 }, 0);
+        tl.set(["#f-dash", "#f-agents", "#f-dep", "#f-eod"], { opacity: 0, scale: 0.985, y: 14, transformOrigin: "50% 50%" }, 0);
+        tl.set(["#c-dash", "#c-agents", "#c-dep", "#c-eod"], { opacity: 0, y: 14 }, 0);
+        tl.set(["#intro-logo", "#intro-hook", "#intro-sub", "#outro-logo", "#outro-tag", "#outro-url"], { opacity: 0, y: 18 }, 0);
+        tl.set("#intro-logo", { scale: 0.96, transformOrigin: "50% 50%" }, 0);
+        tl.set("#outro-logo", { scale: 0.96, transformOrigin: "50% 50%" }, 0);
+        tl.fromTo("#glow", { scale: 0.9, opacity: 0.7 }, { scale: 1.06, opacity: 1, duration: 34, ease: "sine.inOut" }, 0);
+
+        // ---- INTRO 0–3.0 ----
+        tl.to("#intro", { opacity: 1, duration: 0.3 }, 0);
+        tl.to("#intro-logo", { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out" }, 0.2);
+        tl.to("#intro-hook", { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0.9);
+        tl.to("#intro-sub", { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 1.7);
+        tl.to("#intro", { opacity: 0, duration: 0.4, ease: "power1.in" }, 2.6);
+
+        // ---- 01 DASHBOARD: rises in from below ----
+        tl.fromTo("#f-dash", { opacity: 0, y: 140, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.85, ease: "power4.out" }, 3.0);
+        tl.fromTo("#c-dash", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 3.3);
+        tl.to("#f-dash", { scale: 1.02, duration: 5.3, ease: "sine.inOut" }, 3.85);
+        // cut → push left
+        tl.to(["#f-dash", "#c-dash"], { x: -320, opacity: 0, duration: 0.5, ease: "power2.in" }, 9.15);
+
+        // ---- 02 AGENTS: pushes in from the right ----
+        tl.fromTo("#f-agents", { opacity: 0, x: 360 }, { opacity: 1, x: 0, duration: 0.7, ease: "power3.out" }, 9.4);
+        tl.fromTo("#c-agents", { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.55, ease: "power3.out" }, 9.7);
+        tl.to("#f-agents", { scale: 1.02, duration: 4.6, ease: "sine.inOut" }, 10.1);
+        // cut → zoom through
+        tl.to("#f-agents", { scale: 1.08, opacity: 0, duration: 0.45, ease: "power2.in" }, 14.95);
+        tl.to("#c-agents", { opacity: 0, y: -20, duration: 0.35, ease: "power1.in" }, 14.95);
+
+        // ---- 03 DEPOSIT: blooms up from small ----
+        tl.fromTo("#f-dep", { opacity: 0, scale: 0.88 }, { opacity: 1, scale: 1, duration: 0.75, ease: "power3.out" }, 15.2);
+        tl.fromTo("#c-dep", { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 0.55, ease: "power3.out", transformOrigin: "0% 50%" }, 15.5);
+        tl.to("#f-dep", { scale: 1.02, duration: 6.3, ease: "sine.inOut" }, 15.95);
+        // cut → lift out
+        tl.to(["#f-dep", "#c-dep"], { y: -240, opacity: 0, duration: 0.5, ease: "power2.in" }, 22.4);
+
+        // ---- 04 END OF DAY: rises from below ----
+        tl.fromTo("#f-eod", { opacity: 0, y: 260 }, { opacity: 1, y: 0, duration: 0.75, ease: "power3.out" }, 22.65);
+        tl.fromTo("#c-eod", { opacity: 0, y: -26 }, { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }, 22.95);
+        tl.to("#f-eod", { scale: 1.02, duration: 6.4, ease: "sine.inOut" }, 23.4);
+        // cut → settle back and fade
+        tl.to("#f-eod", { scale: 0.95, opacity: 0, duration: 0.55, ease: "power2.in" }, 29.9);
+        tl.to("#c-eod", { opacity: 0, duration: 0.4 }, 29.9);
+
+        // ---- OUTRO 30.3–34 ----
+        tl.to("#outro", { opacity: 1, duration: 0.4 }, 30.3);
+        tl.to("#outro-logo", { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out" }, 30.45);
+        tl.to("#outro-tag", { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 31.1);
+        tl.to("#outro-url", { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 31.7);
+        window.__timelines["main"] = tl;
+        tl.seek(0);
+      </script>
+    </div>
+  </body>
+</html>

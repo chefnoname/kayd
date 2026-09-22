@@ -122,8 +122,8 @@ export function SessionTimeoutProvider({
     clearAllTimers();
     setShowWarning(false);
 
-    const timeoutMs = timeoutMinutesRef.current * 60 * 1000;
-    const warningMs = warningMinutesRef.current * 60 * 1000;
+    const timeoutMs = timeoutMinutesRef.current * 600 * 1000;
+    const warningMs = warningMinutesRef.current * 600 * 1000;
     const warningAtMs = timeoutMs - warningMs;
 
     // Schedule warning banner

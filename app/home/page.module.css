@@ -1,0 +1,469 @@
+/*
+ * Landing tokens — structure from the Wise design system, recoloured to the
+ * Kayd logo. Wise "forest ink" → Kayd ink navy, "lime voltage" → Kayd gold,
+ * "linen mist" → pale gold wash, "fog" → warm off-white.
+ */
+.page {
+  --kayd-ink: #0b1a48;
+  --kayd-navy: #1c2a5c;
+  --kayd-gold: #d9a838;
+  --kayd-gold-deep: #9a6f14;
+  --kayd-mist: #f6ecd3;
+  --kayd-fog: #efece6;
+  --kayd-charcoal: #454a58;
+  --kayd-slate: #6b6f80;
+  --kayd-paper: #ffffff;
+  --shadow-subtle: rgba(11, 26, 72, 0.12) 0 0 0 1px;
+  --shadow-xl: rgba(11, 26, 72, 0.18) 0 10px 32px 0,
+    rgba(11, 26, 72, 0.06) 0 40px 40px 0;
+
+  min-height: 100vh;
+  background: var(--kayd-paper);
+  color: var(--kayd-charcoal);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page :where(h1, h2, h3) {
+  color: var(--kayd-ink);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ── Shared type ─────────────────────────────────────── */
+
+.eyebrow,
+.eyebrowOnDark {
+  display: inline-block;
+  margin-bottom: 20px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.eyebrow {
+  background: var(--kayd-mist);
+  color: var(--kayd-gold-deep);
+}
+
+.eyebrowOnDark {
+  background: rgba(217, 168, 56, 0.16);
+  color: var(--kayd-gold);
+}
+
+.sectionTitle {
+  max-width: 760px;
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(36px, 5vw, 59px);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+}
+
+.sectionLead {
+  max-width: 620px;
+  margin-top: 20px;
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--kayd-slate);
+}
+
+/* ── Buttons ─────────────────────────────────────────── */
+
+.ctaPrimary,
+.ctaSecondary,
+.ctaOnDark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  padding: 0 28px;
+  border-radius: 999px;
+  font-size: 17px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 150ms ease, background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.ctaPrimary,
+.ctaOnDark {
+  background: var(--kayd-gold);
+  color: var(--kayd-ink);
+}
+
+.ctaPrimary:hover,
+.ctaOnDark:hover {
+  background: #e4b64a;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(217, 168, 56, 0.35);
+}
+
+.ctaSecondary {
+  color: var(--kayd-ink);
+  box-shadow: inset 0 0 0 2px var(--kayd-ink);
+}
+
+.ctaSecondary:hover {
+  background: var(--kayd-ink);
+  color: var(--kayd-paper);
+}
+
+.ctaPrimary:focus-visible,
+.ctaSecondary:focus-visible,
+.ctaOnDark:focus-visible {
+  outline: 3px solid var(--kayd-gold-deep);
+  outline-offset: 3px;
+}
+
+/* ── Hero ────────────────────────────────────────────── */
+
+.hero {
+  padding: 112px 0 124px;
+  text-align: center;
+  background:
+    radial-gradient(60% 55% at 50% 0%, var(--kayd-mist) 0%, transparent 70%),
+    var(--kayd-paper);
+}
+
+.heroTitle {
+  max-width: 980px;
+  margin: 0 auto;
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(52px, 9vw, 105px);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+}
+
+.heroAccent {
+  white-space: nowrap;
+  background: linear-gradient(
+    transparent 62%,
+    var(--kayd-gold) 62%,
+    var(--kayd-gold) 90%,
+    transparent 90%
+  );
+}
+
+.heroLead {
+  max-width: 640px;
+  margin: 32px auto 0;
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--kayd-slate);
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 40px;
+}
+
+/* ── Kayd Original showcase ─────────────────────────── */
+
+.showcase {
+  padding: 112px 0;
+  background: var(--kayd-ink);
+  color: rgba(255, 255, 255, 0.78);
+  scroll-margin-top: 64px;
+}
+
+.showcaseHead {
+  max-width: 780px;
+}
+
+.showcase .showcaseTitle {
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(36px, 5vw, 59px);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  color: var(--kayd-paper);
+}
+
+.showcaseLead {
+  margin-top: 20px;
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+.videoFrame {
+  margin: 56px 0 0;
+  padding: 10px;
+  border-radius: 32px;
+  background: var(--kayd-navy);
+  box-shadow: var(--shadow-xl);
+}
+
+.video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 24px;
+  background: var(--kayd-fog);
+}
+
+.featureList {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 40px;
+  list-style: none;
+  padding: 0;
+}
+
+.featureItem {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.featureTick {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--kayd-gold);
+  color: var(--kayd-ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ── What we build / How it works ───────────────────── */
+
+.section,
+.sectionTinted {
+  padding: 112px 0;
+  scroll-margin-top: 64px;
+}
+
+.sectionTinted {
+  background: var(--kayd-fog);
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 56px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: 36px;
+  border-radius: 32px;
+  background: var(--kayd-fog);
+  transition: background-color 200ms ease, transform 200ms ease;
+}
+
+.card:hover {
+  background: var(--kayd-mist);
+  transform: translateY(-3px);
+}
+
+.cardTitle {
+  font-family: var(--font-display), sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.cardBody {
+  margin-top: 12px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.chipList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding: 24px 0 0;
+  list-style: none;
+}
+
+.chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--kayd-paper);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--kayd-ink);
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 56px;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  padding: 36px;
+  border-radius: 32px;
+  background: var(--kayd-paper);
+}
+
+.stepNumber {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  background: var(--kayd-ink);
+  color: var(--kayd-gold);
+  font-family: var(--font-display), sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.stepTitle {
+  margin-top: 24px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.stepBody {
+  margin-top: 10px;
+  line-height: 1.6;
+}
+
+/* ── Closing CTA ────────────────────────────────────── */
+
+.ctaBand {
+  padding: 124px 0;
+  background:
+    radial-gradient(50% 80% at 50% 100%, rgba(217, 168, 56, 0.22) 0%, transparent 70%),
+    var(--kayd-ink);
+  text-align: center;
+}
+
+.ctaInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ctaBand .ctaTitle {
+  max-width: 860px;
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  color: var(--kayd-paper);
+}
+
+.ctaLead {
+  max-width: 560px;
+  margin: 24px 0 40px;
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ── Footer ─────────────────────────────────────────── */
+
+.footer {
+  padding: 32px 0;
+  background: var(--kayd-ink);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footerInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.footerNote {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+
+@media (max-width: 960px) {
+  .featureList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .steps {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .hero {
+    padding: 72px 0 88px;
+  }
+
+  .heroLead {
+    font-size: 18px;
+  }
+
+  .heroActions > a {
+    width: 100%;
+  }
+
+  .showcase,
+  .section,
+  .sectionTinted,
+  .ctaBand {
+    padding: 80px 0;
+  }
+
+  .videoFrame {
+    padding: 6px;
+    border-radius: 20px;
+  }
+
+  .video {
+    border-radius: 14px;
+  }
+
+  .featureList,
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .card,
+  .step {
+    padding: 28px;
+    border-radius: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page * {
+    transition: none !important;
+  }
+}

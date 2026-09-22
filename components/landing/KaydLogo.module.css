@@ -1,0 +1,23 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--kayd-ink);
+}
+
+.light {
+  color: #ffffff;
+}
+
+.mark {
+  width: 30px;
+  height: 30px;
+}
+
+.word {
+  font-family: var(--font-display), sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}

@@ -1,0 +1,138 @@
+.form {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* Visually hidden, still announced as the group name. */
+.legend {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--kayd-slate);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Hover only darkens the ring — never a pill background, which made the
+ * picked option look like a button. Guarded so taps don't leave it stuck. */
+@media (hover: hover) {
+  .option:hover {
+    color: var(--kayd-ink);
+  }
+
+  .option:hover .radio {
+    box-shadow: inset 0 0 0 2px var(--kayd-ink);
+  }
+}
+
+/* Native input stays in the tab order and accessibility tree. */
+.input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.radio {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--kayd-paper);
+  box-shadow: inset 0 0 0 2px var(--kayd-slate);
+  transition: box-shadow 120ms ease;
+}
+
+.radio::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--kayd-ink);
+  transform: scale(0);
+  transition: transform 120ms ease;
+}
+
+/* Classic radio: white circle, navy ring, navy dot. */
+.input:checked ~ .radio,
+.option:hover .input:checked ~ .radio {
+  box-shadow: inset 0 0 0 2px var(--kayd-ink);
+}
+
+.input:checked ~ .radio::after {
+  transform: scale(1);
+}
+
+.input:checked ~ .full,
+.input:checked ~ .short {
+  color: var(--kayd-ink);
+}
+
+.input:focus-visible ~ .radio {
+  outline: 3px solid var(--kayd-gold-deep);
+  outline-offset: 2px;
+}
+
+.short {
+  display: none;
+}
+
+.submit {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--kayd-ink);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .option {
+    gap: 6px;
+    padding: 0 6px;
+  }
+
+  .full {
+    display: none;
+  }
+
+  .short {
+    display: inline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .radio,
+  .radio::after {
+    transition: none;
+  }
+}
