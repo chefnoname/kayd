@@ -16,6 +16,7 @@
   --kayd-sand-50: #fbf2e3;
   --kayd-sand-100: #f1e6d4;
   --kayd-sand-200: #ecd9b8;
+  --kayd-sand-text: #8a5a2b;       /* sand-hued label text, 5.9:1 on white */
 
   /* ── Surfaces ──────────────────────────────────────────── */
   --kayd-bg: #f7f4ef;              /* app background */

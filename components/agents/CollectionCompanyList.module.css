@@ -32,3 +32,13 @@
 .errorAlert {
   margin-top: 0.75rem;
 }
+
+@media (max-width: 640px) {
+  .addRow {
+    flex-wrap: wrap;
+  }
+
+  .addInput {
+    flex: 1 1 100%;
+  }
+}

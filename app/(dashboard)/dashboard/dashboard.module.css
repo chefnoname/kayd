@@ -27,6 +27,10 @@
   .topCards {
     grid-template-columns: 1fr;
   }
+
+  .dateLine {
+    display: none; /* the date already shows in the page chrome */
+  }
 }
 
 .summaryGrid {
@@ -44,6 +48,6 @@
 
 @media (max-width: 900px) {
   .bottomGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }

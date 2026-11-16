@@ -29,7 +29,7 @@
   font-size: var(--kayd-font-size-2xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--kayd-sand-shadow);
+  color: var(--kayd-sand-text);
   font-weight: var(--kayd-font-weight-semibold);
   margin-bottom: 0.2rem;
 }

@@ -8,17 +8,24 @@
 .body {
   flex: 1;
   display: grid;
-  grid-template-columns: 240px 1fr;
+  grid-template-columns: var(--kayd-sidebar-width) minmax(0, 1fr);
   min-height: 0;
 }
 
 .main {
-  padding: 2rem;
+  padding: var(--kayd-space-8);
   overflow-y: auto;
+  min-width: 0;
 }
 
 @media (max-width: 768px) {
   .body {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .main {
+    padding: var(--kayd-space-4);
+    overflow-y: visible;
   }
 }

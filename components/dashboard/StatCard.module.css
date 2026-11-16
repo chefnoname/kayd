@@ -17,3 +17,17 @@
   color: var(--kayd-tint-amber-value);
   font-variant-numeric: tabular-nums;
 }
+
+@media (max-width: 640px) {
+  .card > div {
+    padding: var(--kayd-space-4);
+  }
+
+  .card > div + div {
+    padding-top: 0;
+  }
+
+  .value {
+    font-size: var(--kayd-font-size-2xl);
+  }
+}

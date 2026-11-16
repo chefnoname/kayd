@@ -26,3 +26,20 @@
   display: flex;
   gap: 0.5rem;
 }
+
+@media (max-width: 640px) {
+  .wrap {
+    align-items: flex-start;
+    margin-bottom: var(--kayd-space-4);
+    padding-bottom: var(--kayd-space-3);
+  }
+
+  .title {
+    font-size: var(--kayd-font-size-3xl);
+  }
+
+  .actions {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+}

@@ -88,16 +88,32 @@
 }
 
 @media (max-width: 768px) {
+  /* Mobile: labelled, horizontally scrollable tab strip pinned under the header */
   .sidebar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
     border-right: none;
     border-bottom: 1px solid var(--kayd-border);
+    padding: var(--kayd-space-2) var(--kayd-space-3);
   }
   .nav {
     flex-direction: row;
+    gap: var(--kayd-space-1);
     overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
-  .link span {
+  .nav::-webkit-scrollbar {
     display: none;
+  }
+  .link {
+    flex: 0 0 auto;
+    min-height: var(--kayd-touch-target);
+    padding: 0 var(--kayd-space-3);
+    gap: var(--kayd-space-2);
+    font-size: var(--kayd-font-size-md);
+    white-space: nowrap;
   }
   .rateBox {
     display: none;

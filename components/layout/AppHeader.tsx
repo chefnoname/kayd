@@ -273,8 +273,10 @@ export function AppHeader() {
             size="sm"
             className={styles.outstandingBtn}
             onClick={() => router.push("/agents?filter=in_debt")}
+            aria-label={`Outstanding collections: ${outstandingCount}`}
           >
-            ⚠ Collections: {outstandingCount}
+            ⚠ <span className={styles.alertLabel}>Collections: </span>
+            {outstandingCount}
           </Button>
         )}
         {showWarningBtn && (
@@ -283,8 +285,9 @@ export function AppHeader() {
             size="sm"
             className={styles.warningBtn}
             onClick={handleWarningClick}
+            aria-label="High balance warning"
           >
-            ⚠ High Balance
+            ⚠ High<span className={styles.alertLabel}> Balance</span>
           </Button>
         )}
         <DropdownMenu>

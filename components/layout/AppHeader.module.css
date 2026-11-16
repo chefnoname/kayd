@@ -5,29 +5,12 @@
   padding: 0.85rem 1.5rem;
   background: var(--kayd-night);
   color: var(--kayd-text-inverse);
-  height: 100px;
+  height: var(--kayd-header-height);
 }
 
-@media (max-width: 640px) {
-  .header {
-    grid-template-columns: auto 1fr auto;
-    padding: 0.65rem 1rem;
-    gap: 0.5rem;
-  }
-
-  .meta {
-    justify-content: center;
-  }
-
-  .date {
-    display: none;
-  }
-
-  .rateGroup {
-    flex-direction: column;
-    gap: 0.25rem;
-    align-items: center;
-  }
+.logo {
+  width: 175px;
+  height: auto;
 }
 
 .brand {
@@ -138,4 +121,51 @@
   background: var(--kayd-danger-bright);
   border-color: var(--kayd-danger-bright);
   color: var(--kayd-text-inverse);
+}
+
+@media (max-width: 640px) {
+  /* Mobile: logo and account on the first row, today's rates on the second */
+  .header {
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "logo user"
+      "meta meta";
+    row-gap: var(--kayd-space-2);
+    height: auto;
+    padding: var(--kayd-space-3) var(--kayd-space-4);
+  }
+
+  .logo {
+    grid-area: logo;
+    width: 128px;
+    margin-left: -16px; /* the logo file has built-in padding */
+  }
+
+  .meta {
+    grid-area: meta;
+  }
+
+  .user {
+    grid-area: user;
+    gap: var(--kayd-space-2);
+  }
+
+  .date {
+    display: none;
+  }
+
+  .rateGroup {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .alertLabel {
+    display: none;
+  }
+
+  .outstandingBtn,
+  .warningBtn {
+    min-height: 36px;
+    padding: 0 var(--kayd-space-3);
+  }
 }
