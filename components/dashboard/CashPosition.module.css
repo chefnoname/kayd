@@ -1,0 +1,89 @@
+.band {
+  display: flex;
+  flex-wrap: wrap;
+  background: var(--kayd-surface);
+  border: 1px solid var(--kayd-border);
+  border-radius: var(--kayd-radius-lg);
+  overflow: hidden;
+}
+
+.lead {
+  flex: 2 1 300px;
+  min-width: 0;
+}
+
+.cell {
+  flex: 1 1 200px;
+  min-width: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--kayd-space-2);
+  padding: var(--kayd-space-6);
+  /* dividers that still look right when the cells wrap */
+  box-shadow: -1px -1px 0 var(--kayd-border);
+}
+
+.label {
+  font-size: var(--kayd-font-size-2xs);
+  font-weight: var(--kayd-font-weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kayd-text-subtle);
+}
+
+.value {
+  font-size: var(--kayd-font-size-3xl);
+  line-height: 1.2;
+  font-weight: var(--kayd-font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.debt {
+  color: var(--kayd-danger);
+}
+
+.note {
+  font-size: var(--kayd-font-size-sm);
+  color: var(--kayd-text-muted);
+}
+
+@media (max-width: 640px) {
+  .band {
+    flex-direction: column;
+    flex-wrap: nowrap;
+  }
+
+  .lead,
+  .cell {
+    flex: 0 0 auto;
+  }
+
+  /* Phone: label and note on the left, figure on the right */
+  .cell {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--kayd-space-3);
+    row-gap: 0.125rem;
+    align-items: center;
+    padding: var(--kayd-space-4) var(--kayd-space-5);
+  }
+
+  .label {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .note {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .value {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    font-size: var(--kayd-font-size-xl);
+    text-align: right;
+  }
+}

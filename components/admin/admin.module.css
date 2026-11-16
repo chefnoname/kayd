@@ -19,6 +19,8 @@
 
 .roleBadge {
   text-transform: capitalize;
+  white-space: nowrap; /* pill text never wraps or overflows */
+  flex-shrink: 0;
 }
 
 .badgeSuperadmin {

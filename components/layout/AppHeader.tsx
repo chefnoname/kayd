@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import { getOrganisationId, clearOrganisationCache } from "@/lib/org";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,13 +15,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { formatLongDate, toDateString } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { daysSince, getLocationStatus, toDateString } from "@/lib/utils";
 import { HighBalanceWarningDialog } from "@/components/shared/HighBalanceWarningDialog";
 import { UNCOLLECTED_BALANCE_THRESHOLD, RATE_REFRESH_INTERVAL_MS } from "@/lib/constants";
 import { useRateGate } from "@/components/shared/RateGateProvider";
 import { useAtom } from "jotai";
-import { rateAtom } from "@/lib/atoms";
+import { useSetAtom } from "jotai";
+import { attentionAtom, rateAtom, type AttentionOffice } from "@/lib/atoms";
 import styles from "./AppHeader.module.css";
 
 /** sessionStorage key — cleared on logout so fresh login re-triggers the modal. */
@@ -33,19 +32,17 @@ type HighBalanceAgent = { id: string; name: string; balance_usd: number };
 export function AppHeader() {
   const supabase = createClient();
   const router = useRouter();
+  const pathname = usePathname();
+  const setAttention = useSetAtom(attentionAtom);
   const { gateCleared } = useRateGate();
   const [rates, setRates] = useAtom(rateAtom);
 
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
 
-  // Outstanding collections count
-  const [outstandingCount, setOutstandingCount] = useState(0);
-
-  // High-balance warning state
+  // High-balance warning dialog (auto-opens once per browser session)
   const [highBalanceAgents, setHighBalanceAgents] = useState<HighBalanceAgent[]>([]);
   const [warningOpen, setWarningOpen] = useState(false);
-  const [showWarningBtn, setShowWarningBtn] = useState(false);
 
   // Fetch identity + name once on mount.
   useEffect(() => {
@@ -111,113 +108,84 @@ export function AppHeader() {
     };
   }, [supabase, gateCleared, setRates]);
 
-  // Outstanding collections: count of active agents with balance > 0.
-  // Refreshes on mount, visibility change, and auth state.
+  // Things that need attention today: agents who owe, agents over the
+  // uncollected-balance threshold, and offices overdue a collection.
+  // Shared through attentionAtom so the sidebar badges and the dashboard
+  // list read one source. Refreshes on mount, on navigation and when the
+  // tab regains focus. Only runs AFTER the rate gate is cleared (AC-8).
   useEffect(() => {
     if (!gateCleared) return;
 
     let cancelled = false;
 
-    async function fetchOutstanding() {
+    async function fetchAttention() {
       const orgId = await getOrganisationId();
       if (cancelled || !orgId) return;
-      const { count } = await supabase
-        .from("agents")
-        .select("id", { count: "exact", head: true })
-        .eq("organisation_id", orgId)
-        .eq("status", "active")
-        .gt("balance_usd", 0);
-      if (!cancelled) setOutstandingCount(count ?? 0);
-    }
 
-    fetchOutstanding();
-
-    function onVisible() {
-      if (document.visibilityState === "visible") fetchOutstanding();
-    }
-    document.addEventListener("visibilitychange", onVisible);
-    return () => {
-      cancelled = true;
-      document.removeEventListener("visibilitychange", onVisible);
-    };
-  }, [supabase, gateCleared]);
-
-  // High-balance check: only runs AFTER rate gate is cleared (AC-8).
-  // - First trigger this session → shows modal + sets sessionStorage flag
-  // - Subsequent triggers → button stays visible but modal does not re-pop
-  // - Balance drops below threshold mid-session → button is hidden
-  useEffect(() => {
-    if (!gateCleared) return;
-
-    let cancelled = false;
-
-    async function checkHighBalance() {
-      const orgId = await getOrganisationId();
-      if (cancelled || !orgId) return;
-      const { data } = await supabase
-        .from("agents")
-        .select("id, name, balance_usd")
-        .eq("organisation_id", orgId)
-        .eq("status", "active")
-        .gte("balance_usd", UNCOLLECTED_BALANCE_THRESHOLD);
+      const [{ data: agentRows }, { data: officeRows }] = await Promise.all([
+        supabase
+          .from("agents")
+          .select("id, name, balance_usd")
+          .eq("organisation_id", orgId)
+          .eq("status", "active")
+          .gt("balance_usd", 0)
+          .order("balance_usd", { ascending: false }),
+        supabase
+          .from("regional_offices")
+          .select("id, name, cash_held_gbp, last_collection_date")
+          .eq("organisation_id", orgId)
+          .order("name", { ascending: true }),
+      ]);
       if (cancelled) return;
-      const breaching: HighBalanceAgent[] = (data ?? []).map((a: any) => ({
+
+      const owing: HighBalanceAgent[] = (agentRows ?? []).map((a: any) => ({
         id: a.id,
         name: a.name,
         balance_usd: Number(a.balance_usd),
       }));
-      if (breaching.length > 0) {
-        setShowWarningBtn(true);
-        // Only auto-open the modal once per browser session.
-        if (!sessionStorage.getItem(SESSION_KEY)) {
-          sessionStorage.setItem(SESSION_KEY, "true");
-          setHighBalanceAgents(breaching);
-          setWarningOpen(true);
-        }
-      } else {
-        // All agents back below threshold — hide the button.
-        setShowWarningBtn(false);
+      const breaching = owing.filter(
+        (a) => a.balance_usd >= UNCOLLECTED_BALANCE_THRESHOLD
+      );
+
+      const overdueOffices: AttentionOffice[] = (officeRows ?? [])
+        .map((o: any) => ({
+          id: o.id as string,
+          name: o.name as string,
+          cash_held_gbp: Number(o.cash_held_gbp),
+          days: o.last_collection_date
+            ? daysSince(o.last_collection_date)
+            : null,
+        }))
+        .filter(
+          (o) => getLocationStatus(o.days ?? Number.POSITIVE_INFINITY) === "red"
+        );
+
+      setAttention({
+        owingCount: owing.length,
+        highBalanceAgents: breaching,
+        overdueOffices,
+        loaded: true,
+      });
+
+      // Auto-open the warning dialog once per browser session.
+      if (breaching.length > 0 && !sessionStorage.getItem(SESSION_KEY)) {
+        sessionStorage.setItem(SESSION_KEY, "true");
+        setHighBalanceAgents(breaching);
+        setWarningOpen(true);
       }
     }
 
-    checkHighBalance();
+    fetchAttention();
 
     function onVisible() {
-      if (document.visibilityState === "visible") checkHighBalance();
+      if (document.visibilityState === "visible") fetchAttention();
     }
     document.addEventListener("visibilitychange", onVisible);
     return () => {
       cancelled = true;
       document.removeEventListener("visibilitychange", onVisible);
     };
-  }, [supabase, gateCleared]);
-
-  /**
-   * Re-fetch breaching agents at click time so the modal always shows
-   * up-to-date data (never stale from the initial load).
-   */
-  async function handleWarningClick() {
-    const orgId = await getOrganisationId();
-    if (!orgId) return;
-    const { data } = await supabase
-      .from("agents")
-      .select("id, name, balance_usd")
-      .eq("organisation_id", orgId)
-      .eq("status", "active")
-      .gte("balance_usd", UNCOLLECTED_BALANCE_THRESHOLD);
-    const fresh: HighBalanceAgent[] = (data ?? []).map((a: any) => ({
-      id: a.id,
-      name: a.name,
-      balance_usd: Number(a.balance_usd),
-    }));
-    setHighBalanceAgents(fresh);
-    if (fresh.length === 0) {
-      // Threshold no longer breached — hide the button.
-      setShowWarningBtn(false);
-    } else {
-      setWarningOpen(true);
-    }
-  }
+  }, [supabase, gateCleared, pathname, setAttention]);
 
   async function onLogout() {
     // Clear session flags so modals fire again on next login.
@@ -244,52 +212,48 @@ export function AppHeader() {
         .slice(0, 2)
       : "U";
 
+  const setTime = rates.timestamp
+    ? new Date(rates.timestamp).toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : null;
+
   return (
     <header className={styles.header}>
-      <Image
-        src="/kayd.png"
-        alt="Kayd logo"
-        width={175}
-        height={0}
-        className={styles.logo}
-      />
+      <Link href="/dashboard" className={styles.logoLink} aria-label="Kayd dashboard">
+        <Image
+          src="/kayd-logo.png"
+          alt="Kayd"
+          width={480}
+          height={131}
+          className={styles.logo}
+          priority
+        />
+      </Link>
 
-      <div className={styles.meta}>
-        <span className={styles.date}>{formatLongDate()}</span>
-        <div className={styles.rateGroup}>
-          <Badge className={styles.rateBadge}>
-            GBP→USD {rates.sendRate?.toFixed(4) ?? "—"}
-          </Badge>
-          <Badge className={styles.rateBadge}>
-            USD→GBP {rates.receiveRate?.toFixed(4) ?? "—"}
-          </Badge>
-        </div>
+      <div className={styles.rates} aria-label="Today's rates">
+        <span className={styles.ratesTitle}>Today&apos;s rates</span>
+        <span className={styles.rate}>
+          <span className={styles.rateLabel}>
+            Send<span className={styles.ratePair}> GBP→USD</span>
+          </span>
+          <span className={styles.rateValue}>
+            {rates.sendRate?.toFixed(4) ?? "—"}
+          </span>
+        </span>
+        <span className={styles.rate}>
+          <span className={styles.rateLabel}>
+            Receive<span className={styles.ratePair}> USD→GBP</span>
+          </span>
+          <span className={styles.rateValue}>
+            {rates.receiveRate?.toFixed(4) ?? "—"}
+          </span>
+        </span>
+        {setTime && <span className={styles.rateSet}>Set {setTime}</span>}
       </div>
 
       <div className={styles.user}>
-        {outstandingCount > 0 && (
-          <Button
-            variant="outline"
-            size="sm"
-            className={styles.outstandingBtn}
-            onClick={() => router.push("/agents?filter=in_debt")}
-            aria-label={`Outstanding collections: ${outstandingCount}`}
-          >
-            ⚠ <span className={styles.alertLabel}>Collections: </span>
-            {outstandingCount}
-          </Button>
-        )}
-        {showWarningBtn && (
-          <Button
-            variant="outline"
-            size="sm"
-            className={styles.warningBtn}
-            onClick={handleWarningClick}
-            aria-label="High balance warning"
-          >
-            ⚠ High<span className={styles.alertLabel}> Balance</span>
-          </Button>
-        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className={styles.avatarBtn} aria-label="Open user menu">

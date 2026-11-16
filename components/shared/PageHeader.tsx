@@ -6,14 +6,14 @@ export function PageHeader({
   actions,
 }: {
   title: string;
-  description?: string;
+  description?: React.ReactNode;
   actions?: React.ReactNode;
 }) {
   return (
     <header className={styles.wrap}>
       <div>
         <h1 className={styles.title}>{title}</h1>
-        {description && <p className={styles.desc}>{description}</p>}
+        {description && <div className={styles.desc}>{description}</div>}
       </div>
       {actions && <div className={styles.actions}>{actions}</div>}
     </header>

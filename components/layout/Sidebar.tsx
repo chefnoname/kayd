@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -17,7 +18,7 @@ import {
 } from "lucide-react";
 import { useAtomValue } from "jotai";
 import { createClient } from "@/lib/supabase";
-import { rateAtom } from "@/lib/atoms";
+import { attentionAtom } from "@/lib/atoms";
 import styles from "./Sidebar.module.css";
 
 type NavItem = {
@@ -42,7 +43,7 @@ const nav: NavItem[] = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const rates = useAtomValue(rateAtom);
+  const attention = useAtomValue(attentionAtom);
   const [role, setRole] = useState<string>("staff");
 
   // Fetch role once on mount.
@@ -83,12 +84,50 @@ export function Sidebar() {
     (item) => !item.roles || item.roles.includes(role)
   );
 
+  // Count badges. The colour says there is an issue and the number says how
+  // many; the full wording lives in the accessible label and the tooltip so
+  // the badge itself never has text that can wrap or overflow.
+  const highCount = attention.highBalanceAgents.length;
+  const overdueCount = attention.overdueOffices.length;
+  const badges: Record<string, { count: number; tone: string; label: string }> = {};
+  if (highCount > 0) {
+    badges["/agents"] = {
+      count: highCount,
+      tone: styles.badgeDanger,
+      label: `${highCount} ${highCount === 1 ? "agent is" : "agents are"} over the balance limit`,
+    };
+  } else if (attention.owingCount > 0) {
+    badges["/agents"] = {
+      count: attention.owingCount,
+      tone: styles.badgeWarning,
+      label: `${attention.owingCount} ${attention.owingCount === 1 ? "agent owes" : "agents owe"} money`,
+    };
+  }
+  if (overdueCount > 0) {
+    badges["/locations"] = {
+      count: overdueCount,
+      tone: styles.badgeDanger,
+      label: `${overdueCount} ${overdueCount === 1 ? "office is" : "offices are"} overdue a collection`,
+    };
+  }
+
   return (
     <aside className={styles.sidebar}>
+      <Link href="/dashboard" className={styles.logoLink} aria-label="Kayd dashboard">
+        <Image
+          src="/kayd-logo.png"
+          alt="Kayd"
+          width={480}
+          height={131}
+          className={styles.logo}
+          priority
+        />
+      </Link>
       <nav className={styles.nav} ref={navRef} aria-label="Main">
         {visibleNav.map(({ href, label, icon: Icon }) => {
           const active =
             pathname === href || pathname.startsWith(href + "/");
+          const badge = badges[href];
           return (
             <Link
               key={href}
@@ -96,41 +135,21 @@ export function Sidebar() {
               className={`${styles.link} ${active ? styles.active : ""}`}
               aria-current={active ? "page" : undefined}
             >
-              <Icon size={18} aria-hidden />
-              <span>{label}</span>
+              <Icon size={18} aria-hidden className={styles.icon} />
+              <span className={styles.label}>{label}</span>
+              {badge && (
+                <span
+                  className={`${styles.badge} ${badge.tone}`}
+                  title={badge.label}
+                >
+                  <span aria-hidden>{badge.count}</span>
+                  <span className={styles.srOnly}>, {badge.label}</span>
+                </span>
+              )}
             </Link>
           );
         })}
       </nav>
-
-      {(rates.sendRate != null || rates.receiveRate != null) && (
-        <div className={styles.rateBox}>
-          <span className={styles.rateBoxTitle}>Today&apos;s Rates</span>
-          {rates.sendRate != null && (
-            <div className={styles.rateRow}>
-              <span className={styles.rateRowLabel}>Send</span>
-              <span className={styles.rateRowValue}>{rates.sendRate.toFixed(4)}</span>
-            </div>
-          )}
-          {rates.receiveRate != null && (
-            <div className={styles.rateRow}>
-              <span className={styles.rateRowLabel}>Receive</span>
-              <span className={styles.rateRowValue}>{rates.receiveRate.toFixed(4)}</span>
-            </div>
-          )}
-          {rates.timestamp && (
-            <span className={styles.rateTimestamp}>
-              Set{" "}
-              {new Date(rates.timestamp).toLocaleString("en-GB", {
-                day: "numeric",
-                month: "short",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </span>
-          )}
-        </div>
-      )}
     </aside>
   );
 }

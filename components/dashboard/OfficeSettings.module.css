@@ -1,0 +1,20 @@
+.card {
+  background: var(--kayd-surface);
+  border: 1px solid var(--kayd-border);
+  border-radius: var(--kayd-radius-lg);
+  padding: var(--kayd-space-5) var(--kayd-space-6);
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.title {
+  margin: 0 0 var(--kayd-space-2);
+  font-size: var(--kayd-font-size-xl);
+  font-weight: var(--kayd-font-weight-semibold);
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: var(--kayd-space-4) var(--kayd-space-5);
+  }
+}

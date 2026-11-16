@@ -1,63 +1,57 @@
-.card {
-  background: linear-gradient(135deg, var(--kayd-tint-blue-start) 0%, var(--kayd-tint-blue-end) 100%);
-  border: 1px solid var(--kayd-tint-blue-border);
-}
-
-.header {
-  display: flex;
-  flex-direction: row !important;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
-
-.label {
-  font-size: var(--kayd-font-size-2xs) !important;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--kayd-tint-blue-label);
-  font-weight: var(--kayd-font-weight-semibold);
-}
-
-.editBtn {
-  color: var(--kayd-tint-blue-label);
-  height: 28px;
-  width: 28px;
-}
-
-.editBtn:hover {
-  color: var(--kayd-night);
-}
-
-.rows {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
 .fieldRow {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  font-size: var(--kayd-font-size-md);
-  gap: 1rem;
+  gap: var(--kayd-space-3);
+  padding: 0.625rem 0;
+  border-bottom: 1px solid var(--kayd-border);
+}
+
+.fieldRow:last-of-type {
+  border-bottom: 0;
 }
 
 .fieldLabel {
-  color: var(--kayd-tint-blue-icon);
-  font-size: var(--kayd-font-size-md);
+  color: var(--kayd-text-muted);
 }
 
 .fieldValue {
-  font-weight: var(--kayd-font-weight-medium);
-  color: var(--kayd-tint-blue-value);
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--kayd-space-3);
+  font-weight: var(--kayd-font-weight-semibold);
   font-variant-numeric: tabular-nums;
   text-align: right;
+  overflow-wrap: anywhere;
 }
 
 .notConfigured {
-  font-size: var(--kayd-font-size-md);
+  font-weight: var(--kayd-font-weight-medium);
   color: var(--kayd-text-subtle);
+}
+
+.editBtn {
+  flex: 0 0 auto;
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-size: var(--kayd-font-size-sm);
+  font-weight: var(--kayd-font-weight-semibold);
+  color: var(--kayd-night);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.editBtn:hover {
+  color: var(--kayd-night-shadow);
+}
+
+@media (max-width: 640px) {
+  .editBtn {
+    min-height: var(--kayd-touch-target);
+  }
 }
 
 .editFields {

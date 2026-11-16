@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
 import { formatCurrency, toDateString } from "@/lib/utils";
-import { StatCard } from "./StatCard";
 import styles from "./CollectionMetrics.module.css";
 
 interface CollectionMetricsProps {
@@ -95,15 +94,29 @@ export function CollectionMetrics({ orgId }: CollectionMetricsProps) {
     };
   }, [orgId]);
 
+  const rows: [string, string][] = [
+    ["Today", formatCurrency(dailyGBP, "GBP")],
+    ["This week", formatCurrency(weeklyGBP, "GBP")],
+    ["This month", formatCurrency(monthlyGBP, "GBP")],
+    [
+      "Deposit conversion rate",
+      conversionRate !== null ? `${conversionRate.toFixed(1)}%` : "—",
+    ],
+  ];
+
   return (
-    <div className={styles.grid}>
-      <StatCard label="Collections Today" displayValue={formatCurrency(dailyGBP, "GBP")} />
-      <StatCard label="Collections This Week" displayValue={formatCurrency(weeklyGBP, "GBP")} />
-      <StatCard label="Collections This Month" displayValue={formatCurrency(monthlyGBP, "GBP")} />
-      <StatCard
-        label="Deposit Conversion Rate"
-        displayValue={conversionRate !== null ? `${conversionRate.toFixed(1)}%` : "—"}
-      />
-    </div>
+    <section className={styles.card} aria-labelledby="collections-title">
+      <h2 id="collections-title" className={styles.title}>
+        Collections
+      </h2>
+      <dl className={styles.rows}>
+        {rows.map(([label, value]) => (
+          <div key={label} className={styles.row}>
+            <dt className={styles.label}>{label}</dt>
+            <dd className={styles.value}>{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   );
 }

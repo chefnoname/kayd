@@ -1,31 +1,45 @@
+/* Desktop: white sidebar (logo + navigation) beside a column holding the
+   slim top bar and the page. */
 .shell {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: var(--kayd-sidebar-width) minmax(0, 1fr);
   background: var(--kayd-bg);
 }
 
-.body {
-  flex: 1;
-  display: grid;
-  grid-template-columns: var(--kayd-sidebar-width) minmax(0, 1fr);
-  min-height: 0;
+.content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .main {
+  flex: 1;
   padding: var(--kayd-space-8);
-  overflow-y: auto;
   min-width: 0;
 }
 
 @media (max-width: 768px) {
-  .body {
+  /* Phone: top bar, then the navigation strip, then the page */
+  .shell {
     display: flex;
     flex-direction: column;
   }
 
+  .content {
+    display: contents;
+  }
+
+  .content > header {
+    order: 1;
+  }
+
+  .shell > aside {
+    order: 2;
+  }
+
   .main {
+    order: 3;
     padding: var(--kayd-space-4);
-    overflow-y: visible;
   }
 }

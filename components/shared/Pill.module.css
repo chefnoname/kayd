@@ -1,0 +1,45 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  padding: 0.125rem 0.625rem;
+  border-radius: var(--kayd-radius-pill);
+  border: 1px solid transparent;
+  font-size: var(--kayd-font-size-xs);
+  font-weight: var(--kayd-font-weight-semibold);
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--kayd-radius-pill);
+  background: currentColor;
+}
+
+.success {
+  background: var(--kayd-success-bg);
+  color: var(--kayd-success);
+  border-color: var(--kayd-success-border);
+}
+
+.warning {
+  background: var(--kayd-warning-bg);
+  color: var(--kayd-warning);
+  border-color: var(--kayd-warning-border);
+}
+
+.danger {
+  background: var(--kayd-danger-bg);
+  color: var(--kayd-danger);
+  border-color: var(--kayd-danger-border);
+}
+
+.info {
+  background: var(--kayd-info-bg);
+  color: var(--kayd-info);
+  border-color: var(--kayd-info-border);
+}

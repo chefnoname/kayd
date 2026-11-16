@@ -62,6 +62,8 @@
   font-weight: var(--kayd-font-weight-bold);
   padding: 0.15rem 0.45rem;
   border-radius: var(--kayd-radius-pill);
+  white-space: nowrap; /* pill text never wraps or overflows */
+  flex-shrink: 0;
 }
 
 .statusActive {
@@ -119,4 +121,12 @@
   border: 1px dashed var(--kayd-border);
   border-radius: var(--kayd-radius-lg);
   color: var(--kayd-text-muted);
+}
+
+/* Balance badges: pill text never wraps or overflows */
+.green,
+.amber,
+.red {
+  white-space: nowrap;
+  flex-shrink: 0;
 }

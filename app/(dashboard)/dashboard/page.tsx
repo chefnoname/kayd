@@ -3,21 +3,24 @@
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
 import { getOrganisationId } from "@/lib/org";
+import Link from "next/link";
+import { Banknote } from "lucide-react";
 import { PageHeader } from "@/components/shared/PageHeader";
-import { DailyRateBadge } from "@/components/dashboard/DailyRateBadge";
+import { Pill } from "@/components/shared/Pill";
+import { Button } from "@/components/ui/button";
 import { AlertsBanner } from "@/components/dashboard/AlertsBanner";
-import { OpeningBalanceCard } from "@/components/dashboard/OpeningBalanceCard";
-import { AgentDebtCard } from "@/components/dashboard/AgentDebtCard";
-import { BalanceSummaryRow } from "@/components/dashboard/BalanceSummaryRow";
+import { CashPosition } from "@/components/dashboard/CashPosition";
+import { NeedsAttention } from "@/components/dashboard/NeedsAttention";
 import {
   ActivityFeed,
   type ActivityRow,
 } from "@/components/dashboard/ActivityFeed";
-import { QuickActions } from "@/components/dashboard/QuickActions";
+import { OfficeSettings } from "@/components/dashboard/OfficeSettings";
+import { EditableStatCard } from "@/components/dashboard/EditableStatCard";
 import { BankDetailsCard } from "@/components/dashboard/BankDetailsCard";
 import { CollectionMetrics } from "@/components/dashboard/CollectionMetrics";
 import type { DailyBalance } from "@/components/dashboard/types";
-import { formatLongDate, toDateString, usdToGbp } from "@/lib/utils";
+import { toDateString, usdToGbp } from "@/lib/utils";
 import styles from "./dashboard.module.css";
 
 function yesterdayDate(): Date {
@@ -33,6 +36,12 @@ export default function DashboardPage() {
   const [rate, setRate] = useState<number | null>(null);
   const [balance, setBalance] = useState<DailyBalance | null>(null);
   const [agentDebtGBP, setAgentDebtGBP] = useState<number>(0);
+  const [agentDebtUSD, setAgentDebtUSD] = useState<number>(0);
+  const [owingAgents, setOwingAgents] = useState<number>(0);
+  const [collectedToday, setCollectedToday] = useState<{
+    totalGBP: number;
+    count: number;
+  }>({ totalGBP: 0, count: 0 });
   const [activity, setActivity] = useState<ActivityRow[]>([]);
   const [loadingActivity, setLoadingActivity] = useState(true);
   const [orgId, setOrgId] = useState<string | null>(null);
@@ -179,6 +188,23 @@ export default function DashboardPage() {
       0
     );
     setAgentDebtGBP(todayRate ? usdToGbp(totalDebtUSD, todayRate) : 0);
+    setAgentDebtUSD(totalDebtUSD);
+    setOwingAgents(rows.filter((a) => a.balance_usd > 0).length);
+
+    // Everything collected from agents today (the activity list below is
+    // capped at 10 rows, so total it separately)
+    const { data: todayAmounts } = await supabase
+      .from("agent_deposits")
+      .select("amount_received_gbp")
+      .eq("organisation_id", orgId)
+      .eq("date", today);
+    setCollectedToday({
+      totalGBP: (todayAmounts ?? []).reduce(
+        (sum: number, r: any) => sum + Number(r.amount_received_gbp),
+        0
+      ),
+      count: (todayAmounts ?? []).length,
+    });
 
     // Today's activity — last 10 agent deposits
     setLoadingActivity(true);
@@ -234,16 +260,44 @@ export default function DashboardPage() {
     setBalance({ ...balance, ...patch });
   }
 
+  const longDate = new Intl.DateTimeFormat("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date());
+
   return (
     <div className={styles.page}>
       <PageHeader
         title="Dashboard"
-        description="Today's cash position at a glance."
+        description={
+          <span className={styles.dateLine}>
+            <span>{longDate}</span>
+            {balance &&
+              (balance.is_closed ? (
+                <Pill tone="info" dot>
+                  Day closed
+                </Pill>
+              ) : (
+                <Pill tone="success" dot>
+                  Day open
+                </Pill>
+              ))}
+          </span>
+        }
         actions={
-          <div className={styles.topRow}>
-            <span className={styles.dateLine}>{formatLongDate()}</span>
-            {/* <DailyRateBadge rate={rate} /> */}
-          </div>
+          <>
+            <Button asChild variant="outline" className={styles.headerAction}>
+              <Link href="/end-of-day">Close day</Link>
+            </Button>
+            <Button asChild className={styles.headerAction}>
+              <Link href="/agent-deposits">
+                <Banknote size={18} aria-hidden />
+                Record agent deposit
+              </Link>
+            </Button>
+          </>
         }
       />
 
@@ -255,27 +309,36 @@ export default function DashboardPage() {
       )}
 
       {balance && (
-        <div className={styles.topCards}>
-          <OpeningBalanceCard
-            openingGBP={balance.opening_gbp}
-            yesterday={yesterdayDate()}
-          />
-          <AgentDebtCard totalAgentDebtGBP={agentDebtGBP} />
-        </div>
+        <CashPosition
+          cashInSafeGBP={balance.cash_in_safe_gbp}
+          openingGBP={balance.opening_gbp}
+          yesterday={yesterdayDate()}
+          collectedTodayGBP={collectedToday.totalGBP}
+          depositsToday={collectedToday.count}
+          agentDebtGBP={agentDebtGBP}
+          agentDebtUSD={agentDebtUSD}
+          owingAgents={owingAgents}
+          onSaveCashInSafe={(next) => patchBalance({ cash_in_safe_gbp: next })}
+        />
       )}
 
-      {balance && (
-        <BalanceSummaryRow
-          systemLimitUSD={balance.system_limit_usd}
-          cashInSafeGBP={balance.cash_in_safe_gbp}
-          onSaveSystemLimit={(next) =>
-            patchBalance({ system_limit_usd: next })
-          }
-          onSaveCashInSafe={(next) =>
-            patchBalance({ cash_in_safe_gbp: next })
-          }
-        >
-          {orgId && (
+      <div className={styles.split}>
+        <NeedsAttention />
+        {orgId && <CollectionMetrics orgId={orgId} />}
+      </div>
+
+      <div className={styles.split}>
+        <ActivityFeed rows={activity} loading={loadingActivity} />
+        {balance && orgId && (
+          <OfficeSettings>
+            <EditableStatCard
+              variant="row"
+              label="System limit"
+              value={balance.system_limit_usd}
+              currency="USD"
+              editable
+              onSave={(next) => patchBalance({ system_limit_usd: next })}
+            />
             <BankDetailsCard
               bankName={bankDetails.bank_name}
               sortCode={bankDetails.sort_code}
@@ -290,15 +353,8 @@ export default function DashboardPage() {
                 })
               }
             />
-          )}
-        </BalanceSummaryRow>
-      )}
-
-      {orgId && <CollectionMetrics orgId={orgId} />}
-
-      <div className={styles.bottomGrid}>
-        <ActivityFeed rows={activity} loading={loadingActivity} />
-        <QuickActions />
+          </OfficeSettings>
+        )}
       </div>
     </div>
   );
