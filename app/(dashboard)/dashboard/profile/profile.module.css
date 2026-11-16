@@ -26,6 +26,6 @@
 }
 
 .loading {
-  font-size: 0.9rem;
-  color: #6b6b6b;
+  font-size: var(--kayd-font-size-md);
+  color: var(--kayd-text-muted);
 }

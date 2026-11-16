@@ -13,11 +13,11 @@
 .select {
   width: 100%;
   padding: 0.5rem 0.75rem;
-  border: 1px solid #ece4d7;
-  border-radius: 8px;
-  font-size: 0.925rem;
+  border: 1px solid var(--kayd-border);
+  border-radius: var(--kayd-radius-md);
+  font-size: var(--kayd-font-size-base);
   color: var(--kayd-night-shadow);
-  background: #fff;
+  background: var(--kayd-surface);
   appearance: none;
 }
 

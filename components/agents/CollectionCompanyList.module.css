@@ -18,17 +18,27 @@
 }
 
 .empty {
-  font-size: 0.85rem;
-  color: #999;
+  font-size: var(--kayd-font-size-md);
+  color: var(--kayd-text-disabled);
   padding: 0.75rem 0;
 }
 
 .loading {
-  font-size: 0.85rem;
-  color: #999;
+  font-size: var(--kayd-font-size-md);
+  color: var(--kayd-text-disabled);
   padding: 0.75rem 0;
 }
 
 .errorAlert {
   margin-top: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .addRow {
+    flex-wrap: wrap;
+  }
+
+  .addInput {
+    flex: 1 1 100%;
+  }
 }

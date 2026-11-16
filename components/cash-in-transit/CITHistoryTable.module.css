@@ -8,7 +8,7 @@
 }
 
 .tableWrap table {
-  font-size: 0.8125rem;
+  font-size: var(--kayd-font-size-sm);
 }
 
 .tableWrap th,
@@ -17,7 +17,7 @@
 }
 
 .nameCell {
-  font-weight: 600;
+  font-weight: var(--kayd-font-weight-semibold);
   color: var(--kayd-night-shadow);
 }
 
@@ -32,8 +32,8 @@
 
 .notes {
   max-width: 200px;
-  font-size: 0.8rem;
-  color: #6b6b6b;
+  font-size: var(--kayd-font-size-sm);
+  color: var(--kayd-text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -41,23 +41,23 @@
 
 .muted {
   text-align: center;
-  color: #8a7e6c;
+  color: var(--kayd-text-subtle);
   padding: 2rem 0;
 }
 
 .plProfit {
-  color: #1e6b3c;
-  font-weight: 600;
+  color: var(--kayd-success);
+  font-weight: var(--kayd-font-weight-semibold);
   font-variant-numeric: tabular-nums;
 }
 
 .plLoss {
-  color: #8a1f1f;
-  font-weight: 600;
+  color: var(--kayd-danger);
+  font-weight: var(--kayd-font-weight-semibold);
   font-variant-numeric: tabular-nums;
 }
 
 .plNeutral {
-  color: #6b6b6b;
+  color: var(--kayd-text-muted);
   font-variant-numeric: tabular-nums;
 }

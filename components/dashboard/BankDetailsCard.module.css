@@ -12,15 +12,15 @@
 }
 
 .label {
-  font-size: 0.7rem !important;
+  font-size: var(--kayd-font-size-2xs) !important;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #185fa5;
-  font-weight: 600;
+  color: var(--kayd-tint-blue-label);
+  font-weight: var(--kayd-font-weight-semibold);
 }
 
 .editBtn {
-  color: #85b7eb;
+  color: var(--kayd-tint-blue-label);
   height: 28px;
   width: 28px;
 }
@@ -39,25 +39,25 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  font-size: 0.9rem;
+  font-size: var(--kayd-font-size-md);
   gap: 1rem;
 }
 
 .fieldLabel {
-  color: #378add;
-  font-size: 0.85rem;
+  color: var(--kayd-tint-blue-icon);
+  font-size: var(--kayd-font-size-md);
 }
 
 .fieldValue {
-  font-weight: 500;
-  color: #042c53;
+  font-weight: var(--kayd-font-weight-medium);
+  color: var(--kayd-tint-blue-value);
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
 
 .notConfigured {
-  font-size: 0.875rem;
-  color: #8a7e6c;
+  font-size: var(--kayd-font-size-md);
+  color: var(--kayd-text-subtle);
 }
 
 .editFields {
@@ -73,25 +73,25 @@
 }
 
 .editField label {
-  font-size: 0.8rem;
-  color: #6b6b6b;
+  font-size: var(--kayd-font-size-sm);
+  color: var(--kayd-text-muted);
 }
 
 .countrySelect {
   height: 36px;
   width: 100%;
-  border: 1px solid hsl(var(--border));
-  border-radius: calc(var(--radius) - 2px);
-  background: hsl(var(--background));
-  color: hsl(var(--foreground));
-  font-size: 0.875rem;
+  border: 1px solid var(--kayd-border-strong);
+  border-radius: var(--kayd-radius-md);
+  background: var(--kayd-surface);
+  color: var(--kayd-text);
+  font-size: var(--kayd-font-size-md);
   padding: 0 0.75rem;
   outline: none;
   cursor: pointer;
 }
 
 .countrySelect:focus {
-  box-shadow: 0 0 0 2px hsl(var(--ring));
+  box-shadow: var(--kayd-focus-ring);
 }
 
 .dialogFooter {
@@ -103,8 +103,8 @@
 }
 
 .error {
-  font-size: 0.8rem;
-  color: #8a1f1f;
+  font-size: var(--kayd-font-size-sm);
+  color: var(--kayd-danger);
   margin-top: 0.4rem;
 }
 

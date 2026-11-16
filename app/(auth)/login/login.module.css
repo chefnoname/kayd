@@ -11,12 +11,12 @@
 .card {
   width: 100%;
   max-width: 420px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--kayd-shadow-modal);
 }
 
 .brand {
-  font-size: 1.75rem;
-  font-weight: 700;
+  font-size: var(--kayd-font-size-4xl);
+  font-weight: var(--kayd-font-weight-bold);
   letter-spacing: 0.02em;
   color: var(--kayd-night);
   margin-bottom: 0.5rem;

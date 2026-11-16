@@ -4,16 +4,30 @@
 }
 
 .label {
-  font-size: 0.7rem !important;
+  font-size: var(--kayd-font-size-2xs) !important;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #854f0b;
-  font-weight: 600;
+  color: var(--kayd-tint-amber-label);
+  font-weight: var(--kayd-font-weight-semibold);
 }
 
 .value {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #412402;
+  font-size: var(--kayd-font-size-4xl);
+  font-weight: var(--kayd-font-weight-bold);
+  color: var(--kayd-tint-amber-value);
   font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 640px) {
+  .card > div {
+    padding: var(--kayd-space-4);
+  }
+
+  .card > div + div {
+    padding-top: 0;
+  }
+
+  .value {
+    font-size: var(--kayd-font-size-2xl);
+  }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -70,13 +70,22 @@ export function Sidebar() {
     };
   }, []);
 
+  // On mobile the nav is a horizontal strip: keep the current page in view.
+  const navRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const current = navRef.current?.querySelector<HTMLElement>(
+      '[aria-current="page"]'
+    );
+    current?.scrollIntoView({ inline: "center", block: "nearest" });
+  }, [pathname, role]);
+
   const visibleNav = nav.filter(
     (item) => !item.roles || item.roles.includes(role)
   );
 
   return (
     <aside className={styles.sidebar}>
-      <nav className={styles.nav}>
+      <nav className={styles.nav} ref={navRef} aria-label="Main">
         {visibleNav.map(({ href, label, icon: Icon }) => {
           const active =
             pathname === href || pathname.startsWith(href + "/");
@@ -85,6 +94,7 @@ export function Sidebar() {
               key={href}
               href={href}
               className={`${styles.link} ${active ? styles.active : ""}`}
+              aria-current={active ? "page" : undefined}
             >
               <Icon size={18} aria-hidden />
               <span>{label}</span>

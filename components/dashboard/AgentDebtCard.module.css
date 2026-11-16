@@ -4,16 +4,16 @@
 }
 
 .label {
-  font-size: 0.75rem !important;
+  font-size: var(--kayd-font-size-xs) !important;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #9b1c1c;
-  font-weight: 600;
+  color: var(--kayd-tint-rose-label);
+  font-weight: var(--kayd-font-weight-semibold);
 }
 
 .value {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #5a0e0e;
+  font-size: var(--kayd-font-size-5xl);
+  font-weight: var(--kayd-font-weight-bold);
+  color: var(--kayd-tint-rose-value);
   font-variant-numeric: tabular-nums;
 }

@@ -5,8 +5,8 @@
 
 .btn {
   background: var(--kayd-night);
-  color: #fff;
-  font-weight: 600;
+  color: var(--kayd-text-inverse);
+  font-weight: var(--kayd-font-weight-semibold);
   padding: 0 1.75rem;
 }
 
@@ -24,43 +24,43 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  font-size: 0.9rem;
+  font-size: var(--kayd-font-size-md);
 }
 
 .label {
-  color: #6b6b6b;
+  color: var(--kayd-text-muted);
 }
 
 .value {
-  font-weight: 500;
+  font-weight: var(--kayd-font-weight-medium);
   color: var(--kayd-night-shadow);
   font-variant-numeric: tabular-nums;
 }
 
 .valueStrong {
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: var(--kayd-font-weight-bold);
+  font-size: var(--kayd-font-size-lg);
   color: var(--kayd-night-shadow);
   font-variant-numeric: tabular-nums;
 }
 
 .reason {
-  background: #fbf2e3;
-  border: 1px solid #ecd9b8;
-  border-radius: 8px;
+  background: var(--kayd-sand-50);
+  border: 1px solid var(--kayd-sand-200);
+  border-radius: var(--kayd-radius-md);
   padding: 0.65rem 0.8rem;
 }
 
 .reasonLabel {
-  font-size: 0.7rem;
+  font-size: var(--kayd-font-size-2xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--kayd-sand-shadow);
-  font-weight: 600;
+  color: var(--kayd-sand-text);
+  font-weight: var(--kayd-font-weight-semibold);
   margin-bottom: 0.2rem;
 }
 
 .reasonText {
-  font-size: 0.875rem;
+  font-size: var(--kayd-font-size-md);
   color: var(--kayd-night-shadow);
 }

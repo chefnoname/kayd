@@ -1,13 +1,13 @@
 .tableWrap {
-  background: #fff;
-  border: 1px solid #ece4d7;
-  border-radius: 10px;
+  background: var(--kayd-surface);
+  border: 1px solid var(--kayd-border);
+  border-radius: var(--kayd-radius-lg);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
 .tableWrap table {
-  font-size: 0.8125rem;
+  font-size: var(--kayd-font-size-sm);
 }
 
 .tableWrap th,
@@ -20,7 +20,7 @@
 }
 
 .row:hover {
-  background: #fbf2e3;
+  background: var(--kayd-sand-50);
 }
 
 .inactive {
@@ -28,7 +28,7 @@
 }
 
 .nameCell {
-  font-weight: 600;
+  font-weight: var(--kayd-font-weight-semibold);
   color: var(--kayd-night-shadow);
 }
 
@@ -49,62 +49,62 @@
 }
 
 .sortArrow {
-  font-size: 0.7rem;
-  color: var(--kayd-sand-shadow);
+  font-size: var(--kayd-font-size-2xs);
+  color: var(--kayd-sand-text);
 }
 
 /* Status pill */
 .statusPill {
   display: inline-block;
-  font-size: 0.65rem;
+  font-size: var(--kayd-font-size-2xs);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  font-weight: 700;
+  font-weight: var(--kayd-font-weight-bold);
   padding: 0.15rem 0.45rem;
-  border-radius: 999px;
+  border-radius: var(--kayd-radius-pill);
 }
 
 .statusActive {
-  background: #dff1e3;
-  color: #1e6b3c;
+  background: var(--kayd-success-bg);
+  color: var(--kayd-success);
 }
 
 .statusInactive {
-  background: #ece4d7;
-  color: #6b6b6b;
+  background: var(--kayd-border);
+  color: var(--kayd-text-muted);
 }
 
 /* Balance badges */
 .green {
-  background: #dff1e3 !important;
-  color: #1e6b3c !important;
+  background: var(--kayd-success-bg) !important;
+  color: var(--kayd-success) !important;
 }
 
 .amber {
-  background: #fbe6c2 !important;
-  color: #8a5a16 !important;
+  background: var(--kayd-warning-bg) !important;
+  color: var(--kayd-warning) !important;
 }
 
 .red {
-  background: #f8d7d7 !important;
-  color: #8a1f1f !important;
+  background: var(--kayd-danger-bg) !important;
+  color: var(--kayd-danger) !important;
 }
 
 /* Profit/Loss indicators */
 .plProfit {
-  color: #1e6b3c;
-  font-weight: 600;
+  color: var(--kayd-success);
+  font-weight: var(--kayd-font-weight-semibold);
   font-variant-numeric: tabular-nums;
 }
 
 .plLoss {
-  color: #8a1f1f;
-  font-weight: 600;
+  color: var(--kayd-danger);
+  font-weight: var(--kayd-font-weight-semibold);
   font-variant-numeric: tabular-nums;
 }
 
 .plNeutral {
-  color: #6b6b6b;
+  color: var(--kayd-text-muted);
   font-variant-numeric: tabular-nums;
 }
 
@@ -115,8 +115,8 @@
   align-items: center;
   gap: 0.75rem;
   padding: 3rem 1rem;
-  background: #fff;
-  border: 1px dashed #ece4d7;
-  border-radius: 10px;
-  color: #6b6b6b;
+  background: var(--kayd-surface);
+  border: 1px dashed var(--kayd-border);
+  border-radius: var(--kayd-radius-lg);
+  color: var(--kayd-text-muted);
 }

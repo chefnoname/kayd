@@ -44,3 +44,55 @@
   }
 }
 
+
+/* ── Mobile baseline (≤ 640px) ───────────────────────────────
+ * Shared rules so every screen is usable on a phone without
+ * each component re-implementing them.
+ */
+@media (max-width: 640px) {
+  /* 16px inputs stop iOS Safari zooming the page on focus */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* Comfortable touch targets inside the app shell */
+  main button,
+  main select,
+  main input:not([type="checkbox"]):not([type="radio"]) {
+    min-height: var(--kayd-touch-target);
+  }
+
+  /* Wide tables scroll sideways: keep rows on one line and pin the
+     first column so each row stays identifiable while scrolling */
+  main table th,
+  main table td,
+  [role="dialog"] table th,
+  [role="dialog"] table td {
+    white-space: nowrap;
+  }
+
+  main table th:first-child,
+  main table td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--kayd-surface);
+    box-shadow: 1px 0 0 var(--kayd-border);
+  }
+
+  /* Dialogs never exceed the viewport and scroll internally */
+  [role="dialog"] {
+    width: calc(100vw - 1rem) !important;
+    max-height: calc(100dvh - 1rem);
+    overflow-y: auto;
+    padding: var(--kayd-space-4);
+    border-radius: var(--kayd-radius-lg);
+  }
+
+  [role="dialog"] > *,
+  [role="dialog"] > * > * {
+    min-width: 0;
+  }
+}

@@ -1,7 +1,7 @@
 .panel {
   padding: 1.25rem 1.5rem;
-  background: #fbf7f0;
-  border-top: 1px solid #ece4d7;
+  background: var(--kayd-surface-sunken);
+  border-top: 1px solid var(--kayd-border);
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -26,17 +26,17 @@
 }
 
 .label {
-  font-size: 0.7rem;
+  font-size: var(--kayd-font-size-2xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--kayd-sand-shadow);
-  font-weight: 600;
+  color: var(--kayd-sand-text);
+  font-weight: var(--kayd-font-weight-semibold);
   margin-bottom: 0.2rem;
 }
 
 .value {
-  font-size: 0.95rem;
-  font-weight: 500;
+  font-size: var(--kayd-font-size-base);
+  font-weight: var(--kayd-font-weight-medium);
   color: var(--kayd-night-shadow);
 }
 
@@ -47,14 +47,14 @@
 }
 
 .sectionTitle {
-  font-size: 0.875rem;
-  font-weight: 700;
+  font-size: var(--kayd-font-size-md);
+  font-weight: var(--kayd-font-weight-bold);
   color: var(--kayd-night);
 }
 
 .rateCell {
   font-variant-numeric: tabular-nums;
-  color: #6b6b6b;
+  color: var(--kayd-text-muted);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -62,30 +62,30 @@
 }
 
 .rateLabelSend {
-  font-size: 0.65rem;
-  font-weight: 600;
+  font-size: var(--kayd-font-size-2xs);
+  font-weight: var(--kayd-font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   padding: 0.1rem 0.35rem;
-  border-radius: 4px;
-  background: #e8f5e9;
-  color: #2e7d32;
+  border-radius: var(--kayd-radius-sm);
+  background: var(--kayd-success-bg);
+  color: var(--kayd-success);
 }
 
 .rateLabelReceive {
-  font-size: 0.65rem;
-  font-weight: 600;
+  font-size: var(--kayd-font-size-2xs);
+  font-weight: var(--kayd-font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   padding: 0.1rem 0.35rem;
-  border-radius: 4px;
-  background: #e3f2fd;
-  color: #1565c0;
+  border-radius: var(--kayd-radius-sm);
+  background: var(--kayd-info-bg);
+  color: var(--kayd-info);
 }
 
 .muted {
   text-align: center;
-  color: #8a7e6c;
+  color: var(--kayd-text-subtle);
 }
 
 .actions {
@@ -97,12 +97,12 @@
 
 .deleteBtn {
   margin-left: auto;
-  color: #d33;
-  border-color: #d33;
+  color: var(--kayd-danger-strong);
+  border-color: var(--kayd-danger-strong);
 }
 
 .deleteBtn:hover {
-  background: #fef2f2;
+  background: var(--kayd-danger-bg-subtle);
 }
 
 .deleteConfirm {
@@ -113,7 +113,7 @@
 }
 
 .deleteWarn {
-  font-size: 0.8rem;
-  color: #d33;
-  font-weight: 500;
+  font-size: var(--kayd-font-size-sm);
+  color: var(--kayd-danger-strong);
+  font-weight: var(--kayd-font-weight-medium);
 }

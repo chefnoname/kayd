@@ -13,35 +13,35 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  font-size: 0.9rem;
+  font-size: var(--kayd-font-size-md);
 }
 
 .label {
-  color: #6b6b6b;
+  color: var(--kayd-text-muted);
 }
 
 .value {
-  font-weight: 500;
+  font-weight: var(--kayd-font-weight-medium);
   color: var(--kayd-night-shadow);
   font-variant-numeric: tabular-nums;
 }
 
 .valueStrong {
-  font-weight: 700;
+  font-weight: var(--kayd-font-weight-bold);
   color: var(--kayd-night-shadow);
   font-variant-numeric: tabular-nums;
-  font-size: 1rem;
+  font-size: var(--kayd-font-size-lg);
 }
 
 .divider {
   height: 1px;
-  background: #ece4d7;
+  background: var(--kayd-border);
   margin: 0.25rem 0;
 }
 
 .muted {
-  font-size: 0.9rem;
-  color: #8a7e6c;
+  font-size: var(--kayd-font-size-md);
+  color: var(--kayd-text-subtle);
   margin: 0;
 }
 
@@ -50,17 +50,17 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 0.75rem;
-  border-radius: 8px;
-  font-size: 0.85rem;
+  border-radius: var(--kayd-radius-md);
+  font-size: var(--kayd-font-size-md);
   margin-top: 0.5rem;
 }
 
 .success {
-  background: #dff1e3;
-  color: #1e6b3c;
+  background: var(--kayd-success-bg);
+  color: var(--kayd-success);
 }
 
 .warning {
-  background: #fbe6c2;
-  color: #8a5a16;
+  background: var(--kayd-warning-bg);
+  color: var(--kayd-warning);
 }

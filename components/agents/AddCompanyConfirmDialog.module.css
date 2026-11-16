@@ -1,5 +1,5 @@
 .message {
-  font-size: 0.95rem;
+  font-size: var(--kayd-font-size-base);
   color: var(--kayd-night-shadow);
   margin: 0.5rem 0;
 }

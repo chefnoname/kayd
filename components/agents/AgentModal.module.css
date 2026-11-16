@@ -16,10 +16,10 @@
   gap: 0.5rem;
   align-items: center;
   padding: 0.65rem 0.85rem;
-  background: #fbf2e3;
-  border: 1px solid #ecd9b8;
-  border-radius: 8px;
-  font-size: 0.875rem;
+  background: var(--kayd-sand-50);
+  border: 1px solid var(--kayd-sand-200);
+  border-radius: var(--kayd-radius-md);
+  font-size: var(--kayd-font-size-md);
   color: var(--kayd-night-shadow);
   cursor: pointer;
 }
@@ -31,24 +31,24 @@
 }
 
 .toggleHint {
-  font-size: 0.75rem;
-  color: #6b6b6b;
+  font-size: var(--kayd-font-size-xs);
+  color: var(--kayd-text-muted);
   grid-column: 3;
 }
 
 .select {
   height: 36px;
   width: 100%;
-  border: 1px solid hsl(var(--input));
-  border-radius: calc(var(--radius) - 2px);
+  border: 1px solid var(--kayd-border-strong);
+  border-radius: var(--kayd-radius-md);
   background: transparent;
   padding: 0 0.75rem;
-  font-size: 0.875rem;
+  font-size: var(--kayd-font-size-md);
   color: var(--kayd-night-shadow);
   appearance: auto;
 }
 
 .select:focus {
-  outline: 2px solid hsl(var(--ring));
+  outline: 2px solid var(--kayd-night);
   outline-offset: 2px;
 }

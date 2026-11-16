@@ -24,17 +24,17 @@
 
 .select {
   padding: 0.5rem 0.75rem;
-  border: 1px solid #ddd5c8;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  background: #fdfbf7;
-  color: var(--kayd-night-shadow, #2d2a26);
+  border: 1px solid var(--kayd-border-strong);
+  border-radius: var(--kayd-radius-md);
+  font-size: var(--kayd-font-size-md);
+  background: var(--kayd-surface-sunken);
+  color: var(--kayd-night-shadow);
   outline: none;
 }
 
 .select:focus {
-  border-color: var(--kayd-night, #1b1a17);
-  box-shadow: 0 0 0 2px rgba(27, 26, 23, 0.08);
+  border-color: var(--kayd-night);
+  box-shadow: var(--kayd-focus-ring);
 }
 
 .subBranchFields {
@@ -42,9 +42,9 @@
   flex-direction: column;
   gap: 0.75rem;
   padding: 0.75rem;
-  background: #fbf2e3;
-  border: 1px solid #ecd9b8;
-  border-radius: 8px;
+  background: var(--kayd-sand-50);
+  border: 1px solid var(--kayd-sand-200);
+  border-radius: var(--kayd-radius-md);
 }
 
 .rateBanner {
@@ -52,27 +52,27 @@
   align-items: center;
   gap: 1rem;
   padding: 0.5rem 0.75rem;
-  background: #f0f7f2;
-  border: 1px solid #c6dece;
-  border-radius: 8px;
-  font-size: 0.8125rem;
+  background: var(--kayd-success-bg-subtle);
+  border: 1px solid var(--kayd-success-border);
+  border-radius: var(--kayd-radius-md);
+  font-size: var(--kayd-font-size-sm);
 }
 
 .rateLabel {
-  font-weight: 600;
-  color: var(--kayd-night-shadow, #2d2a26);
+  font-weight: var(--kayd-font-weight-semibold);
+  color: var(--kayd-night-shadow);
 }
 
 .rateValue {
-  color: #3a6b4a;
+  color: var(--kayd-success);
 }
 
 .checkRow {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--kayd-night-shadow, #2d2a26);
+  font-size: var(--kayd-font-size-md);
+  font-weight: var(--kayd-font-weight-medium);
+  color: var(--kayd-night-shadow);
   cursor: pointer;
 }

@@ -2,9 +2,9 @@
   display: flex;
   flex-direction: column;
   gap: 1.1rem;
-  background: #fff;
-  border: 1px solid #ece4d7;
-  border-radius: 10px;
+  background: var(--kayd-surface);
+  border: 1px solid var(--kayd-border);
+  border-radius: var(--kayd-radius-lg);
   padding: 1.25rem;
 }
 
@@ -16,7 +16,7 @@
 
 .submit {
   background: var(--kayd-night);
-  color: #fff;
+  color: var(--kayd-text-inverse);
   margin-top: 0.25rem;
 }
 

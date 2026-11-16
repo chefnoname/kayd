@@ -23,9 +23,9 @@
 }
 
 .summary {
-  background: #fbf2e3;
-  border: 1px solid #ecd9b8;
-  border-radius: 8px;
+  background: var(--kayd-sand-50);
+  border: 1px solid var(--kayd-sand-200);
+  border-radius: var(--kayd-radius-md);
   padding: 0.75rem 0.9rem;
   display: flex;
   flex-direction: column;
@@ -35,15 +35,15 @@
 .summaryRow {
   display: flex;
   justify-content: space-between;
-  font-size: 0.9rem;
+  font-size: var(--kayd-font-size-md);
   color: var(--kayd-night-shadow);
 }
 
 .summaryLabel {
-  color: #6b6b6b;
+  color: var(--kayd-text-muted);
 }
 
 .summaryValue {
-  font-weight: 700;
+  font-weight: var(--kayd-font-weight-bold);
   font-variant-numeric: tabular-nums;
 }

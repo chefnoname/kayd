@@ -5,15 +5,15 @@
 }
 
 .tableCard {
-  background: #fff;
-  border: 1px solid #ece4d7;
-  border-radius: 10px;
+  background: var(--kayd-surface);
+  border: 1px solid var(--kayd-border);
+  border-radius: var(--kayd-radius-lg);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
 .email {
-  font-weight: 600;
+  font-weight: var(--kayd-font-weight-semibold);
   color: var(--kayd-night-shadow);
 }
 
@@ -22,21 +22,21 @@
 }
 
 .badgeSuperadmin {
-  background: #fef3c7;
-  color: #92400e;
-  border-color: #fde68a;
+  background: var(--kayd-warning-bg-subtle);
+  color: var(--kayd-warning);
+  border-color: var(--kayd-warning-border);
 }
 
 .badgeAdmin {
-  background: #dbeafe;
-  color: #1e40af;
-  border-color: #bfdbfe;
+  background: var(--kayd-info-bg);
+  color: var(--kayd-info);
+  border-color: var(--kayd-info-border);
 }
 
 .badgeStaff {
-  background: #f3f4f6;
-  color: #374151;
-  border-color: #e5e7eb;
+  background: var(--kayd-surface-sunken);
+  color: var(--kayd-text-muted);
+  border-color: var(--kayd-border-strong);
 }
 
 .actions {
@@ -46,6 +46,6 @@
 
 .empty {
   text-align: center;
-  color: #8a7e6c;
+  color: var(--kayd-text-subtle);
   padding: 2.25rem 0;
 }
