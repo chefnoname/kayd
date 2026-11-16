@@ -1,5 +1,5 @@
 .title {
-  font-size: 1rem;
+  font-size: var(--kayd-font-size-lg);
 }
 
 .content {
@@ -8,11 +8,11 @@
 
 .muted {
   text-align: center;
-  color: #8a7e6c;
+  color: var(--kayd-text-subtle);
   padding: 1.5rem;
 }
 
 .name {
-  font-weight: 600;
+  font-weight: var(--kayd-font-weight-semibold);
   color: var(--kayd-night-shadow);
 }

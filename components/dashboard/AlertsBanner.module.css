@@ -3,15 +3,15 @@
   align-items: center;
   gap: 0.65rem;
   padding: 0.85rem 1rem;
-  background: #f8d7d7;
-  color: #8a1f1f;
-  border: 1px solid #e3b3b3;
-  border-radius: 10px;
-  font-size: 0.925rem;
-  font-weight: 500;
+  background: var(--kayd-danger-bg);
+  color: var(--kayd-danger);
+  border: 1px solid var(--kayd-danger-border);
+  border-radius: var(--kayd-radius-lg);
+  font-size: var(--kayd-font-size-base);
+  font-weight: var(--kayd-font-weight-medium);
   text-decoration: none;
 }
 
 .banner:hover {
-  background: #f3c3c3;
+  background: var(--kayd-danger-border);
 }

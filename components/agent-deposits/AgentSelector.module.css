@@ -15,10 +15,10 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 0.75rem;
-  border-radius: 6px;
-  border: 1px solid hsl(var(--input));
-  background: #fff;
-  font-size: 0.875rem;
+  border-radius: var(--kayd-radius-md);
+  border: 1px solid var(--kayd-border-strong);
+  background: var(--kayd-surface);
+  font-size: var(--kayd-font-size-md);
   color: var(--kayd-night-shadow);
   cursor: pointer;
   text-align: left;
@@ -26,7 +26,7 @@
 
 .trigger:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px hsl(var(--ring) / 0.5);
+  box-shadow: var(--kayd-focus-ring);
 }
 
 .trigger:disabled {
@@ -35,17 +35,17 @@
 }
 
 .placeholder {
-  color: #8a7e6c;
+  color: var(--kayd-text-subtle);
 }
 
 .triggerValue {
-  font-weight: 500;
+  font-weight: var(--kayd-font-weight-medium);
 }
 
 .chev {
   flex-shrink: 0;
   margin-left: 0.5rem;
-  color: #8a7e6c;
+  color: var(--kayd-text-subtle);
 }
 
 .menu {
@@ -53,10 +53,10 @@
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  background: #fff;
-  border: 1px solid hsl(var(--input));
-  border-radius: 8px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  background: var(--kayd-surface);
+  border: 1px solid var(--kayd-border-strong);
+  border-radius: var(--kayd-radius-md);
+  box-shadow: var(--kayd-shadow-popover);
   z-index: 30;
   overflow: hidden;
 }
@@ -64,7 +64,7 @@
 .searchRow {
   position: relative;
   padding: 0.5rem;
-  border-bottom: 1px solid #ece4d7;
+  border-bottom: 1px solid var(--kayd-border);
 }
 
 .searchIcon {
@@ -72,7 +72,7 @@
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #8a7e6c;
+  color: var(--kayd-text-subtle);
   pointer-events: none;
 }
 
@@ -90,7 +90,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: #8a7e6c;
+  color: var(--kayd-text-subtle);
 }
 
 .list {
@@ -103,8 +103,8 @@
 
 .empty {
   padding: 0.75rem 1rem;
-  font-size: 0.875rem;
-  color: #8a7e6c;
+  font-size: var(--kayd-font-size-md);
+  color: var(--kayd-text-subtle);
 }
 
 .option {
@@ -118,16 +118,16 @@
   border: none;
   text-align: left;
   cursor: pointer;
-  font-size: 0.875rem;
+  font-size: var(--kayd-font-size-md);
 }
 
 .option:hover {
-  background: #fbf2e3;
+  background: var(--kayd-sand-50);
 }
 
 .optionActive {
   background: var(--kayd-night);
-  color: #fff;
+  color: var(--kayd-text-inverse);
 }
 
 .optionActive:hover {
@@ -135,10 +135,10 @@
 }
 
 .optName {
-  font-weight: 600;
+  font-weight: var(--kayd-font-weight-semibold);
 }
 
 .optMeta {
-  font-size: 0.8rem;
+  font-size: var(--kayd-font-size-sm);
   opacity: 0.85;
 }

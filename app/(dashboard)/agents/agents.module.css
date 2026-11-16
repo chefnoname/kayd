@@ -16,16 +16,16 @@
   align-items: baseline;
   gap: 0.35rem;
   padding: 0.35rem 0.7rem;
-  border-radius: 999px;
-  background: #fbf2e3;
-  border: 1px solid #ecd9b8;
-  font-size: 0.85rem;
+  border-radius: var(--kayd-radius-pill);
+  background: var(--kayd-sand-50);
+  border: 1px solid var(--kayd-sand-200);
+  font-size: var(--kayd-font-size-md);
   color: var(--kayd-night-shadow);
-  font-weight: 500;
+  font-weight: var(--kayd-font-weight-medium);
 }
 
 .metaValue {
-  font-weight: 700;
+  font-weight: var(--kayd-font-weight-bold);
 }
 
 .summaryGrid {
@@ -35,16 +35,16 @@
 }
 
 .summaryLabel {
-  font-size: 0.7rem;
+  font-size: var(--kayd-font-size-2xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--kayd-sand-shadow);
-  font-weight: 600;
+  font-weight: var(--kayd-font-weight-semibold);
 }
 
 .summaryValue {
-  font-size: 1.75rem;
-  font-weight: 700;
+  font-size: var(--kayd-font-size-4xl);
+  font-weight: var(--kayd-font-weight-bold);
   color: var(--kayd-night-shadow);
   margin-top: 0.25rem;
 }

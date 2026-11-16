@@ -17,7 +17,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem 0;
-  border-bottom: 1px solid var(--border, #e5e5e5);
+  border-bottom: 1px solid var(--kayd-border-strong);
 }
 
 .companyRow:last-child {
@@ -25,13 +25,13 @@
 }
 
 .companyName {
-  font-size: 0.9rem;
+  font-size: var(--kayd-font-size-md);
   color: var(--kayd-night-shadow);
 }
 
 .empty {
-  font-size: 0.85rem;
-  color: #999;
+  font-size: var(--kayd-font-size-md);
+  color: var(--kayd-text-disabled);
   padding: 0.75rem 0;
 }
 
@@ -44,6 +44,6 @@
 }
 
 .pageInfo {
-  font-size: 0.85rem;
-  color: #6b6b6b;
+  font-size: var(--kayd-font-size-md);
+  color: var(--kayd-text-muted);
 }

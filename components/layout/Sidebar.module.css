@@ -1,8 +1,8 @@
 .sidebar {
   display: flex;
   flex-direction: column;
-  background: #fff;
-  border-right: 1px solid #ece4d7;
+  background: var(--kayd-surface);
+  border-right: 1px solid var(--kayd-border);
   padding: 1rem 0.75rem;
 }
 
@@ -17,26 +17,26 @@
   align-items: center;
   gap: 0.65rem;
   padding: 0.6rem 0.85rem;
-  border-radius: 8px;
+  border-radius: var(--kayd-radius-md);
   color: var(--kayd-night-shadow);
   text-decoration: none;
-  font-size: 0.925rem;
-  font-weight: 500;
+  font-size: var(--kayd-font-size-base);
+  font-weight: var(--kayd-font-weight-medium);
   transition: background 120ms ease, color 120ms ease;
 }
 
 .link:hover {
-  background: #f1e6d4;
+  background: var(--kayd-sand-100);
   color: var(--kayd-night);
 }
 
 .active {
   background: var(--kayd-night);
-  color: #fff;
+  color: var(--kayd-text-inverse);
 }
 .active:hover {
   background: var(--kayd-night-shadow);
-  color: #fff;
+  color: var(--kayd-text-inverse);
 }
 
 .rateBox {
@@ -44,16 +44,16 @@
   padding: 0.85rem 0.9rem;
   background: var(--kayd-night);
   border: none;
-  border-radius: 10px;
+  border-radius: var(--kayd-radius-lg);
 }
 
 .rateBoxTitle {
   display: block;
-  font-size: 0.6875rem;
-  font-weight: 700;
+  font-size: var(--kayd-font-size-2xs);
+  font-weight: var(--kayd-font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--kayd-text-inverse-subtle);
   margin-bottom: 0.5rem;
 }
 
@@ -61,36 +61,36 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.8125rem;
+  font-size: var(--kayd-font-size-sm);
   padding: 0.2rem 0;
 }
 
 .rateRowLabel {
-  color: rgba(255, 255, 255, 0.75);
-  font-weight: 500;
+  color: var(--kayd-text-inverse-muted);
+  font-weight: var(--kayd-font-weight-medium);
 }
 
 .rateRowValue {
-  font-weight: 700;
+  font-weight: var(--kayd-font-weight-bold);
   font-variant-numeric: tabular-nums;
-  color: #fff;
+  color: var(--kayd-text-inverse);
 }
 
 .rateTimestamp {
   display: block;
   margin-top: 0.55rem;
   padding-top: 0.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.45);
-  font-weight: 500;
+  border-top: 1px solid var(--kayd-border-inverse);
+  font-size: var(--kayd-font-size-2xs);
+  color: var(--kayd-text-inverse-subtle);
+  font-weight: var(--kayd-font-weight-medium);
   letter-spacing: 0.02em;
 }
 
 @media (max-width: 768px) {
   .sidebar {
     border-right: none;
-    border-bottom: 1px solid #ece4d7;
+    border-bottom: 1px solid var(--kayd-border);
   }
   .nav {
     flex-direction: row;

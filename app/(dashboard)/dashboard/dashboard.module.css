@@ -13,8 +13,8 @@
 }
 
 .dateLine {
-  font-size: 0.875rem;
-  color: #6b6b6b;
+  font-size: var(--kayd-font-size-md);
+  color: var(--kayd-text-muted);
 }
 
 .topCards {

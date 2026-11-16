@@ -10,7 +10,7 @@
   display: flex;
   justify-content: space-between;
   padding: 0.625rem 0;
-  border-bottom: 1px solid var(--border, #e5e7eb);
+  border-bottom: 1px solid var(--kayd-border-strong);
 }
 
 .row:last-child {
@@ -18,17 +18,17 @@
 }
 
 .agentName {
-  font-weight: 500;
+  font-weight: var(--kayd-font-weight-medium);
 }
 
 .balance {
-  color: #d33;
-  font-weight: 600;
+  color: var(--kayd-danger-strong);
+  font-weight: var(--kayd-font-weight-semibold);
   font-variant-numeric: tabular-nums;
 }
 
 .icon {
-  color: #d33;
+  color: var(--kayd-danger-strong);
   vertical-align: middle;
   margin-right: 0.5rem;
 }

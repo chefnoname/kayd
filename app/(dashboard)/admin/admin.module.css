@@ -5,21 +5,21 @@
 }
 
 .settingsCard {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border: 1px solid var(--kayd-border-strong);
+  border-radius: var(--kayd-radius-md);
   padding: 1.25rem;
-  background: #fff;
+  background: var(--kayd-surface);
 }
 
 .settingsTitle {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: var(--kayd-font-size-lg);
+  font-weight: var(--kayd-font-weight-semibold);
   margin: 0 0 0.25rem;
 }
 
 .settingsDesc {
-  font-size: 0.85rem;
-  color: #6b7280;
+  font-size: var(--kayd-font-size-md);
+  color: var(--kayd-text-muted);
   margin: 0 0 0.75rem;
 }
 
@@ -34,6 +34,6 @@
 }
 
 .settingsUnit {
-  font-size: 0.85rem;
-  color: #6b7280;
+  font-size: var(--kayd-font-size-md);
+  color: var(--kayd-text-muted);
 }

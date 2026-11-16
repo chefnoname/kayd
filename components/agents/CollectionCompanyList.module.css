@@ -18,14 +18,14 @@
 }
 
 .empty {
-  font-size: 0.85rem;
-  color: #999;
+  font-size: var(--kayd-font-size-md);
+  color: var(--kayd-text-disabled);
   padding: 0.75rem 0;
 }
 
 .loading {
-  font-size: 0.85rem;
-  color: #999;
+  font-size: var(--kayd-font-size-md);
+  color: var(--kayd-text-disabled);
   padding: 0.75rem 0;
 }
 

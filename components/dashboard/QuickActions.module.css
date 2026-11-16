@@ -1,5 +1,5 @@
 .title {
-  font-size: 1rem;
+  font-size: var(--kayd-font-size-lg);
 }
 
 .actions {

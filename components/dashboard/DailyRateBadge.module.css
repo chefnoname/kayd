@@ -2,8 +2,8 @@
   background: var(--kayd-sand);
   color: var(--kayd-night-shadow);
   border: 1px solid var(--kayd-sand-shadow);
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-weight: var(--kayd-font-weight-semibold);
+  font-size: var(--kayd-font-size-md);
   padding: 0.4rem 0.75rem;
 }
 
@@ -12,15 +12,15 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.4rem 0.75rem;
-  border-radius: 999px;
-  background: #fbe6c2;
-  color: #8a5a16;
-  font-size: 0.85rem;
-  font-weight: 600;
+  border-radius: var(--kayd-radius-pill);
+  background: var(--kayd-warning-bg);
+  color: var(--kayd-warning);
+  font-size: var(--kayd-font-size-md);
+  font-weight: var(--kayd-font-weight-semibold);
   text-decoration: none;
-  border: 1px solid #ecd9b8;
+  border: 1px solid var(--kayd-sand-200);
 }
 
 .warning:hover {
-  background: #f7d99a;
+  background: var(--kayd-warning-border);
 }

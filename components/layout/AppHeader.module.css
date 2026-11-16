@@ -4,7 +4,7 @@
   align-items: center;
   padding: 0.85rem 1.5rem;
   background: var(--kayd-night);
-  color: #fff;
+  color: var(--kayd-text-inverse);
   height: 100px;
 }
 
@@ -31,8 +31,8 @@
 }
 
 .brand {
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: var(--kayd-font-size-2xl);
+  font-weight: var(--kayd-font-weight-bold);
   letter-spacing: 0.04em;
 }
 
@@ -44,8 +44,8 @@
 }
 
 .date {
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.85);
+  font-size: var(--kayd-font-size-md);
+  color: var(--kayd-text-inverse-muted);
 }
 
 .rateGroup {
@@ -57,7 +57,7 @@
   background: var(--kayd-sand-shadow);
   color: var(--kayd-night-shadow);
   border: 1px solid var(--kayd-sand-shadow);
-  font-weight: 600;
+  font-weight: var(--kayd-font-weight-semibold);
   white-space: nowrap;
   margin-left: 5px;
 
@@ -81,7 +81,7 @@
   border: none;
   padding: 0;
   cursor: pointer;
-  border-radius: 9999px;
+  border-radius: var(--kayd-radius-pill);
   display: flex;
   align-items: center;
 }
@@ -94,48 +94,48 @@
 .avatarFallback {
   background: var(--kayd-sand);
   color: var(--kayd-night-shadow);
-  font-weight: 700;
-  font-size: 0.85rem;
+  font-weight: var(--kayd-font-weight-bold);
+  font-size: var(--kayd-font-size-md);
   letter-spacing: 0.03em;
 }
 
 .logoutItem {
-  color: #c0392b;
+  color: var(--kayd-danger-strong);
 }
 
 .logout:hover {
   background: var(--kayd-sand-shadow);
-  color: #fff;
+  color: var(--kayd-text-inverse);
 }
 
 .outstandingBtn {
   background: transparent;
-  border: 1px solid #f59e0b;
-  color: #f59e0b;
-  font-size: 0.8rem;
-  font-weight: 600;
+  border: 1px solid var(--kayd-warning-bright);
+  color: var(--kayd-warning-bright);
+  font-size: var(--kayd-font-size-sm);
+  font-weight: var(--kayd-font-weight-semibold);
   letter-spacing: 0.03em;
   white-space: nowrap;
 }
 
 .outstandingBtn:hover {
-  background: #f59e0b;
-  border-color: #f59e0b;
-  color: #fff;
+  background: var(--kayd-warning-bright);
+  border-color: var(--kayd-warning-bright);
+  color: var(--kayd-text-inverse);
 }
 
 .warningBtn {
   background: transparent;
-  border: 1px solid #ef4444;
-  color: #ef4444;
-  font-size: 0.8rem;
-  font-weight: 600;
+  border: 1px solid var(--kayd-danger-bright);
+  color: var(--kayd-danger-bright);
+  font-size: var(--kayd-font-size-sm);
+  font-weight: var(--kayd-font-weight-semibold);
   letter-spacing: 0.03em;
   white-space: nowrap;
 }
 
 .warningBtn:hover {
-  background: #ef4444;
-  border-color: #ef4444;
-  color: #fff;
+  background: var(--kayd-danger-bright);
+  border-color: var(--kayd-danger-bright);
+  color: var(--kayd-text-inverse);
 }

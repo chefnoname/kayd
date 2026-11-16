@@ -1,21 +1,142 @@
-/* Kayd brand palette */
+/*
+ * Kayd design tokens
+ * ------------------
+ * Single source of truth for colour, type, spacing, radius and elevation.
+ * Component CSS Modules should reference these variables rather than
+ * hardcoding values.
+ */
 :root {
+  /* ── Brand ─────────────────────────────────────────────── */
   --kayd-sand: #e1b382;
   --kayd-sand-shadow: #c89666;
   --kayd-night: #2d545e;
   --kayd-night-shadow: #12343b;
 
-  /* Card tint palette */
+  /* Sand tints: warm surfaces, pills and hover states */
+  --kayd-sand-50: #fbf2e3;
+  --kayd-sand-100: #f1e6d4;
+  --kayd-sand-200: #ecd9b8;
+
+  /* ── Surfaces ──────────────────────────────────────────── */
+  --kayd-bg: #f7f4ef;              /* app background */
+  --kayd-surface: #ffffff;         /* cards, tables, modals */
+  --kayd-surface-sunken: #fdfbf7;  /* table headers, inset panels */
+  --kayd-surface-inverse: var(--kayd-night);
+
+  /* ── Borders ───────────────────────────────────────────── */
+  --kayd-border: #ece4d7;          /* default hairline */
+  --kayd-border-strong: #ddd5c8;   /* inputs, emphasised dividers */
+
+  /* ── Text ──────────────────────────────────────────────── */
+  --kayd-text: var(--kayd-night-shadow);  /* 13.2:1 on white */
+  --kayd-text-muted: #5f5f5f;      /* 6.4:1 on white: descriptions, secondary */
+  --kayd-text-subtle: #756a59;     /* 5.2:1 on white: labels, captions */
+  --kayd-text-disabled: #9a9284;   /* placeholders, disabled only */
+  --kayd-text-inverse: #ffffff;
+  --kayd-text-inverse-muted: rgba(255, 255, 255, 0.8);
+  --kayd-text-inverse-subtle: rgba(255, 255, 255, 0.65);
+  --kayd-border-inverse: rgba(255, 255, 255, 0.15);
+
+  /* ── Status ────────────────────────────────────────────── */
+  --kayd-success: #1e6b3c;
+  --kayd-success-bg: #dff1e3;
+  --kayd-success-bg-subtle: #f1f9f3;
+  --kayd-success-border: #b9dec3;
+
+  --kayd-warning: #8a5a16;
+  --kayd-warning-bg: #fbe6c2;
+  --kayd-warning-bg-subtle: #fef3c7;
+  --kayd-warning-border: #f7d99a;
+  --kayd-warning-bright: #f59e0b;  /* for dark surfaces and accents only */
+
+  --kayd-danger: #8a1f1f;
+  --kayd-danger-bg: #f8d7d7;
+  --kayd-danger-bg-subtle: #fef2f2;
+  --kayd-danger-border: #e3b3b3;
+  --kayd-danger-strong: #c0392b;   /* destructive actions, error text */
+  --kayd-danger-bright: #ef4444;   /* for dark surfaces and accents only */
+
+  --kayd-info: #1e40af;
+  --kayd-info-bg: #dbeafe;
+  --kayd-info-border: #bfdbfe;
+
+  /* Card tint palette (dashboard stat cards) */
   --kayd-tint-green-start: #e1f5ee;
   --kayd-tint-green-end: #f0faf5;
   --kayd-tint-green-border: #9fe1cb;
+  --kayd-tint-green-label: #0f6e56;
+  --kayd-tint-green-value: #04342c;
   --kayd-tint-blue-start: #e6f1fb;
   --kayd-tint-blue-end: #f2f7fc;
   --kayd-tint-blue-border: #b5d4f4;
+  --kayd-tint-blue-label: #185fa5;
+  --kayd-tint-blue-value: #042c53;
+  --kayd-tint-blue-icon: #378add;
   --kayd-tint-amber-start: #faeeda;
   --kayd-tint-amber-end: #fdf6ec;
   --kayd-tint-amber-border: #fac775;
+  --kayd-tint-amber-label: #854f0b;
+  --kayd-tint-amber-value: #412402;
   --kayd-tint-rose-start: #fce4e4;
   --kayd-tint-rose-end: #fdf0f0;
   --kayd-tint-rose-border: #f5a3a3;
+  --kayd-tint-rose-label: #9b1c1c;
+  --kayd-tint-rose-value: #5a0e0e;
+
+  /* ── Typography ────────────────────────────────────────── */
+  --kayd-font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --kayd-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --kayd-font-size-2xs: 0.6875rem; /* 11px: uppercase micro-labels only */
+  --kayd-font-size-xs: 0.75rem;    /* 12px: badges, captions */
+  --kayd-font-size-sm: 0.8125rem;  /* 13px: table meta, helper text */
+  --kayd-font-size-md: 0.875rem;   /* 14px: default UI text */
+  --kayd-font-size-base: 0.9375rem;/* 15px: body, nav */
+  --kayd-font-size-lg: 1rem;       /* 16px: card titles */
+  --kayd-font-size-xl: 1.125rem;   /* 18px: section titles */
+  --kayd-font-size-2xl: 1.25rem;   /* 20px */
+  --kayd-font-size-3xl: 1.5rem;    /* 24px */
+  --kayd-font-size-4xl: 1.75rem;   /* 28px: page titles, stat values */
+  --kayd-font-size-5xl: 2rem;      /* 32px: hero stat values */
+
+  --kayd-font-weight-medium: 500;
+  --kayd-font-weight-semibold: 600;
+  --kayd-font-weight-bold: 700;
+
+  /* ── Spacing (4px base) ────────────────────────────────── */
+  --kayd-space-1: 0.25rem;
+  --kayd-space-2: 0.5rem;
+  --kayd-space-3: 0.75rem;
+  --kayd-space-4: 1rem;
+  --kayd-space-5: 1.25rem;
+  --kayd-space-6: 1.5rem;
+  --kayd-space-8: 2rem;
+  --kayd-space-10: 2.5rem;
+  --kayd-space-12: 3rem;
+
+  /* ── Radius ────────────────────────────────────────────── */
+  --kayd-radius-sm: 4px;    /* badges, small chips */
+  --kayd-radius-md: 8px;    /* buttons, inputs, nav items */
+  --kayd-radius-lg: 10px;   /* cards, panels */
+  --kayd-radius-xl: 14px;   /* modals */
+  --kayd-radius-pill: 999px;
+
+  /* ── Elevation ─────────────────────────────────────────── */
+  --kayd-shadow-popover: 0 12px 32px rgba(0, 0, 0, 0.12);
+  --kayd-shadow-toast: 0 12px 32px rgba(0, 0, 0, 0.25);
+  --kayd-shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.25);
+  --kayd-overlay: rgba(0, 0, 0, 0.65);
+  --kayd-focus-ring: 0 0 0 2px rgba(45, 84, 94, 0.45);
+
+  /* ── Layout ────────────────────────────────────────────── */
+  --kayd-sidebar-width: 240px;
+  --kayd-header-height: 100px;
+  --kayd-touch-target: 44px;
+
+  /* Breakpoints (reference only: CSS variables cannot be used in @media)
+   *   mobile  ≤ 640px
+   *   tablet  ≤ 960px
+   *   desktop > 960px
+   */
 }

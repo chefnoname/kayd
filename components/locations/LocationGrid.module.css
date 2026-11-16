@@ -17,12 +17,12 @@
 }
 
 .empty {
-  background: #fff;
-  border: 1px dashed #ece4d7;
-  border-radius: 10px;
+  background: var(--kayd-surface);
+  border: 1px dashed var(--kayd-border);
+  border-radius: var(--kayd-radius-lg);
   padding: 2.25rem;
   text-align: center;
-  color: #8a7e6c;
+  color: var(--kayd-text-subtle);
 }
 
 .card {
@@ -31,19 +31,19 @@
 }
 
 .borderGreen {
-  border-color: #86efac;
+  border-color: var(--kayd-success-border);
 }
 
 .borderAmber {
-  border-color: #fcd34d;
+  border-color: var(--kayd-warning-border);
 }
 
 .borderRed {
-  border-color: #fca5a5;
+  border-color: var(--kayd-danger-border);
 }
 
 .name {
-  font-size: 1.1rem;
+  font-size: var(--kayd-font-size-xl);
   color: var(--kayd-night-shadow);
 }
 
@@ -60,13 +60,13 @@
 }
 
 .amountLabel {
-  color: #6b6b6b;
-  font-size: 0.85rem;
+  color: var(--kayd-text-muted);
+  font-size: var(--kayd-font-size-md);
 }
 
 .amount {
-  font-size: 1.45rem;
-  font-weight: 700;
+  font-size: var(--kayd-font-size-3xl);
+  font-weight: var(--kayd-font-weight-bold);
   color: var(--kayd-night-shadow);
   font-variant-numeric: tabular-nums;
 }
@@ -78,20 +78,20 @@
 }
 
 .days {
-  font-size: 0.85rem;
+  font-size: var(--kayd-font-size-md);
   color: var(--kayd-night-shadow);
 }
 
 .daysNever {
-  font-size: 0.85rem;
-  color: #8a7e6c;
+  font-size: var(--kayd-font-size-md);
+  color: var(--kayd-text-subtle);
   font-style: italic;
 }
 
 .overdue {
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: #b91c1c;
+  font-size: var(--kayd-font-size-xs);
+  font-weight: var(--kayd-font-weight-bold);
+  color: var(--kayd-danger);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -104,7 +104,7 @@
 
 .logBtn {
   background: var(--kayd-night);
-  color: #fff;
+  color: var(--kayd-text-inverse);
 }
 
 .logBtn:hover:not(:disabled) {

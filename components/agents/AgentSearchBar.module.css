@@ -3,9 +3,9 @@
   gap: 0.75rem;
   align-items: flex-end;
   flex-wrap: wrap;
-  background: #fff;
-  border: 1px solid #ece4d7;
-  border-radius: 10px;
+  background: var(--kayd-surface);
+  border: 1px solid var(--kayd-border);
+  border-radius: var(--kayd-radius-lg);
   padding: 0.85rem 1rem;
 }
 
@@ -19,7 +19,7 @@
   left: 0.7rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #8a7e6c;
+  color: var(--kayd-text-subtle);
   pointer-events: none;
 }
 
@@ -45,24 +45,24 @@
 }
 
 .filterLabel {
-  font-size: 0.7rem;
+  font-size: var(--kayd-font-size-2xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--kayd-sand-shadow);
-  font-weight: 600;
+  font-weight: var(--kayd-font-weight-semibold);
 }
 
 .select {
   height: 40px;
-  border-radius: 6px;
-  border: 1px solid hsl(var(--input));
-  background: #fff;
+  border-radius: var(--kayd-radius-md);
+  border: 1px solid var(--kayd-border-strong);
+  background: var(--kayd-surface);
   padding: 0 0.75rem;
-  font-size: 0.875rem;
+  font-size: var(--kayd-font-size-md);
   color: var(--kayd-night-shadow);
 }
 
 .select:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px hsl(var(--ring) / 0.5);
+  box-shadow: var(--kayd-focus-ring);
 }

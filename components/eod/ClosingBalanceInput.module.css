@@ -2,14 +2,14 @@
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  background: #fff;
-  border: 1px solid #ece4d7;
-  border-radius: 10px;
+  background: var(--kayd-surface);
+  border: 1px solid var(--kayd-border);
+  border-radius: var(--kayd-radius-lg);
   padding: 1.25rem;
 }
 
 .hint {
   margin: 0;
-  font-size: 0.8rem;
-  color: #8a7e6c;
+  font-size: var(--kayd-font-size-sm);
+  color: var(--kayd-text-subtle);
 }

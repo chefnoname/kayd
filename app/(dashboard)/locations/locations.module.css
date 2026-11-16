@@ -11,26 +11,26 @@
   gap: 1rem;
   padding: 1.25rem 1.5rem;
   background: var(--kayd-night);
-  color: #fff;
-  border-radius: 12px;
+  color: var(--kayd-text-inverse);
+  border-radius: var(--kayd-radius-lg);
 }
 
 .summaryLabel {
-  font-size: 0.85rem;
+  font-size: var(--kayd-font-size-md);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   opacity: 0.85;
 }
 
 .summaryValue {
-  font-size: 1.85rem;
-  font-weight: 700;
+  font-size: var(--kayd-font-size-4xl);
+  font-weight: var(--kayd-font-weight-bold);
   font-variant-numeric: tabular-nums;
   margin-top: 0.15rem;
 }
 
 .summaryHint {
-  font-size: 0.85rem;
+  font-size: var(--kayd-font-size-md);
   opacity: 0.85;
   text-align: right;
 }

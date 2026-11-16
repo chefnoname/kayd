@@ -2,7 +2,7 @@
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: rgba(0, 0, 0, 0.65);
+  background: var(--kayd-overlay);
   animation: fadeIn 0.2s ease;
 }
 
@@ -14,10 +14,10 @@
   transform: translate(-50%, -50%);
   width: 95vw;
   max-width: 440px;
-  background: #fff;
-  border-radius: 14px;
+  background: var(--kayd-surface);
+  border-radius: var(--kayd-radius-xl);
   padding: 2rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--kayd-shadow-modal);
   animation: slideUp 0.25s ease;
 }
 
@@ -27,15 +27,15 @@
 }
 
 .title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--kayd-night-shadow, #2d2a26);
+  font-size: var(--kayd-font-size-2xl);
+  font-weight: var(--kayd-font-weight-bold);
+  color: var(--kayd-night-shadow);
   margin-bottom: 0.5rem;
 }
 
 .description {
-  font-size: 0.875rem;
-  color: #6b6b6b;
+  font-size: var(--kayd-font-size-md);
+  color: var(--kayd-text-muted);
   line-height: 1.5;
 }
 
@@ -53,50 +53,50 @@
 }
 
 .label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--kayd-night-shadow, #2d2a26);
+  font-size: var(--kayd-font-size-sm);
+  font-weight: var(--kayd-font-weight-semibold);
+  color: var(--kayd-night-shadow);
 }
 
 .input {
   padding: 0.6rem 0.75rem;
-  border: 1px solid #ddd5c8;
-  border-radius: 8px;
-  font-size: 1rem;
+  border: 1px solid var(--kayd-border-strong);
+  border-radius: var(--kayd-radius-md);
+  font-size: var(--kayd-font-size-lg);
   font-variant-numeric: tabular-nums;
-  background: #fdfbf7;
-  color: var(--kayd-night-shadow, #2d2a26);
+  background: var(--kayd-surface-sunken);
+  color: var(--kayd-night-shadow);
   outline: none;
   transition: border-color 0.15s ease;
 }
 
 .input:focus {
-  border-color: var(--kayd-night, #1b1a17);
-  box-shadow: 0 0 0 2px rgba(27, 26, 23, 0.08);
+  border-color: var(--kayd-night);
+  box-shadow: var(--kayd-focus-ring);
 }
 
 .input::placeholder {
-  color: #b5ad9e;
+  color: var(--kayd-text-disabled);
 }
 
 .error {
-  color: #b91c1c;
-  font-size: 0.82rem;
+  color: var(--kayd-danger);
+  font-size: var(--kayd-font-size-sm);
   margin-bottom: 0.75rem;
   text-align: center;
 }
 
 .submitBtn {
   width: 100%;
-  background: var(--kayd-night, #1b1a17);
-  color: #fff;
-  font-weight: 600;
+  background: var(--kayd-night);
+  color: var(--kayd-text-inverse);
+  font-weight: var(--kayd-font-weight-semibold);
   padding: 0.65rem 1rem;
-  border-radius: 8px;
+  border-radius: var(--kayd-radius-md);
 }
 
 .submitBtn:hover:not(:disabled) {
-  background: var(--kayd-night-shadow, #2d2a26);
+  background: var(--kayd-night-shadow);
 }
 
 .submitBtn:disabled {

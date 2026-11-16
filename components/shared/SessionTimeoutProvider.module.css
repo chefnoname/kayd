@@ -9,10 +9,10 @@
   justify-content: center;
   gap: 1rem;
   padding: 0.75rem 1.5rem;
-  background: #dc2626;
-  color: #fff;
-  font-size: 0.9rem;
-  font-weight: 600;
+  background: var(--kayd-danger-strong);
+  color: var(--kayd-text-inverse);
+  font-size: var(--kayd-font-size-md);
+  font-weight: var(--kayd-font-weight-semibold);
   letter-spacing: 0.02em;
   animation: slideDown 0.3s ease-out;
 }
@@ -39,17 +39,17 @@
 }
 
 .stayBtn {
-  background: #fff;
-  color: #dc2626;
+  background: var(--kayd-surface);
+  color: var(--kayd-danger-strong);
   border: none;
-  border-radius: 6px;
+  border-radius: var(--kayd-radius-md);
   padding: 0.35rem 1rem;
-  font-size: 0.8rem;
-  font-weight: 700;
+  font-size: var(--kayd-font-size-sm);
+  font-weight: var(--kayd-font-weight-bold);
   cursor: pointer;
   white-space: nowrap;
 }
 
 .stayBtn:hover {
-  background: #fee2e2;
+  background: var(--kayd-danger-bg);
 }

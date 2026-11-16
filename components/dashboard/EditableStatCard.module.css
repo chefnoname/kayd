@@ -12,15 +12,15 @@
 }
 
 .label {
-  font-size: 0.7rem !important;
+  font-size: var(--kayd-font-size-2xs) !important;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #185fa5;
-  font-weight: 600;
+  color: var(--kayd-tint-blue-label);
+  font-weight: var(--kayd-font-weight-semibold);
 }
 
 .editBtn {
-  color: #85b7eb;
+  color: var(--kayd-info-border);
   height: 28px;
   width: 28px;
 }
@@ -30,9 +30,9 @@
 }
 
 .value {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #042c53;
+  font-size: var(--kayd-font-size-4xl);
+  font-weight: var(--kayd-font-weight-bold);
+  color: var(--kayd-tint-blue-value);
   font-variant-numeric: tabular-nums;
 }
 
@@ -52,7 +52,7 @@
 }
 
 .error {
-  font-size: 0.8rem;
-  color: #8a1f1f;
+  font-size: var(--kayd-font-size-sm);
+  color: var(--kayd-danger);
   margin-top: 0.25rem;
 }
