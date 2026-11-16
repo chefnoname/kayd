@@ -20,7 +20,7 @@
 }
 
 .editBtn {
-  color: var(--kayd-info-border);
+  color: var(--kayd-tint-blue-label);
   height: 28px;
   width: 28px;
 }

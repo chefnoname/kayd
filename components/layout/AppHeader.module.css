@@ -104,7 +104,7 @@
 .outstandingBtn:hover {
   background: var(--kayd-warning-bright);
   border-color: var(--kayd-warning-bright);
-  color: var(--kayd-text-inverse);
+  color: var(--kayd-night-shadow);
 }
 
 .warningBtn {
@@ -120,7 +120,7 @@
 .warningBtn:hover {
   background: var(--kayd-danger-bright);
   border-color: var(--kayd-danger-bright);
-  color: var(--kayd-text-inverse);
+  color: var(--kayd-night-shadow);
 }
 
 @media (max-width: 640px) {

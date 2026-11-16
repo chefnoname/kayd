@@ -48,14 +48,14 @@
   --kayd-warning-bg: #fbe6c2;
   --kayd-warning-bg-subtle: #fef3c7;
   --kayd-warning-border: #f7d99a;
-  --kayd-warning-bright: #f59e0b;  /* for dark surfaces and accents only */
+  --kayd-warning-bright: #fbbf24;  /* for dark surfaces and accents only */
 
   --kayd-danger: #8a1f1f;
   --kayd-danger-bg: #f8d7d7;
   --kayd-danger-bg-subtle: #fef2f2;
   --kayd-danger-border: #e3b3b3;
   --kayd-danger-strong: #c0392b;   /* destructive actions, error text */
-  --kayd-danger-bright: #ef4444;   /* for dark surfaces and accents only */
+  --kayd-danger-bright: #fecaca;   /* for dark surfaces and accents only */
 
   --kayd-info: #1e40af;
   --kayd-info-bg: #dbeafe;
