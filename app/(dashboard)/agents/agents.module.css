@@ -22,6 +22,8 @@
   font-size: var(--kayd-font-size-md);
   color: var(--kayd-night-shadow);
   font-weight: var(--kayd-font-weight-medium);
+  white-space: nowrap; /* pill text never wraps or overflows */
+  flex-shrink: 0;
 }
 
 .metaValue {

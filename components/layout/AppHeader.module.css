@@ -1,62 +1,72 @@
+/* Slim top bar: today's rates on the left, account on the right.
+   The logo lives in the sidebar on desktop and only shows here on phones. */
 .header {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
   align-items: center;
-  padding: 0.85rem 1.5rem;
+  gap: var(--kayd-space-3) var(--kayd-space-6);
+  padding: var(--kayd-space-3) var(--kayd-space-8);
   background: var(--kayd-night);
   color: var(--kayd-text-inverse);
-  height: var(--kayd-header-height);
+  min-height: var(--kayd-header-height);
+}
+
+.logoLink {
+  display: none;
 }
 
 .logo {
-  width: 175px;
+  display: block;
+  width: 92px;
   height: auto;
 }
 
-.brand {
-  font-size: var(--kayd-font-size-2xl);
-  font-weight: var(--kayd-font-weight-bold);
-  letter-spacing: 0.04em;
-}
-
-.meta {
+.rates {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--kayd-space-2) var(--kayd-space-5);
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
-.date {
-  font-size: var(--kayd-font-size-md);
+.ratesTitle {
+  font-size: var(--kayd-font-size-2xs);
+  font-weight: var(--kayd-font-weight-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kayd-text-inverse-muted);
+  white-space: nowrap;
+}
+
+.rate {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--kayd-space-2);
+  white-space: nowrap;
+}
+
+.rateLabel {
+  font-size: var(--kayd-font-size-sm);
   color: var(--kayd-text-inverse-muted);
 }
 
-.rateGroup {
-  display: flex;
-  gap: 0.5rem;
+.rateValue {
+  font-size: var(--kayd-font-size-xl);
+  font-weight: var(--kayd-font-weight-bold);
+  font-variant-numeric: tabular-nums;
 }
 
-.rateBadge {
-  background: var(--kayd-sand-shadow);
-  color: var(--kayd-night-shadow);
-  border: 1px solid var(--kayd-sand-shadow);
-  font-weight: var(--kayd-font-weight-semibold);
+.rateSet {
+  font-size: var(--kayd-font-size-xs);
+  color: var(--kayd-text-inverse-muted);
   white-space: nowrap;
-  margin-left: 5px;
-
-  &:hover {
-    background: var(--kayd-sand-shadow);
-    border-color: var(--kayd-sand);
-    color: var(--kayd-night-shadow);
-    cursor: default;
-  }
 }
 
 .user {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
   justify-content: flex-end;
+  flex: 0 0 auto;
 }
 
 .avatarBtn {
@@ -86,86 +96,64 @@
   color: var(--kayd-danger-strong);
 }
 
-.logout:hover {
-  background: var(--kayd-sand-shadow);
-  color: var(--kayd-text-inverse);
-}
-
-.outstandingBtn {
-  background: transparent;
-  border: 1px solid var(--kayd-warning-bright);
-  color: var(--kayd-warning-bright);
-  font-size: var(--kayd-font-size-sm);
-  font-weight: var(--kayd-font-weight-semibold);
-  letter-spacing: 0.03em;
-  white-space: nowrap;
-}
-
-.outstandingBtn:hover {
-  background: var(--kayd-warning-bright);
-  border-color: var(--kayd-warning-bright);
-  color: var(--kayd-night-shadow);
-}
-
-.warningBtn {
-  background: transparent;
-  border: 1px solid var(--kayd-danger-bright);
-  color: var(--kayd-danger-bright);
-  font-size: var(--kayd-font-size-sm);
-  font-weight: var(--kayd-font-weight-semibold);
-  letter-spacing: 0.03em;
-  white-space: nowrap;
-}
-
-.warningBtn:hover {
-  background: var(--kayd-danger-bright);
-  border-color: var(--kayd-danger-bright);
-  color: var(--kayd-night-shadow);
-}
-
-@media (max-width: 640px) {
-  /* Mobile: logo and account on the first row, today's rates on the second */
+@media (max-width: 768px) {
+  /* Phone: white brand row (logo + account), then a night-blue rates row */
   .header {
-    grid-template-columns: auto 1fr;
+    display: grid;
+    grid-template-columns: 1fr auto;
     grid-template-areas:
       "logo user"
-      "meta meta";
-    row-gap: var(--kayd-space-2);
-    height: auto;
-    padding: var(--kayd-space-3) var(--kayd-space-4);
+      "rates rates";
+    gap: 0;
+    padding: 0;
+    min-height: 0;
+    background: var(--kayd-surface);
+    color: var(--kayd-text);
   }
 
-  .logo {
+  .logoLink {
     grid-area: logo;
-    width: 128px;
-    margin-left: -16px; /* the logo file has built-in padding */
-  }
-
-  .meta {
-    grid-area: meta;
+    display: flex;
+    align-items: center;
+    min-height: var(--kayd-touch-target);
+    padding: var(--kayd-space-2) var(--kayd-space-4);
   }
 
   .user {
     grid-area: user;
-    gap: var(--kayd-space-2);
+    padding: var(--kayd-space-2) var(--kayd-space-4);
   }
 
-  .date {
-    display: none;
-  }
-
-  .rateGroup {
-    width: 100%;
+  .avatarBtn {
+    min-height: var(--kayd-touch-target);
+    min-width: var(--kayd-touch-target);
     justify-content: center;
   }
 
-  .alertLabel {
+  .rates {
+    grid-area: rates;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: var(--kayd-space-3);
+    padding: var(--kayd-space-2) var(--kayd-space-4);
+    background: var(--kayd-night);
+    color: var(--kayd-text-inverse);
+  }
+
+  .ratesTitle,
+  .ratePair {
     display: none;
   }
 
-  .outstandingBtn,
-  .warningBtn {
-    min-height: 36px;
-    padding: 0 var(--kayd-space-3);
+  .rate {
+    gap: 0.375rem;
+  }
+
+  .rateLabel {
+    font-size: var(--kayd-font-size-xs);
+  }
+
+  .rateValue {
+    font-size: var(--kayd-font-size-lg);
   }
 }

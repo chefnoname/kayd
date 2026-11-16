@@ -1,0 +1,104 @@
+.card {
+  background: var(--kayd-surface);
+  border: 1px solid var(--kayd-border);
+  border-radius: var(--kayd-radius-lg);
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--kayd-space-3);
+  padding: var(--kayd-space-5) var(--kayd-space-6) var(--kayd-space-3);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--kayd-font-size-xl);
+  font-weight: var(--kayd-font-weight-semibold);
+}
+
+.count {
+  font-size: var(--kayd-font-size-sm);
+  color: var(--kayd-text-muted);
+  white-space: nowrap;
+}
+
+.empty {
+  margin: 0;
+  padding: 0 var(--kayd-space-6) var(--kayd-space-6);
+  color: var(--kayd-text-muted);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--kayd-space-2) var(--kayd-space-4);
+  padding: 0.5rem var(--kayd-space-6);
+  border-top: 1px solid var(--kayd-border);
+}
+
+/* The sentence wraps; the pill beside it never does */
+.text {
+  flex: 1 1 200px;
+  min-width: 0;
+  color: var(--kayd-text-muted);
+}
+
+.text strong {
+  color: var(--kayd-text);
+  font-weight: var(--kayd-font-weight-semibold);
+}
+
+.figure {
+  font-variant-numeric: tabular-nums;
+}
+
+.action {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--kayd-touch-target);
+  font-weight: var(--kayd-font-weight-semibold);
+  color: var(--kayd-night);
+  white-space: nowrap;
+}
+
+.action:hover {
+  color: var(--kayd-night-shadow);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .head {
+    padding: var(--kayd-space-4) var(--kayd-space-5) var(--kayd-space-3);
+  }
+
+  .empty {
+    padding: 0 var(--kayd-space-5) var(--kayd-space-5);
+  }
+
+  .item {
+    padding: var(--kayd-space-3) var(--kayd-space-5) 0.25rem;
+  }
+
+  .text {
+    flex-basis: 100%;
+  }
+}

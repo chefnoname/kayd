@@ -1,15 +1,41 @@
 .sidebar {
   display: flex;
   flex-direction: column;
+  gap: var(--kayd-space-6);
   background: var(--kayd-surface);
   border-right: 1px solid var(--kayd-border);
-  padding: 1rem 0.75rem;
+  padding: var(--kayd-space-5) var(--kayd-space-3);
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.logoLink {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-left: 0.85rem;
+  border-radius: var(--kayd-radius-sm);
+}
+
+.logoLink:focus-visible {
+  outline: 2px solid var(--kayd-night);
+  outline-offset: 4px;
+}
+
+.logo {
+  display: block;
+  width: 112px;
+  height: auto;
 }
 
 .nav {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  position: relative; /* keeps visually hidden badge text inside the scroll area */
 }
 
 .link {
@@ -23,6 +49,19 @@
   font-size: var(--kayd-font-size-base);
   font-weight: var(--kayd-font-weight-medium);
   transition: background 120ms ease, color 120ms ease;
+}
+
+.icon {
+  flex: 0 0 auto;
+}
+
+/* The label gives way (and truncates) before a badge is ever squeezed */
+.label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .link:hover {
@@ -39,52 +78,44 @@
   color: var(--kayd-text-inverse);
 }
 
-.rateBox {
-  margin-top: 20px;
-  padding: 0.85rem 0.9rem;
-  background: var(--kayd-night);
-  border: none;
-  border-radius: var(--kayd-radius-lg);
-}
-
-.rateBoxTitle {
-  display: block;
-  font-size: var(--kayd-font-size-2xs);
-  font-weight: var(--kayd-font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--kayd-text-inverse-subtle);
-  margin-bottom: 0.5rem;
-}
-
-.rateRow {
-  display: flex;
-  justify-content: space-between;
+.badge {
+  position: relative;
+  flex: 0 0 auto;
+  display: inline-flex;
   align-items: center;
-  font-size: var(--kayd-font-size-sm);
-  padding: 0.2rem 0;
-}
-
-.rateRowLabel {
-  color: var(--kayd-text-inverse-muted);
-  font-weight: var(--kayd-font-weight-medium);
-}
-
-.rateRowValue {
+  justify-content: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.4rem;
+  box-sizing: border-box;
+  border-radius: var(--kayd-radius-pill);
+  border: 1px solid transparent;
+  font-size: var(--kayd-font-size-xs);
   font-weight: var(--kayd-font-weight-bold);
   font-variant-numeric: tabular-nums;
-  color: var(--kayd-text-inverse);
+  line-height: 1;
+  white-space: nowrap;
 }
 
-.rateTimestamp {
-  display: block;
-  margin-top: 0.55rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--kayd-border-inverse);
-  font-size: var(--kayd-font-size-2xs);
-  color: var(--kayd-text-inverse-subtle);
-  font-weight: var(--kayd-font-weight-medium);
-  letter-spacing: 0.02em;
+.badgeDanger {
+  background: var(--kayd-danger-bg);
+  color: var(--kayd-danger);
+  border-color: var(--kayd-danger-border);
+}
+
+.badgeWarning {
+  background: var(--kayd-warning-bg);
+  color: var(--kayd-warning);
+  border-color: var(--kayd-warning-border);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 @media (max-width: 768px) {
@@ -93,9 +124,15 @@
     position: sticky;
     top: 0;
     z-index: 20;
+    align-self: stretch;
+    height: auto;
+    overflow-y: visible;
     border-right: none;
     border-bottom: 1px solid var(--kayd-border);
     padding: var(--kayd-space-2) var(--kayd-space-3);
+  }
+  .logoLink {
+    display: none; /* the logo sits in the top bar on phones */
   }
   .nav {
     flex-direction: row;
@@ -115,7 +152,7 @@
     font-size: var(--kayd-font-size-md);
     white-space: nowrap;
   }
-  .rateBox {
-    display: none;
+  .label {
+    overflow: visible;
   }
 }

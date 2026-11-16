@@ -100,12 +100,16 @@
   background: var(--kayd-info-bg);
   color: var(--kayd-info);
   border-color: var(--kayd-info-border);
+  white-space: nowrap; /* pill text never wraps or overflows */
+  flex-shrink: 0;
 }
 
 .badgeReleased {
   background: var(--kayd-success-bg);
   color: var(--kayd-success);
   border-color: var(--kayd-success-border);
+  white-space: nowrap; /* pill text never wraps or overflows */
+  flex-shrink: 0;
 }
 
 .empty {

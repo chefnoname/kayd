@@ -94,6 +94,8 @@
   color: var(--kayd-danger);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  white-space: nowrap; /* pill text never wraps or overflows */
+  flex-shrink: 0;
 }
 
 .actions {

@@ -1,13 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -208,46 +201,59 @@ export function BankDetailsCard({
 
   return (
     <>
-      <Card className={styles.card}>
-        <CardHeader className={styles.header}>
-          <CardTitle className={styles.label}>Bank Details</CardTitle>
-          {editable && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={openDialog}
-              aria-label="Edit bank details"
-              className={styles.editBtn}
-            >
-              <Pencil size={14} />
-            </Button>
-          )}
-        </CardHeader>
-        <CardContent>
-          {allNull ? (
-            <div className={styles.notConfigured}>Not configured</div>
-          ) : (
-            <div className={styles.rows}>
-              <div className={styles.fieldRow}>
-                <span className={styles.fieldLabel}>Bank Name</span>
-                <span className={styles.fieldValue}>{bankName ?? "—"}</span>
-              </div>
-              {sortCode && (
-                <div className={styles.fieldRow}>
-                  <span className={styles.fieldLabel}>{displayConfig.routingLabel ?? "Routing"}</span>
-                  <span className={styles.fieldValue}>{sortCode}</span>
-                </div>
+      {allNull ? (
+        <div className={styles.fieldRow}>
+          <span className={styles.fieldLabel}>Bank details</span>
+          <span className={styles.fieldValue}>
+            <span className={styles.notConfigured}>Not set</span>
+            {editable && (
+              <button
+                type="button"
+                onClick={openDialog}
+                className={styles.editBtn}
+                aria-label="Add bank details"
+              >
+                Add
+              </button>
+            )}
+          </span>
+        </div>
+      ) : (
+        <>
+          <div className={styles.fieldRow}>
+            <span className={styles.fieldLabel}>Bank</span>
+            <span className={styles.fieldValue}>
+              {bankName ?? "—"}
+              {editable && (
+                <button
+                  type="button"
+                  onClick={openDialog}
+                  className={styles.editBtn}
+                  aria-label="Edit bank details"
+                >
+                  Edit
+                </button>
               )}
-              {accountNumber && (
-                <div className={styles.fieldRow}>
-                  <span className={styles.fieldLabel}>{displayConfig.accountLabel}</span>
-                  <span className={styles.fieldValue}>{accountNumber}</span>
-                </div>
-              )}
+            </span>
+          </div>
+          {sortCode && (
+            <div className={styles.fieldRow}>
+              <span className={styles.fieldLabel}>
+                {displayConfig.routingLabel ?? "Routing"}
+              </span>
+              <span className={styles.fieldValue}>{sortCode}</span>
             </div>
           )}
-        </CardContent>
-      </Card>
+          {accountNumber && (
+            <div className={styles.fieldRow}>
+              <span className={styles.fieldLabel}>
+                {displayConfig.accountLabel}
+              </span>
+              <span className={styles.fieldValue}>{accountNumber}</span>
+            </div>
+          )}
+        </>
+      )}
 
       <Dialog open={dialogOpen} onOpenChange={closeDialog}>
         <DialogContent>

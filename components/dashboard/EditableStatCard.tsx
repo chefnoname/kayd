@@ -1,13 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Pencil } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +19,10 @@ interface EditableStatCardProps {
   value: number;
   currency: "GBP" | "USD";
   editable?: boolean;
+  /** "hero" = the leading night-blue figure; "row" = a quiet label/value line. */
+  variant: "hero" | "row";
+  /** Supporting line under a hero figure. */
+  note?: React.ReactNode;
   onSave?: (next: number) => Promise<void> | void;
 }
 
@@ -34,6 +31,8 @@ export function EditableStatCard({
   value,
   currency,
   editable = false,
+  variant,
+  note,
   onSave,
 }: EditableStatCardProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -75,25 +74,44 @@ export function EditableStatCard({
 
   return (
     <>
-      <Card className={styles.card}>
-        <CardHeader className={styles.header}>
-          <CardTitle className={styles.label}>{label}</CardTitle>
-          {editable && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={openDialog}
-              aria-label={`Edit ${label}`}
-              className={styles.editBtn}
-            >
-              <Pencil size={14} />
-            </Button>
-          )}
-        </CardHeader>
-        <CardContent>
-          <div className={styles.value}>{formatCurrency(value, currency)}</div>
-        </CardContent>
-      </Card>
+      {variant === "hero" ? (
+        <div className={styles.hero}>
+          <div className={styles.heroTop}>
+            <span className={styles.heroLabel}>{label}</span>
+            {editable && (
+              <button
+                type="button"
+                onClick={openDialog}
+                aria-label={`Update ${label}`}
+                className={styles.heroBtn}
+              >
+                Update
+              </button>
+            )}
+          </div>
+          <span className={styles.heroValue}>
+            {formatCurrency(value, currency)}
+          </span>
+          {note && <span className={styles.heroNote}>{note}</span>}
+        </div>
+      ) : (
+        <div className={styles.row}>
+          <span className={styles.rowLabel}>{label}</span>
+          <span className={styles.rowValue}>
+            {formatCurrency(value, currency)}
+            {editable && (
+              <button
+                type="button"
+                onClick={openDialog}
+                aria-label={`Edit ${label}`}
+                className={styles.rowBtn}
+              >
+                Edit
+              </button>
+            )}
+          </span>
+        </div>
+      )}
 
       <Dialog open={dialogOpen} onOpenChange={closeDialog}>
         <DialogContent>

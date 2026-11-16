@@ -1,39 +1,104 @@
-.card {
-  background: linear-gradient(135deg, var(--kayd-tint-blue-start) 0%, var(--kayd-tint-blue-end) 100%);
-  border: 1px solid var(--kayd-tint-blue-border);
+/* Hero: the leading figure of the cash position band */
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kayd-space-2);
+  height: 100%;
+  box-sizing: border-box;
+  padding: var(--kayd-space-6);
+  background: var(--kayd-night);
+  color: var(--kayd-text-inverse);
 }
 
-.header {
+.heroTop {
   display: flex;
-  flex-direction: row !important;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
+  gap: var(--kayd-space-2);
 }
 
-.label {
-  font-size: var(--kayd-font-size-2xs) !important;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--kayd-tint-blue-label);
+.heroLabel {
+  font-size: var(--kayd-font-size-2xs);
   font-weight: var(--kayd-font-weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kayd-text-inverse-muted);
 }
 
-.editBtn {
-  color: var(--kayd-tint-blue-label);
-  height: 28px;
-  width: 28px;
+.heroBtn {
+  flex: 0 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: transparent;
+  color: var(--kayd-text-inverse);
+  font: inherit;
+  font-size: var(--kayd-font-size-xs);
+  font-weight: var(--kayd-font-weight-semibold);
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--kayd-radius-md);
+  cursor: pointer;
+  white-space: nowrap;
 }
 
-.editBtn:hover {
-  color: var(--kayd-night);
+.heroBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
 }
 
-.value {
-  font-size: var(--kayd-font-size-4xl);
+.heroBtn:focus-visible {
+  outline: 2px solid var(--kayd-sand);
+  outline-offset: 2px;
+}
+
+.heroValue {
+  font-size: 2.5rem;
+  line-height: 1.1;
   font-weight: var(--kayd-font-weight-bold);
-  color: var(--kayd-tint-blue-value);
   font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.heroNote {
+  font-size: var(--kayd-font-size-sm);
+  color: var(--kayd-text-inverse-muted);
+}
+
+/* Row: a quiet setting line */
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--kayd-space-3);
+  padding: 0.625rem 0;
+  border-bottom: 1px solid var(--kayd-border);
+}
+
+.rowLabel {
+  color: var(--kayd-text-muted);
+}
+
+.rowValue {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--kayd-space-3);
+  font-weight: var(--kayd-font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.rowBtn {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-size: var(--kayd-font-size-sm);
+  font-weight: var(--kayd-font-weight-semibold);
+  color: var(--kayd-night);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.rowBtn:hover {
+  color: var(--kayd-night-shadow);
 }
 
 .dialogField {
@@ -58,15 +123,21 @@
 }
 
 @media (max-width: 640px) {
-  .card > div {
-    padding: var(--kayd-space-4);
+  .hero {
+    padding: var(--kayd-space-5);
   }
 
-  .card > div + div {
-    padding-top: 0;
+  .heroBtn {
+    min-height: var(--kayd-touch-target);
+    padding: 0 var(--kayd-space-4);
+    font-size: var(--kayd-font-size-sm);
   }
 
-  .value {
-    font-size: var(--kayd-font-size-2xl);
+  .heroValue {
+    font-size: var(--kayd-font-size-5xl);
+  }
+
+  .rowBtn {
+    min-height: var(--kayd-touch-target);
   }
 }

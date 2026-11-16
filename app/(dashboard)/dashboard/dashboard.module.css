@@ -1,53 +1,46 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-}
-
-.topRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: var(--kayd-space-5);
+  max-width: 1240px;
 }
 
 .dateLine {
-  font-size: var(--kayd-font-size-md);
-  color: var(--kayd-text-muted);
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--kayd-space-2) 0.625rem;
 }
 
-.topCards {
+.headerAction {
+  height: var(--kayd-touch-target);
+  gap: var(--kayd-space-2);
+}
+
+/* Wide card on the left, narrow card on the right; stacks when tight */
+.split {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-@media (max-width: 640px) {
-  .topCards {
-    grid-template-columns: 1fr;
-  }
-
-  .dateLine {
-    display: none; /* the date already shows in the page chrome */
-  }
-}
-
-.summaryGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-}
-
-.bottomGrid {
-  display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(260px, 3fr);
-  gap: 1.25rem;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: var(--kayd-space-5);
   align-items: start;
 }
 
-@media (max-width: 900px) {
-  .bottomGrid {
+@media (max-width: 1000px) {
+  .split {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    gap: var(--kayd-space-4);
+  }
+
+  .split {
+    gap: var(--kayd-space-4);
+  }
+
+  .headerAction {
+    flex: 1 1 auto;
   }
 }

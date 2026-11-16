@@ -132,7 +132,7 @@
 
   /* ── Layout ────────────────────────────────────────────── */
   --kayd-sidebar-width: 240px;
-  --kayd-header-height: 100px;
+  --kayd-header-height: 64px;
   --kayd-touch-target: 44px;
 
   /* Breakpoints (reference only: CSS variables cannot be used in @media)

@@ -24,9 +24,9 @@ export default function DashboardLayout({
         <SessionTimeoutProvider>
           <RateGateProvider>
             <div className={styles.shell}>
-              <AppHeader />
-              <div className={styles.body}>
-                <Sidebar />
+              <Sidebar />
+              <div className={styles.content}>
+                <AppHeader />
                 <main className={styles.main}>{children}</main>
               </div>
             </div>
