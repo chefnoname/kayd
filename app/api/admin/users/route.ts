@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { createAdminClient } from "@/lib/supabase-admin";
 
+// Reads auth cookies on every request, so it must never be prerendered.
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   // Authenticate the caller
   const supabase = createServerClient(
