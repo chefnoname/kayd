@@ -1,4 +1,5 @@
 .header {
+  animation: headerIn 500ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
   position: sticky;
   top: 0;
   z-index: 20;
@@ -26,6 +27,15 @@
   display: flex;
   gap: 4px;
   margin-right: auto;
+  transition: opacity 240ms ease;
+}
+
+/* Header copy dims with the page while a new language loads. */
+:global(html[data-kayd-lang-switching]) .nav,
+:global(html[data-kayd-lang-switching]) .callLink,
+:global(html[data-kayd-lang-switching]) .login {
+  opacity: 0.45;
+  transition-delay: 90ms;
 }
 
 .navLink {
@@ -60,7 +70,8 @@
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
-  transition: background-color 150ms ease, transform 150ms ease;
+  transition: background-color 150ms ease, transform 150ms ease,
+    opacity 240ms ease;
 }
 
 .callLink {
@@ -111,5 +122,26 @@
 
   .login {
     padding: 0 16px;
+  }
+}
+
+@keyframes headerIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header {
+    animation: none;
+  }
+
+  .header * {
+    transition: none !important;
   }
 }
