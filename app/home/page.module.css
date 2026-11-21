@@ -152,6 +152,9 @@
     var(--kayd-gold) 90%,
     transparent 90%
   );
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 100% 100%;
 }
 
 .heroLead {
@@ -462,8 +465,86 @@
   }
 }
 
+/* ── Motion ─────────────────────────────────────────── */
+
+/* Hero: a staggered rise on first paint, then the gold highlight draws in.
+ * `backwards` fill keeps each item hidden only until its delay ends. */
+.hero .eyebrow,
+.heroTitle,
+.heroLead,
+.heroActions {
+  animation: kaydRise 800ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.hero .eyebrow {
+  animation-delay: 60ms;
+}
+
+.heroTitle {
+  animation-delay: 140ms;
+}
+
+.heroLead {
+  animation-delay: 260ms;
+}
+
+.heroActions {
+  animation-delay: 360ms;
+}
+
+.heroAccent {
+  animation: kaydHighlight 700ms cubic-bezier(0.65, 0, 0.35, 1) 700ms backwards;
+}
+
+/* Scroll reveal (ScrollReveal.tsx). Only below-the-fold items are ever
+ * pending, and `backwards` fill hands transform back to hover styles. */
+.page [data-reveal="pending"] {
+  opacity: 0;
+}
+
+.page [data-reveal="shown"] {
+  animation: kaydRise 700ms cubic-bezier(0.22, 1, 0.36, 1)
+    var(--reveal-delay, 0ms) backwards;
+}
+
+/* Language switch: dim the copy while the new language loads (after a short
+ * grace so fast switches don't flicker); LocaleFade eases the new text in. */
+.localeFade {
+  transition: opacity 240ms ease;
+}
+
+:global(html[data-kayd-lang-switching]) .localeFade {
+  opacity: 0.45;
+  transition: opacity 200ms ease 90ms;
+}
+
+@keyframes kaydRise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes kaydHighlight {
+  from {
+    background-size: 0% 100%;
+  }
+  to {
+    background-size: 100% 100%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .page * {
     transition: none !important;
+    animation: none !important;
+  }
+
+  .page [data-reveal="pending"] {
+    opacity: 1;
   }
 }

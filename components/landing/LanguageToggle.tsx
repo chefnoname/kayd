@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useTransition, type ChangeEvent } from "react";
+import { useEffect, useState, useTransition, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
+import { LANG_SWITCHING_ATTR } from "./motion";
 import type { Locale } from "./types";
 import styles from "./LanguageToggle.module.css";
 
@@ -27,6 +28,14 @@ export function LanguageToggle({ locale, label }: LanguageToggleProps) {
 
   // While the new page is loading, show the visitor's pick; otherwise trust the server.
   const selected = isPending ? requested : locale;
+
+  // Lets the page dim its copy while the new language loads (LocaleFade).
+  useEffect(() => {
+    const root = document.documentElement;
+    if (isPending) root.setAttribute(LANG_SWITCHING_ATTR, "");
+    else root.removeAttribute(LANG_SWITCHING_ATTR);
+    return () => root.removeAttribute(LANG_SWITCHING_ATTR);
+  }, [isPending]);
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     const next = event.target.value as Locale;
