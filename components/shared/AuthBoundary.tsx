@@ -15,7 +15,17 @@ import { resetToPath } from "@/lib/session-reset";
  * - If the browser restores the page from its back/forward cache, or the tab
  *   regains focus, the user is checked again.
  */
-export function AuthBoundary({ children }: { children: React.ReactNode }) {
+export function AuthBoundary({
+  children,
+  loginPath = "/login",
+  homePath = "/dashboard",
+}: {
+  children: React.ReactNode;
+  /** Where to go when signed out. */
+  loginPath?: string;
+  /** Where to go when a different user signs in. */
+  homePath?: string;
+}) {
   const [userId, setUserId] = useState<string | null>(null);
   const userIdRef = useRef<string | null>(null);
 
@@ -29,11 +39,11 @@ export function AuthBoundary({ children }: { children: React.ReactNode }) {
       } = await supabase.auth.getUser();
       if (cancelled) return;
       if (!user) {
-        resetToPath("/login");
+        resetToPath(loginPath);
         return;
       }
       if (userIdRef.current && userIdRef.current !== user.id) {
-        resetToPath("/dashboard");
+        resetToPath(homePath);
         return;
       }
       userIdRef.current = user.id;
@@ -47,11 +57,11 @@ export function AuthBoundary({ children }: { children: React.ReactNode }) {
     } = supabase.auth.onAuthStateChange((event, session) => {
       const nextId = session?.user?.id ?? null;
       if (event === "SIGNED_OUT" || !nextId) {
-        resetToPath("/login");
+        resetToPath(loginPath);
         return;
       }
       if (userIdRef.current && nextId !== userIdRef.current) {
-        resetToPath("/dashboard");
+        resetToPath(homePath);
       }
     });
 
@@ -72,6 +82,7 @@ export function AuthBoundary({ children }: { children: React.ReactNode }) {
       window.removeEventListener("pageshow", onPageShow);
       document.removeEventListener("visibilitychange", onVisible);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!userId) return null;

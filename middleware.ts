@@ -24,8 +24,45 @@ function isPublicPath(pathname: string): boolean {
   );
 }
 
+function isConsolePath(pathname: string): boolean {
+  return pathname === "/console" || pathname.startsWith("/console/");
+}
+
+function isConsoleApi(pathname: string): boolean {
+  return pathname === "/api/console" || pathname.startsWith("/api/console/");
+}
+
+/** Console pages reachable without a session. */
+const CONSOLE_PUBLIC = ["/console/login", "/console/set-password"];
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // ── Kayd console host separation ─────────────────────────────────────
+  // With CONSOLE_HOST set (e.g. console.kayd.live), the console only answers
+  // on that host and the client app never serves it. Without it (local dev,
+  // previews) the console is reachable at /console on any host.
+  const consoleHost = process.env.CONSOLE_HOST;
+  const host = request.headers.get("host") ?? "";
+  if (consoleHost) {
+    const onConsoleHost = host === consoleHost;
+    if (!onConsoleHost && (isConsolePath(pathname) || isConsoleApi(pathname))) {
+      return new NextResponse("Not found", { status: 404 });
+    }
+    if (
+      onConsoleHost &&
+      !isConsolePath(pathname) &&
+      !isConsoleApi(pathname) &&
+      !pathname.startsWith("/_next") &&
+      !pathname.startsWith("/auth/") &&
+      !pathname.includes(".")
+    ) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/console";
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
+  }
 
   // Skip static assets, API routes, and files
   if (
@@ -89,6 +126,20 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // ── Console pages: a session is required; kayd_staff is checked by the
+  // console layout and every console API route on the server.
+  if (isConsolePath(pathname)) {
+    response.headers.set("Cache-Control", "private, no-store, max-age=0");
+    if (CONSOLE_PUBLIC.includes(pathname)) return response;
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/console/login";
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
+    return response;
+  }
+
   const publicPath = isPublicPath(pathname);
 
   // Signed-in pages must never be stored by the browser or a shared cache,
@@ -115,6 +166,30 @@ export async function middleware(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);
+  }
+
+  // Kayd staff have no organisation; send them to the console.
+  if (user.app_metadata?.kayd_staff === true || user.app_metadata?.kayd_staff === "true") {
+    const url = request.nextUrl.clone();
+    if (consoleHost) url.host = consoleHost;
+    url.pathname = "/console";
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+
+  // Locked people and suspended organisations are signed out at once.
+  // (Their data is already hidden: current_org_id() returns null for them.)
+  const { data: accountState } = await supabase.rpc("my_account_state");
+  const state = Array.isArray(accountState) ? accountState[0] : accountState;
+  if (state?.locked || state?.org_suspended) {
+    await supabase.auth.signOut();
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.search = "";
+    url.searchParams.set("blocked", state.locked ? "locked" : "suspended");
+    const redirect = NextResponse.redirect(url);
+    response.cookies.getAll().forEach((c) => redirect.cookies.set(c));
+    return redirect;
   }
 
   // Caller's row — used for both role gating and org scoping below.

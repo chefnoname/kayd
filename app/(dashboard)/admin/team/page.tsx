@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { UserManagementTable } from "@/components/admin/UserManagementTable";
 import { InviteUserModal } from "@/components/admin/InviteUserModal";
+import { KaydAccessList } from "@/components/admin/KaydAccessList";
 import type { StaffUser, UserRole } from "@/components/admin/types";
 import { useToast } from "@/components/ui/toast";
 import styles from "./team.module.css";
@@ -100,7 +101,7 @@ export default function TeamPage() {
       toast({ title: "Error", description: data.error });
       return;
     }
-    toast({ title: "Magic link sent", description: `Email sent to ${user.email}` });
+    toast({ title: "Reset link sent", description: `Email sent to ${user.email}` });
   }
 
   return (
@@ -131,6 +132,8 @@ export default function TeamPage() {
           onResetPassword={handleResetPassword}
         />
       )}
+
+      <KaydAccessList />
 
       <InviteUserModal
         open={inviteOpen}

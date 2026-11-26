@@ -22,12 +22,17 @@ function makeRequest(pathname: string, cookieHeader = ""): NextRequest {
   });
 }
 
-function mockSupabaseUser(user: object | null) {
+function mockSupabaseUser(
+  user: object | null,
+  accountState: { locked: boolean; org_suspended: boolean } = { locked: false, org_suspended: false }
+) {
   vi.doMock("@supabase/ssr", () => ({
     createServerClient: () => ({
       auth: {
         getUser: async () => ({ data: { user } }),
+        signOut: async () => ({ error: null }),
       },
+      rpc: async () => ({ data: [accountState] }),
       from: () => ({
         select: () => ({
           eq: () => ({
@@ -96,6 +101,22 @@ describe("AC-4: Middleware — unverified users are not blocked", () => {
     const location = res.headers.get("location") ?? "";
     expect(location).not.toContain("/verify-email");
     expect(location).not.toContain("/login");
+  });
+
+  test("Console: a locked person is signed out and sent to /login?blocked=locked", async () => {
+    mockSupabaseUser({ id: "user-1" }, { locked: true, org_suspended: false });
+    const { middleware } = await import("../middleware");
+
+    const res = await middleware(makeRequest("/dashboard"));
+    expect(res.headers.get("location")).toContain("/login?blocked=locked");
+  });
+
+  test("Console: someone in a suspended organisation is sent to /login?blocked=suspended", async () => {
+    mockSupabaseUser({ id: "user-1" }, { locked: false, org_suspended: true });
+    const { middleware } = await import("../middleware");
+
+    const res = await middleware(makeRequest("/dashboard"));
+    expect(res.headers.get("location")).toContain("/login?blocked=suspended");
   });
 
   test("AC-4: unauthenticated user on /dashboard is still redirected to /login", async () => {

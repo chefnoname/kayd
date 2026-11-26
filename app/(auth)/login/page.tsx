@@ -20,7 +20,14 @@ function LoginForm() {
 
   const [email, setEmail] = useState(searchParams.get("email") ?? "");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const blocked = searchParams.get("blocked");
+  const [error, setError] = useState<string | null>(
+    blocked === "locked"
+      ? "Your account has been locked. Ask your organisation's admin or Kayd support to unlock it."
+      : blocked === "suspended"
+        ? "Your organisation's Kayd account is suspended. Please contact Kayd support."
+        : searchParams.get("error")
+  );
   const [loading, setLoading] = useState(false);
 
   // Handle implicit-flow invite/recovery links that Supabase sends as
@@ -67,6 +74,12 @@ function LoginForm() {
 
     if (signInError) {
       const msg = signInError.message.toLowerCase();
+      if (msg.includes("banned")) {
+        setError(
+          "Your account has been locked. Ask your organisation's admin or Kayd support to unlock it."
+        );
+        return;
+      }
       if (msg.includes("invalid login credentials")) {
         router.push(`/signup?email=${encodeURIComponent(email)}`);
         return;

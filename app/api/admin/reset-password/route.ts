@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { createAdminClient } from "@/lib/supabase-admin";
+import { sendPasswordEmail, siteUrl } from "@/lib/console/server";
 
 export async function POST(request: NextRequest) {
   const supabase = createServerClient(
@@ -87,18 +88,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Send a magic link / password reset
-  const { error: resetError } = await admin.auth.admin.generateLink({
-    type: "magiclink",
-    email: targetUser.user.email,
-    options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || ""}/auth/callback?type=recovery`,
-    },
-  });
-
-  if (resetError) {
+  // Email a password reset link. generateLink only builds a link and sends
+  // nothing, so the person never received anything before this.
+  try {
+    await sendPasswordEmail(targetUser.user.email, `${siteUrl() || request.nextUrl.origin}/login`);
+  } catch (e) {
     return NextResponse.json(
-      { error: resetError.message },
+      { error: e instanceof Error ? e.message : "Could not send the email." },
       { status: 500 }
     );
   }
