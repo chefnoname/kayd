@@ -6,6 +6,7 @@ import { EmailVerificationToast } from "@/components/shared/EmailVerificationToa
 import { RateGateProvider } from "@/components/shared/RateGateProvider";
 import { SessionTimeoutProvider } from "@/components/shared/SessionTimeoutProvider";
 import { JotaiProvider } from "@/components/shared/JotaiProvider";
+import { AuthBoundary } from "@/components/shared/AuthBoundary";
 import { Suspense } from "react";
 import styles from "./layout.module.css";
 
@@ -15,6 +16,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
+    <AuthBoundary>
     <ToastProvider>
       <Suspense fallback={null}>
         <AccessDeniedToast />
@@ -34,5 +36,6 @@ export default function DashboardLayout({
         </SessionTimeoutProvider>
       </JotaiProvider>
     </ToastProvider>
+    </AuthBoundary>
   );
 }

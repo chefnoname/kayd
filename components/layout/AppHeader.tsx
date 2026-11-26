@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
-import { getOrganisationId, clearOrganisationCache } from "@/lib/org";
+import { getOrganisationId } from "@/lib/org";
+import { resetToPath } from "@/lib/session-reset";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Image from "next/image";
 import {
@@ -192,9 +193,7 @@ export function AppHeader() {
     sessionStorage.removeItem(SESSION_KEY);
     sessionStorage.removeItem("rateGateCleared");
     await supabase.auth.signOut();
-    clearOrganisationCache();
-    router.push("/login");
-    router.refresh();
+    resetToPath("/login");
   }
 
   const initials = name
