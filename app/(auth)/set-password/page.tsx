@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
+import { resetToPath } from "@/lib/session-reset";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -93,8 +94,7 @@ export default function SetPasswordPage() {
     }
 
     setSaving(false);
-    router.replace("/dashboard");
-    router.refresh();
+    resetToPath("/dashboard");
   }
 
   return (

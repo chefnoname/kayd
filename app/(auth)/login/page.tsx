@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
+import { resetToPath } from "@/lib/session-reset";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,9 +42,9 @@ function LoginForm() {
       .then(({ error: sessionError }) => {
         if (sessionError) return;
         if (type === "invite" || type === "recovery") {
-          router.push("/set-password");
+          resetToPath("/set-password");
         } else {
-          router.push("/dashboard");
+          resetToPath("/dashboard");
         }
       });
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -53,6 +54,9 @@ function LoginForm() {
     e.preventDefault();
     setError(null);
     setLoading(true);
+
+    // Drop any previous login before starting a new one.
+    await supabase.auth.signOut({ scope: "local" });
 
     const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
       email,
@@ -73,14 +77,13 @@ function LoginForm() {
 
     // Stamp last_active_at immediately — more reliable than the DB trigger.
     if (signInData.user) {
-      void supabase
+      await supabase
         .from("staff_users")
         .update({ last_active_at: new Date().toISOString() })
         .eq("id", signInData.user.id);
     }
 
-    router.push("/dashboard");
-    router.refresh();
+    resetToPath("/dashboard");
   }
 
   return (

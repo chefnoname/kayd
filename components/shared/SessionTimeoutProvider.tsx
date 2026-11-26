@@ -10,7 +10,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
-import { clearOrganisationCache } from "@/lib/org";
+import { resetToPath } from "@/lib/session-reset";
 import {
   SESSION_TIMEOUT_MINUTES,
   SESSION_WARNING_MINUTES,
@@ -98,10 +98,8 @@ export function SessionTimeoutProvider({
     SESSION_KEYS_TO_CLEAR.forEach((k) => sessionStorage.removeItem(k));
 
     await supabase.auth.signOut();
-    clearOrganisationCache();
-    router.push("/login");
-    router.refresh();
-  }, [supabase, router]);
+    resetToPath("/login");
+  }, [supabase]);
 
   /* ---------------------------------------------------------------- */
   /*  Timer management                                                 */

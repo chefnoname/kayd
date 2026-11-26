@@ -91,6 +91,13 @@ export async function middleware(request: NextRequest) {
 
   const publicPath = isPublicPath(pathname);
 
+  // Signed-in pages must never be stored by the browser or a shared cache,
+  // so Back after sign-out (or a new login on the same device) can't show
+  // the previous account's data.
+  if (user && !publicPath) {
+    response.headers.set("Cache-Control", "private, no-store, max-age=0");
+  }
+
   // Not signed in → only public pages allowed
   if (!user) {
     if (publicPath) return response;

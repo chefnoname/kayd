@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
+import { resetToPath } from "@/lib/session-reset";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -49,6 +50,9 @@ function SignupForm() {
         const siteUrl =
             process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
 
+        // Never let a previous login's session survive into a new account.
+        await supabase.auth.signOut({ scope: "local" });
+
         const { error: signUpError } = await supabase.auth.signUp({
             email: trimmedEmail,
             password,
@@ -66,8 +70,7 @@ function SignupForm() {
             return;
         }
 
-        router.push("/dashboard?verify_email=true");
-        router.refresh();
+        resetToPath("/dashboard?verify_email=true");
     }
 
     return (
